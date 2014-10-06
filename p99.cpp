@@ -2,18 +2,20 @@
 #include <iostream>
 
 template <typename T>
-T lastElementOf(std::list<T> list) {
+T lastElementOf(const std::list<T>& list) {
     return list.back();
 }
 
 template <typename T>
-T penultimate(std::list<T> list) {
-    list.pop_back();
-    return lastElementOf(list);
+T penultimate(const std::list<T>& list) {
+    auto iterator = list.end();
+    iterator--;
+    iterator--;
+    return *iterator;
 }
 
 template <typename T>
-T getElement(int position, std::list<T> list) {
+T getElement(int position, const std::list<T>& list) {
     auto iterator = list.begin();
     for (int i = 0; i < position; i++) {
         iterator++;
@@ -22,7 +24,7 @@ T getElement(int position, std::list<T> list) {
 }
 
 template <typename T>
-int sizeOf(std::list<T> list) {
+int sizeOf(const std::list<T>& list) {
     int size = 0;
     for (auto it = list.begin(); it != list.end(); it++) {
         size++;
@@ -31,7 +33,7 @@ int sizeOf(std::list<T> list) {
 }
 
 template <typename T>
-std::list<T> reverse(std::list<T> list) {
+std::list<T> reverse(const std::list<T>& list) {
     std::list<T> result = {};
     for (auto item : list) {
         result.push_front(item);
@@ -40,7 +42,7 @@ std::list<T> reverse(std::list<T> list) {
 }
 
 template <typename T>
-bool isPalindrome(std::list<T> list) {
+bool isPalindrome(const std::list<T>& list) {
     std::list<T> listCopy = list;
 
     while (listCopy.size() > 1) {
@@ -51,6 +53,5 @@ bool isPalindrome(std::list<T> list) {
         listCopy.pop_front();
         listCopy.pop_back();
     }
-    list.clear(); // TODO pass lists by reference
     return true;
 }

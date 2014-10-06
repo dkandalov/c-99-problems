@@ -6,6 +6,10 @@ TEST(P1, LastElementOfList) {
 }
 
 TEST(P2, PenultimateElementOfList) {
+    EXPECT_EQ(0, penultimate((std::list<int>) {})); // TODO throw exception?
+    EXPECT_EQ(1, penultimate((std::list<int>) {1})); // TODO throw exception?
+
+    EXPECT_EQ(1, penultimate((std::list<int>) {1, 2}));
     EXPECT_EQ(5, penultimate((std::list<int>) {1, 1, 2, 3, 5, 8}));
 }
 
@@ -40,8 +44,5 @@ TEST(P6, IsListAPalindrome) {
     EXPECT_EQ(true, isPalindrome((std::list<int>) {}));
     EXPECT_EQ(true, isPalindrome((std::list<int>) {1}));
     EXPECT_EQ(true, isPalindrome((std::list<int>) {1, 2, 3, 2, 1}));
-
-    std::list<int> list = {1, 1, 2, 3, 5, 8};
-    EXPECT_EQ(false, isPalindrome(list));
-    EXPECT_EQ(6, sizeOf(list));
+    EXPECT_EQ(false, isPalindrome((std::list<int>) {1, 1, 2, 3, 5, 8}));
 }
