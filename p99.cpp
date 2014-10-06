@@ -2,12 +2,19 @@
 #include <iostream>
 
 template <typename T>
+int sizeOf(const std::list<T>& list);
+
+
+template <typename T>
 T lastElementOf(const std::list<T>& list) {
     return list.back();
 }
 
 template <typename T>
 T penultimate(const std::list<T>& list) {
+    if (sizeOf(list) < 2)
+        throw std::runtime_error("List size should be >= 2 but was " + sizeOf(list));
+
     auto iterator = list.end();
     iterator--;
     iterator--;

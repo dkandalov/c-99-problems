@@ -6,8 +6,8 @@ TEST(P1, LastElementOfList) {
 }
 
 TEST(P2, PenultimateElementOfList) {
-    EXPECT_EQ(0, penultimate((std::list<int>) {})); // TODO throw exception?
-    EXPECT_EQ(1, penultimate((std::list<int>) {1})); // TODO throw exception?
+    EXPECT_THROW(penultimate((std::list<int>) {}), std::runtime_error);
+    EXPECT_THROW(penultimate((std::list<int>) {1}), std::runtime_error);
 
     EXPECT_EQ(1, penultimate((std::list<int>) {1, 2}));
     EXPECT_EQ(5, penultimate((std::list<int>) {1, 1, 2, 3, 5, 8}));
