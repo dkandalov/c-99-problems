@@ -2,18 +2,21 @@
 #include <iostream>
 
 template <typename T>
-int sizeOf(const std::list<T>& list);
+using List = std::list<T>;
+
+template <typename T>
+int sizeOf(const List<T>& list);
 
 
 template <typename T>
-T lastElementOf(const std::list<T>& list) {
+T lastElementOf(const List<T>& list) {
     return list.back();
 }
 
 template <typename T>
-T penultimate(const std::list<T>& list) {
+T penultimate(const List<T>& list) {
     if (sizeOf(list) < 2)
-        throw std::runtime_error("List size should be >= 2 but was " + sizeOf(list));
+        throw std::runtime_error("List size should be >= 2 but was " + std::to_string(sizeOf(list)));
 
     auto iterator = list.end();
     iterator--;
@@ -22,7 +25,7 @@ T penultimate(const std::list<T>& list) {
 }
 
 template <typename T>
-T getElement(int position, const std::list<T>& list) {
+T getElement(int position, const List<T>& list) {
     auto iterator = list.begin();
     for (int i = 0; i < position; i++) {
         iterator++;
@@ -31,7 +34,7 @@ T getElement(int position, const std::list<T>& list) {
 }
 
 template <typename T>
-int sizeOf(const std::list<T>& list) {
+int sizeOf(const List<T>& list) {
     int size = 0;
     for (auto it = list.begin(); it != list.end(); it++) {
         size++;
@@ -40,8 +43,8 @@ int sizeOf(const std::list<T>& list) {
 }
 
 template <typename T>
-std::list<T> reverse(const std::list<T>& list) {
-    std::list<T> result = {};
+List<T> reverse(const List<T>& list) {
+    List<T> result = {};
     for (auto item : list) {
         result.push_front(item);
     }
@@ -49,8 +52,8 @@ std::list<T> reverse(const std::list<T>& list) {
 }
 
 template <typename T>
-bool isPalindrome(const std::list<T>& list) {
-    std::list<T> listCopy = list;
+bool isPalindrome(const List<T>& list) {
+    List<T> listCopy = list;
 
     while (listCopy.size() > 1) {
         T first = listCopy.front();
@@ -61,4 +64,9 @@ bool isPalindrome(const std::list<T>& list) {
         listCopy.pop_back();
     }
     return true;
+}
+
+template <typename T>
+List<T> flatten(const List<List<T>>& list) {
+    return {};
 }

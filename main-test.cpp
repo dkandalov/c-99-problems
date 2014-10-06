@@ -2,19 +2,19 @@
 #include "lib/gtest-1.7.0/include/gtest/gtest.h"
 
 TEST(P1, LastElementOfList) {
-    EXPECT_EQ(8, lastElementOf((std::list<int>) {1, 1, 2, 3, 5, 8}));
+    EXPECT_EQ(8, lastElementOf((List<int>) {1, 1, 2, 3, 5, 8}));
 }
 
 TEST(P2, PenultimateElementOfList) {
-    EXPECT_THROW(penultimate((std::list<int>) {}), std::runtime_error);
-    EXPECT_THROW(penultimate((std::list<int>) {1}), std::runtime_error);
+    EXPECT_THROW(penultimate((List<int>) {}), std::runtime_error);
+    EXPECT_THROW(penultimate((List<int>) {1}), std::runtime_error);
 
-    EXPECT_EQ(1, penultimate((std::list<int>) {1, 2}));
-    EXPECT_EQ(5, penultimate((std::list<int>) {1, 1, 2, 3, 5, 8}));
+    EXPECT_EQ(1, penultimate((List<int>) {1, 2}));
+    EXPECT_EQ(5, penultimate((List<int>) {1, 1, 2, 3, 5, 8}));
 }
 
 TEST(P3, FindNthElementOfList) {
-    std::list<int> list = {1, 1, 2, 3, 5, 8};
+    List<int> list = {1, 1, 2, 3, 5, 8};
     EXPECT_EQ(1, getElement(0, list));
     EXPECT_EQ(1, getElement(1, list));
     EXPECT_EQ(2, getElement(2, list));
@@ -24,25 +24,30 @@ TEST(P3, FindNthElementOfList) {
 }
 
 TEST(P4, NumberOfElementsInList) {
-    EXPECT_EQ(0, sizeOf((std::list<int>) {}));
-    EXPECT_EQ(1, sizeOf((std::list<int>) {1}));
-    EXPECT_EQ(6, sizeOf((std::list<int>) {1, 1, 2, 3, 5, 8}));
+    EXPECT_EQ(0, sizeOf((List<int>) {}));
+    EXPECT_EQ(1, sizeOf((List<int>) {1}));
+    EXPECT_EQ(6, sizeOf((List<int>) {1, 1, 2, 3, 5, 8}));
 }
 
 TEST(P5, ReverseList) {
-    std::list<int> expected = {};
-    EXPECT_EQ(expected, reverse((std::list<int>) {}));
+    List<int> expected = {};
+    EXPECT_EQ(expected, reverse((List<int>) {}));
 
     expected = {1};
-    EXPECT_EQ(expected, reverse((std::list<int>) {1}));
+    EXPECT_EQ(expected, reverse((List<int>) {1}));
 
     expected = {8, 5, 3, 2, 1, 1};
-    EXPECT_EQ(expected, reverse((std::list<int>) {1, 1, 2, 3, 5, 8}));
+    EXPECT_EQ(expected, reverse((List<int>) {1, 1, 2, 3, 5, 8}));
 }
 
 TEST(P6, IsListAPalindrome) {
-    EXPECT_EQ(true, isPalindrome((std::list<int>) {}));
-    EXPECT_EQ(true, isPalindrome((std::list<int>) {1}));
-    EXPECT_EQ(true, isPalindrome((std::list<int>) {1, 2, 3, 2, 1}));
-    EXPECT_EQ(false, isPalindrome((std::list<int>) {1, 1, 2, 3, 5, 8}));
+    EXPECT_EQ(true, isPalindrome((List<int>) {}));
+    EXPECT_EQ(true, isPalindrome((List<int>) {1}));
+    EXPECT_EQ(true, isPalindrome((List<int>) {1, 2, 3, 2, 1}));
+    EXPECT_EQ(false, isPalindrome((List<int>) {1, 1, 2, 3, 5, 8}));
+}
+
+TEST(P7, FlattenList) {
+    EXPECT_EQ((List<int>) {}, flatten((List<List<int>>) {}));
+    EXPECT_EQ((List<int>) {1}, flatten((List<List<int>>) {{1}}));
 }
