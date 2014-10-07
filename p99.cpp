@@ -67,6 +67,10 @@ bool isPalindrome(const List<T>& list) {
 }
 
 template <typename T>
-List<T> flatten(const List<List<T>>& list) {
-    return {};
+List<T> flatten(const List<List<T>>& listOfLists) {
+    List<T> result = {};
+    for (auto list : listOfLists) {
+        result.merge(list);
+    }
+    return result;
 }

@@ -50,4 +50,6 @@ TEST(P6, IsListAPalindrome) {
 TEST(P7, FlattenList) {
     EXPECT_EQ((List<int>) {}, flatten((List<List<int>>) {}));
     EXPECT_EQ((List<int>) {1}, flatten((List<List<int>>) {{1}}));
+    List<int> expected = {1, 2, 3, 4};
+    EXPECT_EQ(expected, flatten((List<List<int>>) {{1, 2}, {3, 4}}));
 }
