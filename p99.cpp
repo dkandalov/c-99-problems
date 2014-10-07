@@ -78,18 +78,41 @@ List<T> flatten(const List<List<T>> &listOfLists) {
 template<typename T>
 List<T> compress(const List<T> &list) {
     if (sizeOf(list) < 2) return list;
-    
+
     List<T> result = {};
 
     auto it = list.begin();
     result.push_back(*it);
     T lastItem = *it;
 
-    for (; it != list.end(); it++) {
+    for (it++; it != list.end(); it++) {
         if (*it != lastItem) {
             result.push_back(*it);
             lastItem = *it;
         }
     }
+    return result;
+}
+
+template<typename T>
+List<List<T>> pack(const List<T> &list) {
+    if (list.empty()) return {};
+
+    List<List<T>> result = {};
+    auto it = list.begin();
+    auto lastItem = *it;
+    auto groupedItems = List<T>{ lastItem };
+
+    for (it++; it != list.end(); it++) {
+        if (*it == lastItem) {
+            groupedItems.push_back(*it);
+        } else {
+            result.push_back(groupedItems);
+            lastItem = *it;
+            groupedItems = List<T>{lastItem};
+        }
+    }
+    result.push_back(groupedItems);
+
     return result;
 }

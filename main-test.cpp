@@ -64,3 +64,16 @@ TEST(P8, CompressList) {
     EXPECT_EQ(expected, actual);
 }
 
+TEST(P9, PackList) {
+    EXPECT_EQ((List<List<int>>) {}, pack((List<int>) {}));
+    EXPECT_EQ((List<List<int>>) {{1}}, pack((List<int>) {1}));
+    
+    List<List<char>> expected = {{'a', 'a'}};
+    List<List<char>> actual = pack((List<char>) {'a', 'a'});
+    EXPECT_EQ(expected, actual);
+
+    expected = {{'a', 'a', 'a', 'a'}, {'b'}, {'c', 'c'}, {'a', 'a'}, {'d'}, {'e', 'e', 'e', 'e'}};
+    actual = pack((List<char>) {'a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e'});
+    EXPECT_EQ(expected, actual);
+}
+
