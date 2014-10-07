@@ -53,3 +53,14 @@ TEST(P7, FlattenList) {
     List<int> expected = {1, 2, 3, 4};
     EXPECT_EQ(expected, flatten((List<List<int>>) {{1, 2}, {3, 4}}));
 }
+
+TEST(P8, CompressList) {
+    EXPECT_EQ((List<int>) {}, compress((List<int>) {}));
+    EXPECT_EQ((List<int>) {1}, compress((List<int>) {1}));
+    EXPECT_EQ((List<int>) {1}, compress((List<int>) {1, 1}));
+    
+    List<char> expected = {'a', 'b', 'c', 'a', 'd', 'e'};
+    List<char> actual = compress((List<char>){'a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e'});
+    EXPECT_EQ(expected, actual);
+}
+
