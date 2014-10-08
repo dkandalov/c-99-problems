@@ -6,8 +6,8 @@ TEST(P1, LastElementOfList) {
 }
 
 TEST(P2, PenultimateElementOfList) {
-    EXPECT_THROW(penultimate((List<int>) {}), std::runtime_error);
-    EXPECT_THROW(penultimate((List<int>) {1}), std::runtime_error);
+    EXPECT_THROW(penultimate((List<int>) {}), std::invalid_argument);
+    EXPECT_THROW(penultimate((List<int>) {1}), std::invalid_argument);
 
     EXPECT_EQ(1, penultimate((List<int>) {1, 2}));
     EXPECT_EQ(5, penultimate((List<int>) {1, 1, 2, 3, 5, 8}));
@@ -77,3 +77,14 @@ TEST(P9, PackList) {
     EXPECT_EQ(expected, actual);
 }
 
+TEST(P10, PackList) {
+    EXPECT_EQ((List<std::tuple<int, int>>) {}, encode((List<int>) {}));
+
+    List<std::tuple<int, char>> expected = { std::make_tuple(1, 'a') };
+    List<std::tuple<int, char>> actual = encode((List<char>) {'a'});
+    EXPECT_EQ(expected, actual);
+
+    expected = { std::make_tuple(2, 'a') };
+    actual = encode((List<char>) {'a', 'a'});
+    EXPECT_EQ(expected, actual);
+}

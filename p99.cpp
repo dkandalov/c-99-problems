@@ -16,7 +16,7 @@ T lastElementOf(const List<T> &list) {
 template<typename T>
 T penultimate(const List<T> &list) {
     if (sizeOf(list) < 2)
-        throw std::runtime_error("List size should be >= 2 but was " + std::to_string(sizeOf(list)));
+        throw std::invalid_argument("List size should be >= 2 but was " + std::to_string(sizeOf(list)));
 
     auto iterator = list.end();
     iterator--;
@@ -113,6 +113,19 @@ List<List<T>> pack(const List<T> &list) {
         }
     }
     result.push_back(groupedItems);
+
+    return result;
+}
+
+template <typename T>
+List<std::tuple<int, T>> encode(const List<T> &list) {
+    List<std::tuple<int, T>> result = {};
+
+    auto groupedItems = pack(list);
+    for (auto subList : groupedItems) {
+        auto tuple = std::make_tuple(sizeOf(subList), lastElementOf(subList));
+        result.push_back(tuple);
+    }
 
     return result;
 }
