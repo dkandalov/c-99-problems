@@ -1,5 +1,6 @@
 #include <list>
 #include <iostream>
+#include "either/either.cpp"
 
 template<typename T>
 using List = std::list<T>;
@@ -101,7 +102,7 @@ List<List<T>> pack(const List<T> &list) {
     List<List<T>> result = {};
     auto it = list.begin();
     auto lastItem = *it;
-    auto groupedItems = List<T>{ lastItem };
+    auto groupedItems = List<T>{lastItem};
 
     for (it++; it != list.end(); it++) {
         if (*it == lastItem) {
@@ -117,7 +118,7 @@ List<List<T>> pack(const List<T> &list) {
     return result;
 }
 
-template <typename T>
+template<typename T>
 List<std::tuple<int, T>> encode(const List<T> &list) {
     List<std::tuple<int, T>> result = {};
 
@@ -128,4 +129,9 @@ List<std::tuple<int, T>> encode(const List<T> &list) {
     }
 
     return result;
+}
+
+template<typename T>
+List<Either<std::tuple<int, T>, T>> encodeModified(const List<T>& list) {
+    return {};
 }

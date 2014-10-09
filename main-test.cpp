@@ -77,14 +77,20 @@ TEST(P9, PackList) {
     EXPECT_EQ(expected, actual);
 }
 
-TEST(P10, PackList) {
+TEST(P10, RunLengthEncodingOfAList) {
     EXPECT_EQ((List<std::tuple<int, int>>) {}, encode((List<int>) {}));
 
-    List<std::tuple<int, char>> expected = { std::make_tuple(1, 'a') };
+    List<std::tuple<int, char>> expected = {std::make_tuple(1, 'a')};
     List<std::tuple<int, char>> actual = encode((List<char>) {'a'});
     EXPECT_EQ(expected, actual);
 
-    expected = { std::make_tuple(2, 'a') };
+    expected = {std::make_tuple(2, 'a')};
     actual = encode((List<char>) {'a', 'a'});
+    EXPECT_EQ(expected, actual);
+}
+
+TEST(P11, ModifiedRunLengthEncodingOfAList) {
+    List<Either<std::tuple<int, int>, int>> actual = encodeModified((List<int>) {});
+    List<Either<std::tuple<int, int>, int>> expected = (List<Either<std::tuple<int, int>, int>>) {};
     EXPECT_EQ(expected, actual);
 }
