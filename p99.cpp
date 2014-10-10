@@ -132,6 +132,11 @@ List<std::tuple<int, T>> encode(const List<T> &list) {
 }
 
 template<typename T>
-List<Either<std::tuple<int, T>, T>> encodeModified(const List<T>& list) {
+List<Either<std::tuple<int, T>, T>> encodeModified(const List<T> &list) {
+    return {};
+}
+
+template<typename T>
+List<T> decode(const List<std::tuple<int, T>> &encodedList) {
     return {};
 }

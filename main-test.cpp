@@ -94,3 +94,8 @@ TEST(P11, ModifiedRunLengthEncodingOfAList) {
     List<Either<std::tuple<int, int>, int>> expected = (List<Either<std::tuple<int, int>, int>>) {};
     EXPECT_EQ(expected, actual);
 }
+
+TEST(P12, DecodeRunLengthEncodedAList) {
+    EXPECT_EQ((List<char>) {}, decode((List<std::tuple<int, char>>) {}));
+    EXPECT_EQ((List<char>) {'a'}, decode((List<std::tuple<int, char>>) { std::make_tuple(1, 'a') }));
+}
