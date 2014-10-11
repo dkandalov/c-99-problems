@@ -90,12 +90,31 @@ TEST(P10, RunLengthEncodingOfAList) {
 }
 
 TEST(P11, ModifiedRunLengthEncodingOfAList) {
-    List<Either<std::tuple<int, int>, int>> actual = encodeModified((List<int>) {});
-    List<Either<std::tuple<int, int>, int>> expected = (List<Either<std::tuple<int, int>, int>>) {};
+    List<Either<std::tuple<int, char>, char>> actual = encodeModified((List<char>) {});
+    List<Either<std::tuple<int, char>, char>> expected = (List<Either<std::tuple<int, char>, char>>) {};
+    EXPECT_EQ(expected, actual);
+
+    actual = encodeModified((List<char>) {'a', 'a', 'b'});
+    expected = (List<Either<std::tuple<int, char>, char>>) {
+            Left<std::tuple<int, char>>(std::make_tuple(2, 'a')),
+            Right<char>('b')
+    };
     EXPECT_EQ(expected, actual);
 }
 
 TEST(P12, DecodeRunLengthEncodedAList) {
     EXPECT_EQ((List<char>) {}, decode((List<std::tuple<int, char>>) {}));
     EXPECT_EQ((List<char>) {'a'}, decode((List<std::tuple<int, char>>) { std::make_tuple(1, 'a') }));
+}
+
+TEST(P13, RunLengthEncodingOfAList) {
+    EXPECT_EQ((List<std::tuple<int, int>>) {}, encodeDirect((List<int>) {}));
+
+    List<std::tuple<int, char>> expected = {std::make_tuple(1, 'a')};
+    List<std::tuple<int, char>> actual = encodeDirect((List<char>) {'a'});
+    EXPECT_EQ(expected, actual);
+
+    expected = {std::make_tuple(2, 'a')};
+    actual = encodeDirect((List<char>) {'a', 'a'});
+    EXPECT_EQ(expected, actual);
 }

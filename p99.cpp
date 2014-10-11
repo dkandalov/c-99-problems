@@ -133,10 +133,33 @@ List<std::tuple<int, T>> encode(const List<T> &list) {
 
 template<typename T>
 List<Either<std::tuple<int, T>, T>> encodeModified(const List<T> &list) {
-    return {};
+    List<Either<std::tuple<int, T>, T>> result = {};
+    for (auto item : encode(list)) {
+        if (std::get<0>(item) == 1) {
+            result.push_back(Right<T>(std::get<1>(item)));
+        } else {
+            result.push_back(Left<std::tuple<int, T>>(item));
+        }
+    }
+    return result;
 }
 
 template<typename T>
 List<T> decode(const List<std::tuple<int, T>> &encodedList) {
-    return {};
+    List<T> result = {};
+    for (auto item : encodedList) {
+        for (int i = 0; i < std::get<0>(item); i++) {
+            result.push_back(std::get<1>(item));
+        }
+    }
+    return result;
+}
+
+template<typename T>
+List<std::tuple<int, T>> encodeDirect(const List<T> &list) {
+    List<std::tuple<int, T>> result = {};
+    for (auto item : list) {
+
+    }
+    return result;
 }
