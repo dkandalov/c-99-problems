@@ -5,6 +5,9 @@
 template<typename T>
 using List = std::list<T>;
 
+template<typename T1, typename T2>
+using Tuple = std::tuple<T1, T2>;
+
 template<typename T>
 int sizeOf(const List<T> &list);
 
@@ -45,7 +48,7 @@ int sizeOf(const List<T> &list) {
 
 template<typename T>
 List<T> reverse(const List<T> &list) {
-    List<T> result = {};
+    List<T> result;
     for (auto item : list) {
         result.push_front(item);
     }
@@ -69,7 +72,7 @@ bool isPalindrome(const List<T> &list) {
 
 template<typename T>
 List<T> flatten(const List<List<T>> &listOfLists) {
-    List<T> result = {};
+    List<T> result;
     for (auto list : listOfLists) {
         result.merge(list);
     }
@@ -80,7 +83,7 @@ template<typename T>
 List<T> compress(const List<T> &list) {
     if (sizeOf(list) < 2) return list;
 
-    List<T> result = {};
+    List<T> result;
 
     auto it = list.begin();
     result.push_back(*it);
@@ -99,7 +102,7 @@ template<typename T>
 List<List<T>> pack(const List<T> &list) {
     if (list.empty()) return {};
 
-    List<List<T>> result = {};
+    List<List<T>> result;
     auto it = list.begin();
     auto lastItem = *it;
     auto groupedItems = List<T>{lastItem};
@@ -119,8 +122,8 @@ List<List<T>> pack(const List<T> &list) {
 }
 
 template<typename T>
-List<std::tuple<int, T>> encode(const List<T> &list) {
-    List<std::tuple<int, T>> result = {};
+List<Tuple<int, T>> encode(const List<T> &list) {
+    List<Tuple<int, T>> result;
 
     auto groupedItems = pack(list);
     for (auto subList : groupedItems) {
@@ -132,21 +135,21 @@ List<std::tuple<int, T>> encode(const List<T> &list) {
 }
 
 template<typename T>
-List<Either<std::tuple<int, T>, T>> encodeModified(const List<T> &list) {
-    List<Either<std::tuple<int, T>, T>> result = {};
+List<Either<Tuple<int, T>, T>> encodeModified(const List<T> &list) {
+    List<Either<Tuple<int, T>, T>> result;
     for (auto item : encode(list)) {
         if (std::get<0>(item) == 1) {
             result.push_back(Right<T>(std::get<1>(item)));
         } else {
-            result.push_back(Left<std::tuple<int, T>>(item));
+            result.push_back(Left<Tuple<int, T>>(item));
         }
     }
     return result;
 }
 
 template<typename T>
-List<T> decode(const List<std::tuple<int, T>> &encodedList) {
-    List<T> result = {};
+List<T> decode(const List<Tuple<int, T>> &encodedList) {
+    List<T> result;
     for (auto item : encodedList) {
         for (int i = 0; i < std::get<0>(item); i++) {
             result.push_back(std::get<1>(item));
@@ -156,10 +159,24 @@ List<T> decode(const List<std::tuple<int, T>> &encodedList) {
 }
 
 template<typename T>
-List<std::tuple<int, T>> encodeDirect(const List<T> &list) {
-    List<std::tuple<int, T>> result = {};
-    for (auto item : list) {
+List<Tuple<int, T>> encodeDirect(const List<T> &list) {
+    auto it = list.begin();
+    if (it == list.end()) return {};
 
+    T lastItem = *it;
+    int count = 1;
+    List<Tuple<int, T>> result;
+    while (++it != list.end()) {
+        auto item = *it;
+        if (item == lastItem) {
+            count++;
+        } else {
+            result.push_back(std::make_tuple(count, lastItem));
+            count = 1;
+        }
+        lastItem = item;
     }
+    result.push_back(std::make_tuple(count, lastItem));
+
     return result;
 }
