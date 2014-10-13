@@ -134,3 +134,9 @@ TEST(P14, DuplicateElementsOfAList) {
     actual = duplicate((List<char>) { 'a', 'b', 'c', 'c' });
     EXPECT_EQ(expected, actual);
 }
+
+TEST(P15, DuplicateNElementsOfAList) {
+    List<char> expected = {'a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c', 'c', 'c', 'c'};
+    List<char> actual = duplicateN(3, (List<char>) { 'a', 'b', 'c', 'c' });
+    EXPECT_EQ(expected, actual);
+}

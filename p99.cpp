@@ -182,11 +182,17 @@ List<Tuple<int, T>> encodeDirect(const List<T> &list) {
 }
 
 template<typename T>
-List<T> duplicate(const List<T> &list) {
+List<T> duplicateN(int n, const List<T> &list) {
     List<T> result;
     for (auto item : list) {
-        result.push_back(item);
-        result.push_back(item);
+        for (int i = 0; i < n; i++) {
+            result.push_back(item);
+        }
     }
     return result;
+}
+
+template<typename T>
+List<T> duplicate(const List<T> &list) {
+    return duplicateN(2, list);
 }
