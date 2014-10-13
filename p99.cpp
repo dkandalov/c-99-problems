@@ -180,3 +180,13 @@ List<Tuple<int, T>> encodeDirect(const List<T> &list) {
 
     return result;
 }
+
+template<typename T>
+List<T> duplicate(const List<T> &list) {
+    List<T> result;
+    for (auto item : list) {
+        result.push_back(item);
+        result.push_back(item);
+    }
+    return result;
+}

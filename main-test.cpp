@@ -122,3 +122,15 @@ TEST(P13, RunLengthEncodingOfAList) {
     actual = encodeDirect((List<char>) {'a', 'a', 'b'});
     EXPECT_EQ(expected, actual);
 }
+
+TEST(P14, DuplicateElementsOfAList) {
+    EXPECT_EQ((List<char>) {}, duplicate((List<char>) {}));
+
+    List<char> expected = {'a', 'a'};
+    List<char> actual = duplicate((List<char>) { 'a' });
+    EXPECT_EQ(expected, actual);
+
+    expected = {'a', 'a', 'b', 'b', 'c', 'c', 'c', 'c'};
+    actual = duplicate((List<char>) { 'a', 'b', 'c', 'c' });
+    EXPECT_EQ(expected, actual);
+}
