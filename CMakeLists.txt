@@ -22,11 +22,17 @@ target_link_libraries(main p99)
 target_link_libraries(main ${Boost_LIBRARIES})
 
 if (test)
+    add_subdirectory(lib/catch)
+    include_directories(${CATCH_INCLUDE_DIR} ${COMMON_INCLUDES})
+
     add_subdirectory(lib/gtest-1.7.0)
     enable_testing()
     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-    add_executable(runUnitTests main-test.cpp)
-    target_link_libraries(runUnitTests gtest gtest_main)
+    add_executable(runUnitGTests p99-gtest.cpp)
+    target_link_libraries(runUnitGTests gtest gtest_main)
+    target_link_libraries(runUnitGTests p99)
+
+    add_executable(runUnitTests p99-test.cpp)
     target_link_libraries(runUnitTests p99)
 endif()
