@@ -196,3 +196,30 @@ template<typename T>
 List<T> duplicate(const List<T> &list) {
     return duplicateN(2, list);
 }
+
+template<typename T>
+List<T> drop(int n, const List<T> &list) {
+    List<T> result;
+    int i = 0;
+    for (auto item : list) {
+        if (++i % n == 0) continue;
+        result.push_back(item);
+    }
+    return result;
+}
+
+template<typename T>
+Tuple<List<T>, List<T>> split(int splitIndex, const List<T> &list) {
+    List<T> part1;
+    List<T> part2;
+    int i = 0;
+    for (auto item : list) {
+        if (++i <= splitIndex) {
+            part1.push_back(item);
+        } else {
+            part2.push_back(item);
+        }
+    }
+    return std::make_tuple(part1, part2);
+}
+

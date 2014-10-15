@@ -140,3 +140,17 @@ TEST(P15, DuplicateNElementsOfAList) {
     List<char> actual = duplicateN(3, (List<char>) { 'a', 'b', 'c', 'c' });
     EXPECT_EQ(expected, actual);
 }
+
+TEST(P16, DropNthElementOfAList) {
+    List<int> expected = {1, 2, 4, 5, 7, 8, 10};
+    List<int> actual = drop(3, (List<int>) { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+    EXPECT_EQ(expected, actual);
+}
+
+TEST(P17, SplitAList) {
+    List<int> part1 = {1, 2, 3};
+    List<int> part2 = {4, 5, 6, 7, 8, 9, 10};
+    Tuple<List<int>, List<int>> expected = std::make_tuple(part1, part2);
+    Tuple<List<int>, List<int>> actual = split(3, (List<int>) { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+    EXPECT_EQ(expected, actual);
+}
