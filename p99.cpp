@@ -198,7 +198,7 @@ List<T> duplicate(const List<T> &list) {
 }
 
 template<typename T>
-List<T> drop(int n, const List<T> &list) {
+List<T> dropElement(int n, const List<T> &list) {
     List<T> result;
     int i = 0;
     for (auto item : list) {
@@ -223,3 +223,19 @@ Tuple<List<T>, List<T>> split(int splitIndex, const List<T> &list) {
     return std::make_tuple(part1, part2);
 }
 
+template<typename T>
+List<T> slice(int from, int to, const List<T> &list) {
+    return std::get<1>(split(from, std::get<0>(split(to, list))));
+}
+
+template<typename T>
+List<T> rotate(int shift, const List<T> &list) {
+    int index = shift >= 0 ? shift : sizeOf(list) + shift;
+    auto splitList = split(index, list);
+
+    List<T> part1 = std::get<0>(splitList);
+    List<T> part2 = std::get<1>(splitList);
+    part1.splice(part1.begin(), part2);
+
+    return part1;
+}

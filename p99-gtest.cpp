@@ -143,14 +143,30 @@ TEST(P15, DuplicateNElementsOfAList) {
 
 TEST(P16, DropNthElementOfAList) {
     List<int> expected = {1, 2, 4, 5, 7, 8, 10};
-    List<int> actual = drop(3, (List<int>) { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+    List<int> actual = dropElement(3, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     EXPECT_EQ(expected, actual);
 }
 
-TEST(P17, SplitAList) {
+TEST(P17, SplitList) {
     List<int> part1 = {1, 2, 3};
     List<int> part2 = {4, 5, 6, 7, 8, 9, 10};
     Tuple<List<int>, List<int>> expected = std::make_tuple(part1, part2);
     Tuple<List<int>, List<int>> actual = split(3, (List<int>) { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+    EXPECT_EQ(expected, actual);
+}
+
+TEST(P18, ExtractSliceFromAList) {
+    List<int> expected = { 4, 5, 6, 7 };
+    List<int> actual = slice(3, 7, (List<int>) { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+    EXPECT_EQ(expected, actual);
+}
+
+TEST(P19, RotateListNPlaces) {
+    List<int> expected = {4, 5, 6, 7, 8, 9, 10, 1, 2, 3};
+    List<int> actual = rotate(3, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    EXPECT_EQ(expected, actual);
+
+    expected = {9, 10, 1, 2, 3, 4, 5, 6, 7, 8};
+    actual = rotate(-2, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     EXPECT_EQ(expected, actual);
 }
