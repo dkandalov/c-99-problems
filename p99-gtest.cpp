@@ -188,3 +188,13 @@ TEST(P22, CreateListWithIntegersFromRange) {
     List<int> actual = range(4, 9);
     EXPECT_EQ(expected, actual);
 }
+
+TEST(P23, ExtractGivenNumberOfRandomlySelectedElements) {
+    unsigned int seed = 123;
+    List<int> expected = {1, 6, 7};
+    List<int> actual = randomSelect(3, seed, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    EXPECT_EQ(expected, actual);
+
+    List<int> list = randomSelect(5, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    EXPECT_EQ(5, sizeOf(list));
+}

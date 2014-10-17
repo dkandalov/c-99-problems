@@ -273,3 +273,18 @@ List<int> range(int from, int to) {
     }
     return result;
 }
+
+template<typename T>
+List<T> randomSelect(int amount, unsigned int seed, const List<T> &list) {
+    srand(seed);
+    List<T> result = list;
+    while (sizeOf(result) > amount) {
+        result = removeAt(rand() % sizeOf(result), result);
+    }
+    return result;
+}
+
+template<typename T>
+List<T> randomSelect(int amount, const List<T> &list) {
+    return randomSelect(amount, (unsigned int) time(NULL), list);
+}
