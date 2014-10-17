@@ -198,11 +198,11 @@ List<T> duplicate(const List<T> &list) {
 }
 
 template<typename T>
-List<T> dropElement(int n, const List<T> &list) {
+List<T> dropEvery(int index, const List<T> &list) {
     List<T> result;
     int i = 0;
     for (auto item : list) {
-        if (++i % n == 0) continue;
+        if (++i % index == 0) continue;
         result.push_back(item);
     }
     return result;
@@ -238,4 +238,38 @@ List<T> rotate(int shift, const List<T> &list) {
     part1.splice(part1.begin(), part2);
 
     return part1;
+}
+
+template<typename T>
+List<T> removeAt(int index, const List<T> &list) {
+    List<T> result;
+    int i = 0;
+    for (auto item : list) {
+        if (i++ != index) result.push_back(item);
+    }
+    return result;
+}
+
+template<typename T>
+List<T> insertAt(int index, T element, const List<T> &list) {
+    List<T> result;
+    int i = 0;
+    for (auto item : list) {
+        if (i++ == index) {
+            result.push_back(element);
+        }
+        result.push_back(item);
+    }
+    if (index == sizeOf(result)) {
+        result.push_back(element);
+    }
+    return result;
+}
+
+List<int> range(int from, int to) {
+    List<int> result;
+    for (int i = from; i <= to; i++) {
+        result.push_back(i);
+    }
+    return result;
 }

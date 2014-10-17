@@ -141,9 +141,9 @@ TEST(P15, DuplicateNElementsOfAList) {
     EXPECT_EQ(expected, actual);
 }
 
-TEST(P16, DropNthElementOfAList) {
+TEST(P16, DropEveryNthElementFromList) {
     List<int> expected = {1, 2, 4, 5, 7, 8, 10};
-    List<int> actual = dropElement(3, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    List<int> actual = dropEvery(3, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     EXPECT_EQ(expected, actual);
 }
 
@@ -168,5 +168,23 @@ TEST(P19, RotateListNPlaces) {
 
     expected = {9, 10, 1, 2, 3, 4, 5, 6, 7, 8};
     actual = rotate(-2, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    EXPECT_EQ(expected, actual);
+}
+
+TEST(P20, RemoveNthElementFromList) {
+    List<int> expected = {1, 2, 3, 5, 6, 7, 8, 9, 10};
+    List<int> actual = removeAt(3, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    EXPECT_EQ(expected, actual);
+}
+
+TEST(P21, InsertElementIntoList) {
+    List<int> expected = {1, 2, 3, 123, 4, 5, 6, 7, 8, 9, 10};
+    List<int> actual = insertAt(3, 123, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    EXPECT_EQ(expected, actual);
+}
+
+TEST(P22, CreateListWithIntegersFromRange) {
+    List<int> expected = {4, 5, 6, 7, 8, 9};
+    List<int> actual = range(4, 9);
     EXPECT_EQ(expected, actual);
 }
