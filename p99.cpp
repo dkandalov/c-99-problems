@@ -288,3 +288,11 @@ template<typename T>
 List<T> randomSelect(int amount, const List<T> &list) {
     return randomSelect(amount, (unsigned int) time(NULL), list);
 }
+
+List<int> lotto(unsigned int seed, int amount, int endOfRange) {
+    return randomSelect(amount, seed, range(1, endOfRange));
+}
+
+List<int> lotto(int amount, int endOfRange) {
+    return lotto((unsigned int) time(NULL), amount, endOfRange);
+}

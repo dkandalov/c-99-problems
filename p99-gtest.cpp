@@ -198,3 +198,13 @@ TEST(P23, ExtractGivenNumberOfRandomlySelectedElements) {
     List<int> list = randomSelect(5, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     EXPECT_EQ(5, sizeOf(list));
 }
+
+TEST(P24, DrawNDifferentRandomNumbersFromRange1ToM) {
+    unsigned int seed = 123;
+    List<int> expected = {10, 11, 29, 41, 46};
+    List<int> actual = lotto(seed, 5, 49);
+    EXPECT_EQ(expected, actual);
+
+    List<int> list = lotto(5, 50);
+    EXPECT_EQ(5, sizeOf(list));
+}
