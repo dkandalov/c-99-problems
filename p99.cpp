@@ -241,13 +241,23 @@ List<T> rotate(int shift, const List<T> &list) {
 }
 
 template<typename T>
-List<T> removeAt(int index, const List<T> &list) {
-    List<T> result;
+Tuple<List<T>, T> removeAt(int index, const List<T> &list) {
+    if (index < 0 || index >= sizeOf(list))
+        throw std::invalid_argument(
+                "Cannot remove index: " + std::to_string(index) +
+                ", list size: " + std::to_string(sizeOf(list)));
+
+    List<T> newList;
+    T value;
     int i = 0;
-    for (auto item : list) {
-        if (i++ != index) result.push_back(item);
+    for (T item : list) {
+        if (i++ == index) {
+            value = item;
+        } else {
+            newList.push_back(item);
+        }
     }
-    return result;
+    return std::make_tuple(newList, value);
 }
 
 template<typename T>
@@ -277,9 +287,13 @@ List<int> range(int from, int to) {
 template<typename T>
 List<T> randomSelect(int amount, unsigned int seed, const List<T> &list) {
     srand(seed);
-    List<T> result = list;
-    while (sizeOf(result) > amount) {
-        result = removeAt(rand() % sizeOf(result), result);
+    List<T> listCopy = list;
+    List<T> result;
+    for (int i = 0; i < amount; i++) {
+        auto removed = removeAt(rand() % sizeOf(listCopy), listCopy);
+        listCopy = std::get<0>(removed);
+        T item = std::get<1>(removed);
+        result.push_back(item);
     }
     return result;
 }

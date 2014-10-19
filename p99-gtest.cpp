@@ -172,8 +172,8 @@ TEST(P19, RotateListNPlaces) {
 }
 
 TEST(P20, RemoveNthElementFromList) {
-    List<int> expected = {1, 2, 3, 5, 6, 7, 8, 9, 10};
-    List<int> actual = removeAt(3, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    Tuple<List<int>, int> expected = std::make_tuple((List<int>) {1, 2, 3, 5, 6, 7, 8, 9, 10}, 4);
+    Tuple<List<int>, int> actual = removeAt(3, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     EXPECT_EQ(expected, actual);
 }
 
@@ -191,7 +191,7 @@ TEST(P22, CreateListWithIntegersFromRange) {
 
 TEST(P23, ExtractGivenNumberOfRandomlySelectedElements) {
     unsigned int seed = 123;
-    List<int> expected = {1, 6, 7};
+    List<int> expected = {2, 10, 9};
     List<int> actual = randomSelect(3, seed, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     EXPECT_EQ(expected, actual);
 
@@ -201,7 +201,7 @@ TEST(P23, ExtractGivenNumberOfRandomlySelectedElements) {
 
 TEST(P24, DrawNDifferentRandomNumbersFromRange1ToM) {
     unsigned int seed = 123;
-    List<int> expected = {10, 11, 29, 41, 46};
+    List<int> expected = {1, 13, 20, 8, 45};
     List<int> actual = lotto(seed, 5, 49);
     EXPECT_EQ(expected, actual);
 
