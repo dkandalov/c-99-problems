@@ -192,14 +192,14 @@ TEST(P22, CreateListWithIntegersFromRange) {
 TEST(P23, ExtractGivenNumberOfRandomlySelectedElements) {
     unsigned int seed = 123;
     List<int> expected = {2, 10, 9};
-    List<int> actual = randomSelect(3, seed, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    List<int> actual = randomSelect(seed, 3, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     EXPECT_EQ(expected, actual);
 
     List<int> list = randomSelect(5, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     EXPECT_EQ(5, sizeOf(list));
 }
 
-TEST(P24, DrawNDifferentRandomNumbersFromRange1ToM) {
+TEST(P24, Lotto_DrawNDifferentRandomNumbersFromRange1ToM) {
     unsigned int seed = 123;
     List<int> expected = {1, 13, 20, 8, 45};
     List<int> actual = lotto(seed, 5, 49);
@@ -208,3 +208,14 @@ TEST(P24, DrawNDifferentRandomNumbersFromRange1ToM) {
     List<int> list = lotto(5, 50);
     EXPECT_EQ(5, sizeOf(list));
 }
+
+TEST(P25, GenerateRandomPermutationOfAList) {
+    unsigned int seed = 123;
+    List<int> expected = {2, 5, 3, 1, 4};
+    List<int> actual = randomPermute(seed, (List<int>) {1, 2, 3, 4, 5});
+    EXPECT_EQ(expected, actual);
+
+    List<int> list = randomPermute(range(1, 100));
+    EXPECT_EQ(100, sizeOf(list));
+}
+

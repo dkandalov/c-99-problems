@@ -285,7 +285,7 @@ List<int> range(int from, int to) {
 }
 
 template<typename T>
-List<T> randomSelect(int amount, unsigned int seed, const List<T> &list) {
+List<T> randomSelect(unsigned int seed, int amount, const List<T> &list) {
     srand(seed);
     List<T> listCopy = list;
     List<T> result;
@@ -300,13 +300,23 @@ List<T> randomSelect(int amount, unsigned int seed, const List<T> &list) {
 
 template<typename T>
 List<T> randomSelect(int amount, const List<T> &list) {
-    return randomSelect(amount, (unsigned int) time(NULL), list);
+    return randomSelect((unsigned int) time(NULL), amount, list);
 }
 
 List<int> lotto(unsigned int seed, int amount, int endOfRange) {
-    return randomSelect(amount, seed, range(1, endOfRange));
+    return randomSelect(seed, amount, range(1, endOfRange));
 }
 
 List<int> lotto(int amount, int endOfRange) {
     return lotto((unsigned int) time(NULL), amount, endOfRange);
+}
+
+template<typename T>
+List<T> randomPermute(unsigned int seed, const List<T> &list) {
+    return randomSelect(seed, sizeOf(list), list);
+}
+
+template<typename T>
+List<T> randomPermute(const List<T> &list) {
+    return randomPermute((unsigned int) time(NULL), list);
 }
