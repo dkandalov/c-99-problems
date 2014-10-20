@@ -320,3 +320,25 @@ template<typename T>
 List<T> randomPermute(const List<T> &list) {
     return randomPermute((unsigned int) time(NULL), list);
 }
+
+template<typename T>
+List<List<T>> combinations(int size, const List<T> &list) {
+    List<List<T>> result;
+    if (size <= 1) {
+        for (auto item : list) {
+            result.push_back({item});
+        }
+        return result;
+    }
+
+    auto subList = list;
+    for (auto item : list) {
+        subList = slice(1, sizeOf(subList), subList);
+        auto subResult = combinations(size - 1, subList);
+        for (auto combination : subResult) {
+            result.push_back(insertAt(0, item, combination));
+        }
+    }
+
+    return result;
+}

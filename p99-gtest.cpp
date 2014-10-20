@@ -219,3 +219,20 @@ TEST(P25, GenerateRandomPermutationOfAList) {
     EXPECT_EQ(100, sizeOf(list));
 }
 
+TEST(P26, Combinations) {
+    List<List<int>> expected = {{1}, {2}, {3}};
+    List<List<int>> actual = combinations(1, (List<int>) {1, 2, 3});
+    EXPECT_EQ(expected, actual);
+
+    expected = {{1, 2}, {1, 3}, {2, 3}};
+    actual = combinations(2, (List<int>) {1, 2, 3});
+    EXPECT_EQ(expected, actual);
+
+    expected = {{1, 2, 3}, {1, 2, 4}, {1, 3, 4}, {2, 3, 4}};
+    actual = combinations(3, (List<int>) {1, 2, 3, 4});
+    EXPECT_EQ(expected, actual);
+
+    actual = combinations(3, (List<int>) range(1, 12));
+    EXPECT_EQ(220, sizeOf(actual));
+}
+
