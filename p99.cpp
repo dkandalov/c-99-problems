@@ -5,6 +5,9 @@
 template<typename T>
 using List = std::list<T>;
 
+template<typename T>
+using Combinations = List<List<T>>;
+
 template<typename T1, typename T2>
 using Tuple = std::tuple<T1, T2>;
 
@@ -337,6 +340,35 @@ List<List<T>> combinations(int size, const List<T> &list) {
         auto subResult = combinations(size - 1, subList);
         for (auto combination : subResult) {
             result.push_back(insertAt(0, item, combination));
+        }
+    }
+
+    return result;
+}
+
+template<typename T>
+List<T> tailOf(const List<T> &list) {
+    return std::get<0>(removeAt(0, list));
+}
+
+template<typename T>
+List<Combinations<T>> group(List<int> groupSizes, const List<T> &list) {
+    List<Combinations<T>> result;
+    if (groupSizes.empty() || list.empty()) {
+        result.push_back({});
+        return result;
+    }
+
+    int groupSize = groupSizes.front();
+    auto itemCombinations = combinations(groupSize, list);
+    for (auto combination : itemCombinations) {
+        List<T> listCopy = list;
+        for (auto item : combination) {
+            listCopy.remove(item);
+        }
+        auto subResult = group(tailOf(groupSizes), listCopy);
+        for (auto subCombinations : subResult) {
+            result.push_back(insertAt(0, combination, subCombinations));
         }
     }
 

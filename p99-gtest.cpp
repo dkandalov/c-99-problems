@@ -236,3 +236,8 @@ TEST(P26, Combinations) {
     EXPECT_EQ(220, sizeOf(actual));
 }
 
+TEST(P27, GroupElementsIntoDisjoinedSubsets) {
+    List<Combinations<int>> expected = {{{1}, {2, 3}}, {{2}, {1, 3}}, {{3}, {1, 2}}};
+    List<Combinations<int>> actual = group((List<int>){1, 2}, (List<int>) range(1, 3));
+    EXPECT_EQ(expected, actual);
+}
