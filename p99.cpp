@@ -1,5 +1,6 @@
 #include <list>
 #include <iostream>
+#include <unordered_map>
 #include "either/either.cpp"
 
 template<typename T>
@@ -372,5 +373,36 @@ List<Combinations<T>> group(List<int> groupSizes, const List<T> &list) {
         }
     }
 
+    return result;
+}
+
+template<typename T>
+List<List<T>> sortByLength(const List<List<T>> &list) {
+    List<List<T>> result = list;
+    result.sort();
+    return result;
+}
+
+template<typename T>
+List<List<T>> sortByLengthFrequency(const List<List<T>> &list) {
+    std::unordered_map<int, int> frequencyByLength;
+    for (auto item : list) {
+        int value;
+        std::unordered_map<int, int>::iterator it = frequencyByLength.find(sizeOf(item));
+        if (it == frequencyByLength.end()) {
+            value = 0;
+            std::pair <int,int> newItem = std::make_pair<int, int>(sizeOf(item), 0);
+            frequencyByLength.insert(newItem);
+        } else {
+            value = (*it).second;
+        }
+        frequencyByLength[sizeOf(item)] = value + 1;
+    }
+
+    List<List<T>> result = list;
+    // TODO fails to compile :(
+//    std::sort(result.begin(), result.end(), [](const List<T> &list1, const List<T> &list2) {
+//        return true;
+//    });
     return result;
 }

@@ -241,3 +241,15 @@ TEST(P27, GroupElementsIntoDisjoinedSubsets) {
     List<Combinations<int>> actual = group((List<int>){1, 2}, (List<int>) range(1, 3));
     EXPECT_EQ(expected, actual);
 }
+
+TEST(P28a, SortListsByLengthOfSublists) {
+    List<List<int>> expected = {{0}, {1}, {2, 3}, {4, 5, 6}};
+    List<List<int>> actual = sortByLength((List<List<int>>) {{2,3}, {1}, {4,5,6}, {0}});
+    EXPECT_EQ(expected, actual);
+}
+
+TEST(P28b, SortListsByLengthOfSublists) {
+    List<List<int>> expected = {{2, 3}, {4, 5, 6}, {0}, {1}};
+    List<List<int>> actual = sortByLengthFrequency((List<List<int>>) {{2,3}, {1}, {4,5,6}, {0}});
+    EXPECT_EQ(expected, actual);
+}
