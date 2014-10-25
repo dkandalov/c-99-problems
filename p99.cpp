@@ -400,9 +400,8 @@ List<List<T>> sortByLengthFrequency(const List<List<T>> &list) {
     }
 
     List<List<T>> result = list;
-    // TODO fails to compile :(
-//    std::sort(result.begin(), result.end(), [](const List<T> &list1, const List<T> &list2) {
-//        return true;
-//    });
+    result.sort([&](const List<T> &list1, const List<T> &list2) -> bool {
+        return frequencyByLength[sizeOf(list1)] < frequencyByLength[sizeOf(list2)];
+    });
     return result;
 }

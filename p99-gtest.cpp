@@ -249,7 +249,7 @@ TEST(P28a, SortListsByLengthOfSublists) {
 }
 
 TEST(P28b, SortListsByLengthOfSublists) {
-    List<List<int>> expected = {{2, 3}, {4, 5, 6}, {0}, {1}};
+    List<List<int>> expected = {{2, 3}, {4, 5, 6}, {1}, {0}};
     List<List<int>> actual = sortByLengthFrequency((List<List<int>>) {{2,3}, {1}, {4,5,6}, {0}});
     EXPECT_EQ(expected, actual);
 }
