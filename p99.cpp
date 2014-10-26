@@ -405,3 +405,25 @@ List<List<T>> sortByLengthFrequency(const List<List<T>> &list) {
     });
     return result;
 }
+
+bool isPrime(int n) {
+    if (n < 2) return false;
+    for (int i = (int) sqrt(n); i > 1; i--) {
+        if (n % i == 0) return false;
+    }
+    return true;
+}
+
+int gcd(int a, int b) {
+    if (b < a) {
+        int tmp = a;
+        a = b;
+        b = tmp;
+    }
+    while (b % a != 0) {
+        int reminder = b % a;
+        b = a;
+        a = reminder;
+    }
+    return a;
+}

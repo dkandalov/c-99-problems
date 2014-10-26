@@ -253,3 +253,17 @@ TEST(P28b, SortListsByLengthOfSublists) {
     List<List<int>> actual = sortByLengthFrequency((List<List<int>>) {{2,3}, {1}, {4,5,6}, {0}});
     EXPECT_EQ(expected, actual);
 }
+
+TEST(P31, DetermineIfIntegerIsPrime) {
+    EXPECT_EQ(false, isPrime(0));
+    EXPECT_EQ(false, isPrime(1));
+    EXPECT_EQ(true, isPrime(2));
+    EXPECT_EQ(true, isPrime(3));
+    EXPECT_EQ(false, isPrime(4));
+    EXPECT_EQ(true, isPrime(5));
+}
+
+TEST(P32, DetermineGreatestCommonDivisor) {
+    EXPECT_EQ(1, gcd(3, 4));
+    EXPECT_EQ(9, gcd(36, 63));
+}
