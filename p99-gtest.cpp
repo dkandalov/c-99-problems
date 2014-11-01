@@ -267,3 +267,27 @@ TEST(P32, DetermineGreatestCommonDivisor) {
     EXPECT_EQ(1, gcd(3, 4));
     EXPECT_EQ(9, gcd(36, 63));
 }
+
+TEST(P33, DetermineIfNumbersAreCoprime) {
+    EXPECT_TRUE(areCoprime(3, 4));
+    EXPECT_FALSE(areCoprime(36, 63));
+}
+
+TEST(P34, CalculateTotientFunction) {
+    EXPECT_EQ(4, totient(10));
+}
+
+TEST(P35, FindPrimeFactorOfNumber) {
+    List<int> expected;
+    expected = {1};
+    EXPECT_EQ(expected, primeFactorsOf(1));
+    expected = {2};
+    EXPECT_EQ(expected, primeFactorsOf(2));
+    expected = {3};
+    EXPECT_EQ(expected, primeFactorsOf(3));
+    expected = {2, 2};
+    EXPECT_EQ(expected, primeFactorsOf(4));
+    expected = {3, 3, 5, 7};
+    EXPECT_EQ(expected, primeFactorsOf(315));
+}
+

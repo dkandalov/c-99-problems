@@ -427,3 +427,30 @@ int gcd(int a, int b) {
     }
     return a;
 }
+
+bool areCoprime(int a, int b) {
+    return gcd(a, b) == 1;
+}
+
+int totient(int n) {
+    int result = 0;
+    for (int i = 1; i <= n; i++) {
+        if (areCoprime(i, n)) result++;
+    }
+    return result;
+}
+
+List<int> primeFactorsOf(int n) {
+    if (n == 1) return {1};
+    List<int> result;
+    while (n != 1) {
+        for (int factor = 2; factor <= n; factor++) {
+            if (isPrime(factor) && n % factor == 0) {
+                result.push_back(factor);
+                n = n / factor;
+                break;
+            }
+        }
+    }
+    return result;
+}
