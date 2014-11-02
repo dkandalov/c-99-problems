@@ -291,3 +291,7 @@ TEST(P35, FindPrimeFactorOfNumber) {
     EXPECT_EQ(expected, primeFactorsOf(315));
 }
 
+TEST(P36, FindPrimeFactorOfNumberAndTheirMultiplicity) {
+    std::unordered_map<int, int> expected = {{3, 2}, {5, 1}, {7, 1}};
+    EXPECT_EQ(expected, primeFactorMultiplicityOf(315));
+}

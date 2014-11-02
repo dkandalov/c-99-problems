@@ -454,3 +454,16 @@ List<int> primeFactorsOf(int n) {
     }
     return result;
 }
+
+std::unordered_map<int, int> primeFactorMultiplicityOf(int n) {
+    std::unordered_map<int, int> result;
+    for (auto factor : primeFactorsOf(n)) {
+//        std::unordered_map<int, int>::const_iterator it = result.find(factor);
+//        if (it == result.end()) {
+//            result.emplace(factor, 1);
+//        } else {
+            result[factor] = result[factor] + 1;
+//        }
+    }
+    return result;
+}
