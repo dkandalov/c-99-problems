@@ -467,3 +467,37 @@ std::unordered_map<int, int> primeFactorMultiplicityOf(int n) {
     }
     return result;
 }
+
+
+int fastTotient(int n) {
+    int result = 1;
+    auto primesMultiplicity = primeFactorMultiplicityOf(n);
+    for (auto& entry : primesMultiplicity) {
+        int prime = entry.first;
+        int multiplicity = entry.second;
+        result *= (prime - 1) * pow(prime, multiplicity - 1);
+    }
+    return result;
+}
+
+List<int> listPrimesInRange(int from, int to) {
+    List<int> result;
+    for (auto n : range(from, to)) {
+        if (isPrime(n)) result.push_back(n);
+    }
+    return result;
+}
+
+Tuple<int, int> goldbachNumberOf(int n) {
+    auto primes = listPrimesInRange(2, n);
+    while (!primes.empty()) {
+        int prime1 = primes.front();
+        primes.pop_front();
+        for (auto prime2 :primes) {
+            if (prime1 + prime2 == n) {
+                return std::make_tuple(prime1, prime2);
+            }
+        }
+    }
+    throw new std::runtime_error("");
+}

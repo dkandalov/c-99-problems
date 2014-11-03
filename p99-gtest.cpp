@@ -275,6 +275,7 @@ TEST(P33, DetermineIfNumbersAreCoprime) {
 
 TEST(P34, CalculateTotientFunction) {
     EXPECT_EQ(4, totient(10));
+    EXPECT_EQ(40, totient(100));
 }
 
 TEST(P35, FindPrimeFactorOfNumber) {
@@ -294,4 +295,21 @@ TEST(P35, FindPrimeFactorOfNumber) {
 TEST(P36, FindPrimeFactorOfNumberAndTheirMultiplicity) {
     std::unordered_map<int, int> expected = {{3, 2}, {5, 1}, {7, 1}};
     EXPECT_EQ(expected, primeFactorMultiplicityOf(315));
+}
+
+TEST(P37, CalculateTotientFunctionImproved) {
+    EXPECT_EQ(4, fastTotient(10));
+    EXPECT_EQ(40, fastTotient(100));
+    EXPECT_EQ(400, fastTotient(1000));
+}
+
+TEST(P39, ListOfPrimeNumbers) {
+    List<int> expected = {7, 11, 13, 17, 19, 23, 29, 31};
+    EXPECT_EQ(expected, listPrimesInRange(7, 31));
+}
+
+TEST(P40, GoldbachConjecture) {
+    EXPECT_EQ(std::make_tuple(5, 23), goldbachNumberOf(28));
+    EXPECT_EQ(std::make_tuple(2, 53), goldbachNumberOf(55));
+    EXPECT_EQ(std::make_tuple(3, 97), goldbachNumberOf(100));
 }
