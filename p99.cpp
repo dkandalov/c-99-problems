@@ -12,6 +12,11 @@ using Combinations = List<List<T>>;
 template<typename T1, typename T2>
 using Tuple = std::tuple<T1, T2>;
 
+template<typename T1, typename T2>
+std::tuple<T1, T2> pair(T1 value1, T2 value2) {
+    return std::make_tuple(value1, value2);
+}
+
 template<typename T>
 int sizeOf(const List<T> &list);
 
@@ -131,7 +136,7 @@ List<Tuple<int, T>> encode(const List<T> &list) {
 
     auto groupedItems = pack(list);
     for (auto subList : groupedItems) {
-        auto tuple = std::make_tuple(sizeOf(subList), lastElementOf(subList));
+        auto tuple = pair(sizeOf(subList), lastElementOf(subList));
         result.push_back(tuple);
     }
 
@@ -175,12 +180,12 @@ List<Tuple<int, T>> encodeDirect(const List<T> &list) {
         if (item == lastItem) {
             count++;
         } else {
-            result.push_back(std::make_tuple(count, lastItem));
+            result.push_back(pair(count, lastItem));
             count = 1;
         }
         lastItem = item;
     }
-    result.push_back(std::make_tuple(count, lastItem));
+    result.push_back(pair(count, lastItem));
 
     return result;
 }
@@ -224,7 +229,7 @@ Tuple<List<T>, List<T>> split(int splitIndex, const List<T> &list) {
             part2.push_back(item);
         }
     }
-    return std::make_tuple(part1, part2);
+    return pair(part1, part2);
 }
 
 template<typename T>
@@ -261,7 +266,7 @@ Tuple<List<T>, T> removeAt(int index, const List<T> &list) {
             newList.push_back(item);
         }
     }
-    return std::make_tuple(newList, value);
+    return pair(newList, value);
 }
 
 template<typename T>
@@ -495,7 +500,7 @@ Tuple<int, int> goldbachNumberOf(int n) {
         primes.pop_front();
         for (auto prime2 :primes) {
             if (prime1 + prime2 == n) {
-                return std::make_tuple(prime1, prime2);
+                return pair(prime1, prime2);
             }
         }
     }

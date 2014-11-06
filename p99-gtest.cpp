@@ -80,11 +80,11 @@ TEST(P9, PackList) {
 TEST(P10, RunLengthEncodingOfAList) {
     EXPECT_EQ((List<Tuple<int, int>>) {}, encode((List<int>) {}));
 
-    List<Tuple<int, char>> expected = {std::make_tuple(1, 'a')};
+    List<Tuple<int, char>> expected = {pair(1, 'a')};
     List<Tuple<int, char>> actual = encode((List<char>) {'a'});
     EXPECT_EQ(expected, actual);
 
-    expected = {std::make_tuple(2, 'a')};
+    expected = {pair(2, 'a')};
     actual = encode((List<char>) {'a', 'a'});
     EXPECT_EQ(expected, actual);
 }
@@ -96,7 +96,7 @@ TEST(P11, ModifiedRunLengthEncodingOfAList) {
 
     actual = encodeModified((List<char>) {'a', 'a', 'b'});
     expected = (List<Either<Tuple<int, char>, char>>) {
-            Left<Tuple<int, char>>(std::make_tuple(2, 'a')),
+            Left<Tuple<int, char>>(pair(2, 'a')),
             Right<char>('b')
     };
     EXPECT_EQ(expected, actual);
@@ -104,21 +104,21 @@ TEST(P11, ModifiedRunLengthEncodingOfAList) {
 
 TEST(P12, DecodeRunLengthEncodedAList) {
     EXPECT_EQ((List<char>) {}, decode((List<Tuple<int, char>>) {}));
-    EXPECT_EQ((List<char>) {'a'}, decode((List<Tuple<int, char>>) { std::make_tuple(1, 'a') }));
+    EXPECT_EQ((List<char>) {'a'}, decode((List<Tuple<int, char>>) { pair(1, 'a') }));
 }
 
 TEST(P13, RunLengthEncodingOfAList) {
     EXPECT_EQ((List<Tuple<int, int>>) {}, encodeDirect((List<int>) {}));
 
-    List<Tuple<int, char>> expected = {std::make_tuple(1, 'a')};
+    List<Tuple<int, char>> expected = {pair(1, 'a')};
     List<Tuple<int, char>> actual = encodeDirect((List<char>) {'a'});
     EXPECT_EQ(expected, actual);
 
-    expected = {std::make_tuple(2, 'a')};
+    expected = {pair(2, 'a')};
     actual = encodeDirect((List<char>) {'a', 'a'});
     EXPECT_EQ(expected, actual);
 
-    expected = {std::make_tuple(2, 'a'), std::make_tuple(1, 'b')};
+    expected = {pair(2, 'a'), pair(1, 'b')};
     actual = encodeDirect((List<char>) {'a', 'a', 'b'});
     EXPECT_EQ(expected, actual);
 }
@@ -150,7 +150,7 @@ TEST(P16, DropEveryNthElementFromList) {
 TEST(P17, SplitList) {
     List<int> part1 = {1, 2, 3};
     List<int> part2 = {4, 5, 6, 7, 8, 9, 10};
-    Tuple<List<int>, List<int>> expected = std::make_tuple(part1, part2);
+    Tuple<List<int>, List<int>> expected = pair(part1, part2);
     Tuple<List<int>, List<int>> actual = split(3, (List<int>) { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
     EXPECT_EQ(expected, actual);
 }
@@ -172,7 +172,7 @@ TEST(P19, RotateListNPlaces) {
 }
 
 TEST(P20, RemoveNthElementFromList) {
-    Tuple<List<int>, int> expected = std::make_tuple((List<int>) {1, 2, 3, 5, 6, 7, 8, 9, 10}, 4);
+    Tuple<List<int>, int> expected = pair((List<int>) {1, 2, 3, 5, 6, 7, 8, 9, 10}, 4);
     Tuple<List<int>, int> actual = removeAt(3, (List<int>) {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
     EXPECT_EQ(expected, actual);
 }
@@ -309,7 +309,13 @@ TEST(P39, ListOfPrimeNumbers) {
 }
 
 TEST(P40, GoldbachConjecture) {
-    EXPECT_EQ(std::make_tuple(5, 23), goldbachNumberOf(28));
-    EXPECT_EQ(std::make_tuple(2, 53), goldbachNumberOf(55));
-    EXPECT_EQ(std::make_tuple(3, 97), goldbachNumberOf(100));
+    EXPECT_EQ(pair(5, 23), goldbachNumberOf(28));
+    EXPECT_EQ(pair(2, 53), goldbachNumberOf(55));
+    EXPECT_EQ(pair(3, 97), goldbachNumberOf(100));
 }
+
+TEST(P41, GolbachConjectureList) {
+    std::unordered_map<int, int> expected = {{3, 2}, {5, 1}, {7, 1}};
+//    EXPECT_EQ()
+}
+
