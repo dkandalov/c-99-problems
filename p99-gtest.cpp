@@ -314,8 +314,15 @@ TEST(P40, GoldbachConjecture) {
     EXPECT_EQ(pair(3, 97), goldbachNumberOf(100));
 }
 
-TEST(P41, GolbachConjectureList) {
-    std::unordered_map<int, int> expected = {{3, 2}, {5, 1}, {7, 1}};
-//    EXPECT_EQ()
+TEST(P41part1, GolbachConjectureList) {
+    std::map<int, Tuple<int, int>> expected = {
+            {10, pair(3, 7)},
+            {12, pair(5, 7)},
+            {14, pair(3, 11)},
+            {16, pair(3, 13)},
+            {18, pair(5, 13)},
+            {20, pair(3, 17)}
+    };
+    EXPECT_EQ(expected, golbachList(9, 20));
 }
 

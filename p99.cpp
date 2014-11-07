@@ -1,6 +1,7 @@
 #include <list>
 #include <iostream>
 #include <unordered_map>
+#include <map>
 #include "either/either.cpp"
 
 template<typename T>
@@ -505,4 +506,13 @@ Tuple<int, int> goldbachNumberOf(int n) {
         }
     }
     throw new std::runtime_error("");
+}
+
+std::map<int, Tuple<int, int>> golbachList(int from, int to) {
+    std::map<int, Tuple<int, int>> result;
+    for (int n = from; n <= to; n++) {
+        if (n % 2 != 0) continue;
+        result[n] = goldbachNumberOf(n);
+    }
+    return result;
 }
