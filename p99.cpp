@@ -505,14 +505,26 @@ Tuple<int, int> goldbachNumberOf(int n) {
             }
         }
     }
-    throw new std::runtime_error("");
+    return pair(-1, -1);
 }
 
-std::map<int, Tuple<int, int>> golbachList(int from, int to) {
+std::map<int, Tuple<int, int>> goldbachList(int from, int to) {
     std::map<int, Tuple<int, int>> result;
     for (int n = from; n <= to; n++) {
         if (n % 2 != 0) continue;
         result[n] = goldbachNumberOf(n);
+    }
+    return result;
+}
+
+std::map<int, Tuple<int, int>> goldbachListWithThreshold(int from, int to, int threshold) {
+    std::map<int, Tuple<int, int>> result;
+    for (int n = from; n <= to; n++) {
+        if (n % 2 != 0) continue;
+        Tuple<int, int> tuple = goldbachNumberOf(n);
+        if (std::get<0>(tuple) > threshold && std::get<1>(tuple) > threshold) {
+            result[n] = tuple;
+        }
     }
     return result;
 }

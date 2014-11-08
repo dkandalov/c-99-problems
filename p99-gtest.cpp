@@ -323,6 +323,16 @@ TEST(P41part1, GolbachConjectureList) {
             {18, pair(5, 13)},
             {20, pair(3, 17)}
     };
-    EXPECT_EQ(expected, golbachList(9, 20));
+    EXPECT_EQ(expected, goldbachList(9, 20));
+}
+
+TEST(P41part2, GolbachConjectureList) {
+    std::map<int, Tuple<int, int>> expected = {
+            {992, pair(73, 919)},
+            {1382, pair(61, 1321)},
+            {1856, pair(67, 1789)},
+            {1928, pair(61, 1867)}
+    };
+    EXPECT_EQ(expected, goldbachListWithThreshold(1, 2000, 50));
 }
 
