@@ -528,3 +528,20 @@ std::map<int, Tuple<int, int>> goldbachListWithThreshold(int from, int to, int t
     }
     return result;
 }
+
+List<std::string> grayCode(int n) {
+    if (n == 1) return {"0", "1"};
+
+    List<std::string> part1 = grayCode(n - 1);
+    List<std::string> part2 = part1;
+    part2.reverse();
+
+    List<std::string> result;
+    for (auto item : part1) {
+        result.push_back("0" + item);
+    }
+    for (auto item : part2) {
+        result.push_back("1" + item);
+    }
+    return result;
+}

@@ -336,3 +336,13 @@ TEST(P41part2, GolbachConjectureList) {
     EXPECT_EQ(expected, goldbachListWithThreshold(1, 2000, 50));
 }
 
+TEST(P49, GrayCode) {
+    List<std::string> expected = {"0", "1"};
+    EXPECT_EQ(expected, grayCode(1));
+
+    expected = {"00", "01", "11", "10"};
+    EXPECT_EQ(expected, grayCode(2));
+
+    expected = {"000", "001", "011", "010", "110", "111", "101", "100"};
+    EXPECT_EQ(expected, grayCode(3));
+}
