@@ -545,3 +545,14 @@ List<std::string> grayCode(int n) {
     }
     return result;
 }
+
+struct LeafNode {
+    char symbol;
+    int frequency;
+    LeafNode* left;
+    LeafNode* right;
+};
+
+List<Tuple<char, std::string>> huffman(List<Tuple<char, int>> symbolsWithFrequency) {
+    return {};
+}

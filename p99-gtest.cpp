@@ -346,3 +346,14 @@ TEST(P49, GrayCode) {
     expected = {"000", "001", "011", "010", "110", "111", "101", "100"};
     EXPECT_EQ(expected, grayCode(3));
 }
+
+TEST(P50, HuffmanCode) {
+    List<Tuple <char, std::string>> expected = {
+            pair('a', "0"), pair('b', "101"), pair('c', "100"),
+            pair('d', "111"), pair('e', "1101"), pair('f', "1100")
+    };
+    EXPECT_EQ(expected, huffman((List<Tuple<char, int>>) {
+            pair('a', 45), pair('b', 13), pair('c', 12),
+            pair('d', 16), pair('e', 9), pair('f', 5)
+    }));
+}
