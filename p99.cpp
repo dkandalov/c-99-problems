@@ -548,10 +548,25 @@ List<std::string> grayCode(int n) {
 }
 
 struct Node {
-    char symbol;
-    int frequency;
-    Node * left;
-    Node * right;
+    const char symbol;
+    const int frequency;
+    const Node * left;
+    const Node * right;
+
+    Node(char symbol, int frequency):
+            symbol(symbol),
+            frequency(frequency),
+            left(nullptr),
+            right(nullptr)
+    { }
+
+    Node(const Node* left, Node* right):
+            symbol(0),
+            frequency(left->frequency + right->frequency),
+            left(left),
+            right(right)
+    { }
+
     ~Node() {
         if (left != nullptr) delete(left);
         if (right != nullptr) delete(right);
@@ -564,13 +579,13 @@ Node* takeFrontOf(List<Node*> &nodeList) {
     return result;
 }
 
-Node* takeSmallest(List<Node*> &nodeList1, List<Node*> &nodeList2) {
-    if (nodeList1.empty())  return takeFrontOf(nodeList2);
-    else if (nodeList2.empty()) return takeFrontOf(nodeList1);
-    else if (nodeList1.front()->frequency < nodeList2.front()->frequency) {
-        return takeFrontOf(nodeList1);
+Node* takeSmallest(List<Node*> &nodes1, List<Node*> &nodes2) {
+    if (nodes1.empty()) return takeFrontOf(nodes2);
+    else if (nodes2.empty()) return takeFrontOf(nodes1);
+    else if (nodes1.front()->frequency < nodes2.front()->frequency) {
+        return takeFrontOf(nodes1);
     } else {
-        return takeFrontOf(nodeList2);
+        return takeFrontOf(nodes2);
     }
 }
 
@@ -578,13 +593,7 @@ Node* buildHuffmanTree(const List<Tuple<char, int>> &symbolsWithFrequency) {
     List<Node*> nodeList1;
     List<Node*> nodeList2;
     for (auto pair : symbolsWithFrequency) {
-        Node* leafNode = new Node {
-                std::get<0>(pair),
-                std::get<1>(pair),
-                nullptr,
-                nullptr
-        };
-        nodeList1.push_back(leafNode);
+        nodeList1.push_back(new Node(std::get<0>(pair), std::get<1>(pair)));
     }
     nodeList1.sort([](const Node* node1, const Node* node2) -> bool {
         return node1->frequency < node2->frequency;
@@ -593,18 +602,12 @@ Node* buildHuffmanTree(const List<Tuple<char, int>> &symbolsWithFrequency) {
     while (nodeList1.size() + nodeList2.size() > 1) {
         Node* node1 = takeSmallest(nodeList1, nodeList2);
         Node* node2 = takeSmallest(nodeList1, nodeList2);
-        Node* node = new Node {
-                0,
-                node1->frequency + node2->frequency,
-                node1,
-                node2
-        };
-        nodeList2.push_back(node);
+        nodeList2.push_back(new Node(node1, node2));
     }
     return nodeList2.front();
 }
 
-List<Tuple<char, std::string>> asListOfTuples(Node *node, std::string path) {
+List<Tuple<char, std::string>> asListOfTuples(const Node *node, const std::string path) {
     if (node->symbol != 0) return { pair(node->symbol, path) };
     else {
         auto result = asListOfTuples(node->left, path + "0");
