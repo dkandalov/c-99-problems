@@ -2,20 +2,23 @@
 
 // TODO use rule of three/five?
 
+template<typename T>
 class Tree {
 public:
+    virtual ~Tree() {}
     virtual std::string toString() const = 0;
 };
 
-class Node : Tree {
-    const int value;
-    const Tree* left;
-    const Tree* right;
+template<typename T>
+class Node : public Tree<T> {
+    const T value;
+    const Tree<T>* left;
+    const Tree<T>* right;
 
 public:
-    Node(int value, const Tree* left, const Tree* right):
+    Node(T value, const Tree<T>* left, const Tree<T>* right):
         value(value), left(left), right(right)
-    { }
+    {}
 
     virtual ~Node() {
         delete(left);
@@ -23,18 +26,33 @@ public:
     }
 
     std::string toString() const {
-        return "T(" + std::to_string(value) + " " +
-                left->toString() + " " + right->toString() + ")";
+        return "T(" +
+            std::to_string(value) + " " +
+            left->toString() + " " + right->toString() +
+        ")";
     }
 };
 
-class EmptyNode : Tree {
+template<typename T>
+class EmptyNode : public Tree<T> {
+public:
+    virtual ~EmptyNode() {}
     std::string toString() const {
         return ".";
     }
 };
-Tree* emptyNode = new EmptyNode();
 
-//Tree* node(int value) {
-//    return new Node(value, )
-//}
+template<typename T>
+Tree<T>* emptyNode() {
+    return new EmptyNode<T>();
+}
+
+template<typename T>
+Tree<T>* node(T value) {
+    return new Node<T>(value, emptyNode<T>(), emptyNode<T>());
+}
+
+template<typename T>
+Tree<T>* node(T value, Tree<T>* left, Tree<T>* right) {
+    return new Node<T>(value, left, right);
+}
