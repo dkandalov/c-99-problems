@@ -1,4 +1,5 @@
 #include <string>
+#include <sstream>
 
 // TODO use rule of three/five?
 
@@ -27,9 +28,16 @@ public:
 
     std::string toString() const {
         return "T(" +
-            std::to_string(value) + " " +
+            toString(value) + " " +
             left->toString() + " " + right->toString() +
         ")";
+    }
+
+private:
+    std::string toString(const T t) const {
+        std::stringstream s;
+        s << t;
+        return s.str();
     }
 };
 

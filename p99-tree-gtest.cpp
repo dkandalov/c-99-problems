@@ -14,7 +14,7 @@ TEST(P5X, ConstructAndPrintTree) {
                             emptyNode<char>()))
         );
     EXPECT_EQ(
-            "T(97 T(98 T(100 . .) T(101 . .)) T(99 . T(102 T(103 . .) .)))",
+            "T(a T(b T(d . .) T(e . .)) T(c . T(f T(g . .) .)))",
             tree->toString()
     );
 }
