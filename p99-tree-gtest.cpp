@@ -21,6 +21,9 @@ TEST(P5X, ConstructAndPrintTree) {
 }
 
 TEST(P5X, TreeEquality) {
+    EXPECT_TRUE((*emptyNode<char>()) == emptyNode<char>());
+    EXPECT_TRUE((*node<char>('a')) == node<char>('a'));
+
     Tree<char>* tree1 =
         node<char>('a',
             node<char>('b',

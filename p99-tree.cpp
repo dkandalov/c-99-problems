@@ -13,12 +13,8 @@ template<typename T>
 class Tree {
 public:
     virtual ~Tree() { }
-
     virtual std::string toString() const = 0;
-
-    virtual bool operator==(Tree<T> *tree) const {
-        return false;
-    }
+    virtual bool operator==(const Tree<T> *tree) const = 0;
 };
 
 template<typename T>
@@ -37,10 +33,12 @@ public:
         delete(right);
     }
 
-    bool operator ==(const Node<T>* node) const {
-        return value == node->value &&
-                left == node->left &&
-                right == node->right;
+    bool operator==(const Tree<T>* tree) const {
+        const Node* node = dynamic_cast<const Node*>(tree);
+        return node != NULL &&
+                value == node->value &&
+                (*left) == node->left &&
+                (*right) == node->right;
     }
 
     std::string toString() const {
@@ -63,8 +61,8 @@ class EmptyNode : public Tree<T> {
 public:
     virtual ~EmptyNode() {}
 
-    bool operator==(const EmptyNode emptyNode) const {
-        return true;
+    bool operator==(const Tree<T>* tree) const {
+        return dynamic_cast<const EmptyNode*>(tree) != NULL;
     }
 
     std::string toString() const {
