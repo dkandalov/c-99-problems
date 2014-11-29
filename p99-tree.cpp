@@ -15,6 +15,8 @@ public:
     virtual ~Tree() { }
     virtual std::string toString() const = 0;
     virtual bool operator==(const Tree<T> *tree) const = 0;
+    virtual int size() const = 0;
+    virtual bool isBalanced() = 0;
 };
 
 template<typename T>
@@ -41,6 +43,14 @@ public:
                 (*right) == node->right;
     }
 
+    int size() const {
+        return 1 + left->size() + right->size();
+    }
+
+    bool isBalanced() {
+        return abs(left->size() - right->size()) <= 1;
+    }
+
     std::string toString() const {
         return "T(" +
             toString(value) + " " +
@@ -63,6 +73,14 @@ public:
 
     bool operator==(const Tree<T>* tree) const {
         return dynamic_cast<const EmptyNode*>(tree) != NULL;
+    }
+
+    int size() const {
+        return 0;
+    }
+
+    bool isBalanced() {
+        return true;
     }
 
     std::string toString() const {
