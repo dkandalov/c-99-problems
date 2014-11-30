@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 #include <list>
+#include <iostream>
 
 
 template<typename T>
@@ -16,16 +17,20 @@ public:
     virtual std::string toString() const = 0;
     virtual bool operator==(const Tree<T> *tree) const = 0;
     virtual int size() const = 0;
+    bool isEmpty() const {
+        return size() == 0;
+    }
     virtual bool isBalanced() = 0;
 };
 
 template<typename T>
 class Node : public Tree<T> {
+public:
+
     const T value;
     const Tree<T>* left;
     const Tree<T>* right;
 
-public:
     Node(T value, const Tree<T>* left, const Tree<T>* right):
         value(value), left(left), right(right)
     {}
@@ -36,7 +41,7 @@ public:
     }
 
     bool operator==(const Tree<T>* tree) const {
-        const Node* node = dynamic_cast<const Node*>(tree);
+        const Node<T>* node = dynamic_cast<const Node<T>*>(tree);
         return node != NULL &&
                 value == node->value &&
                 (*left) == node->left &&
@@ -72,7 +77,7 @@ public:
     virtual ~EmptyNode() {}
 
     bool operator==(const Tree<T>* tree) const {
-        return dynamic_cast<const EmptyNode*>(tree) != NULL;
+        return dynamic_cast<const EmptyNode<T>*>(tree) != NULL;
     }
 
     int size() const {
@@ -99,12 +104,35 @@ Tree<T>* node(T value) {
 }
 
 template<typename T>
-Tree<T>* node(T value, Tree<T>* left, Tree<T>* right) {
+Tree<T>* node(T value, const Tree<T>* left, const Tree<T>* right) {
     return new Node<T>(value, left, right);
 }
 
 
 template<typename T>
-List<Tree<T>*> constructBalancedTrees(int numberOfNodes, T value) {
+List<Tree<T>*> constructBalancedTrees(int numberOfNodes, T nodeValue) {
+    if (numberOfNodes == 0) return {};
+    if (numberOfNodes == 1) return { node(nodeValue) };
+
+    auto balancedTrees = constructBalancedTrees(numberOfNodes - 1, nodeValue);
+    for (auto tree : balancedTrees) {
+        addAllPossibleLeafs(tree, nodeValue); // TODO
+    }
+
     return { emptyNode<T>() };
+}
+
+template<typename T>
+List<Tree<T>*> addAllPossibleLeafs(const Tree<T>* tree, T nodeValue) {
+    if (tree->isEmpty()) return { node(nodeValue) };
+
+    const Node<T>* aNode = dynamic_cast<const Node<T>*>(tree);
+    List<Tree<T>*> result;
+    for (Tree<T>* leafTree : addAllPossibleLeafs(aNode->left, nodeValue)) {
+        result.push_back(node<char>(aNode->value, leafTree, aNode->right));
+    }
+    for (Tree<T>* leafTree : addAllPossibleLeafs(aNode->right, nodeValue)) {
+        result.push_back(node<char>(aNode->value, aNode->left, leafTree));
+    }
+    return result;
 }
