@@ -114,12 +114,16 @@ List<Tree<T>*> constructBalancedTrees(int numberOfNodes, T nodeValue) {
     if (numberOfNodes == 0) return {};
     if (numberOfNodes == 1) return { node(nodeValue) };
 
+    List<Tree<T>*> result;
     auto balancedTrees = constructBalancedTrees(numberOfNodes - 1, nodeValue);
     for (auto tree : balancedTrees) {
-        addAllPossibleLeafs(tree, nodeValue); // TODO
+        for (auto leaf : addAllPossibleLeafs(tree, nodeValue)) {
+            if (leaf->isBalanced()) {
+                result.push_back(leaf);
+            }
+        }
     }
-
-    return { emptyNode<T>() };
+    return result; // TODO too many results; memory leak
 }
 
 template<typename T>
@@ -129,10 +133,10 @@ List<Tree<T>*> addAllPossibleLeafs(const Tree<T>* tree, T nodeValue) {
     const Node<T>* aNode = dynamic_cast<const Node<T>*>(tree);
     List<Tree<T>*> result;
     for (Tree<T>* leafTree : addAllPossibleLeafs(aNode->left, nodeValue)) {
-        result.push_back(node<char>(aNode->value, leafTree, aNode->right));
+        result.push_back(node(aNode->value, leafTree, aNode->right));
     }
     for (Tree<T>* leafTree : addAllPossibleLeafs(aNode->right, nodeValue)) {
-        result.push_back(node<char>(aNode->value, aNode->left, leafTree));
+        result.push_back(node(aNode->value, aNode->left, leafTree));
     }
     return result;
 }

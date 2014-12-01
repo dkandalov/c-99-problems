@@ -58,6 +58,15 @@ TEST(P5X, TreeEquality) {
     delete(tree2);
 }
 
+void expectEqualLists(List<Tree<char>*> expected, List<Tree<char>*> actual) {
+    EXPECT_EQ(expected.size(), actual.size());
+    for (auto i = expected.begin(), j = actual.begin(); i != expected.end(); i++, j++) {
+        std::cout << "expected tree: " << (*i)->toString() << "\n";
+        std::cout << "actual tree:   " << (*j)->toString() << "\n";
+        EXPECT_EQ(**i, *j);
+    }
+}
+
 TEST(P55_, AddAllPossibleLeafsToATree) {
     List<Tree<char>*> expected = {
             node<char>('x',
@@ -71,11 +80,10 @@ TEST(P55_, AddAllPossibleLeafsToATree) {
     };
     List<Tree<char>*> actual = addAllPossibleLeafs(node('x'), 'x');
 
-    // TODO extract method
-    EXPECT_EQ(expected.size(), actual.size());
-    for (auto i = expected.begin(), j = actual.begin(); i != expected.end(); i++, j++) {
-        EXPECT_EQ(**i, *j);
-    }
+    expectEqualLists(expected, actual);
+
+    for (auto tree : expected) delete(tree);
+    for (auto tree : actual) delete(tree);
 }
 
 TEST(P55, ConstructCompletelyBalancedTree) {
@@ -84,10 +92,7 @@ TEST(P55, ConstructCompletelyBalancedTree) {
     };
     List<Tree<char>*> actual = constructBalancedTrees(4, 'x');
 
-    EXPECT_EQ(expected.size(), actual.size());
-    for (auto i = expected.begin(), j = actual.begin(); i != expected.end(); i++, j++) {
-        EXPECT_EQ(**i, *j);
-    }
+    expectEqualLists(expected, actual);
 
     for (auto tree : expected) delete(tree);
     for (auto tree : actual) delete(tree);
