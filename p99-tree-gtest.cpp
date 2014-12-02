@@ -4,14 +4,14 @@
 
 TEST(P5X, ConstructAndPrintTree) {
     Tree<char>* tree =
-        node<char>('a',
-            node<char>('b',
-                    node<char>('d'),
-                    node<char>('e')),
-            node<char>('c',
+        node('a',
+            node('b',
+                    node('d'),
+                    node('e')),
+            node('c',
                     emptyNode<char>(),
-                    node<char>('f',
-                            node<char>('g'),
+                    node('f',
+                            node('g'),
                             emptyNode<char>()))
         );
     EXPECT_EQ(
@@ -24,8 +24,8 @@ TEST(P5X, ConstructAndPrintTree) {
 }
 
 TEST(P5X, TreeEquality) {
-    auto nodeA = node<char>('a');
-    auto nodeB = node<char>('b');
+    auto nodeA = node('a');
+    auto nodeB = node('b');
     auto empty = emptyNode<char>();
 
     EXPECT_TRUE((*empty) == empty);
@@ -38,17 +38,17 @@ TEST(P5X, TreeEquality) {
     delete(empty);
 
     Tree<char>* tree1 =
-        node<char>('a',
-            node<char>('b',
-                    node<char>('d'),
-                    node<char>('e')),
+        node('a',
+            node('b',
+                    node('d'),
+                    node('e')),
             emptyNode<char>()
         );
     Tree<char>* tree2 =
-        node<char>('a',
-            node<char>('b',
-                    node<char>('d'),
-                    node<char>('e')),
+        node('a',
+            node('b',
+                    node('d'),
+                    node('e')),
             emptyNode<char>()
         );
 
@@ -63,23 +63,24 @@ void expectEqualLists(List<Tree<char>*> expected, List<Tree<char>*> actual) {
     for (auto i = expected.begin(), j = actual.begin(); i != expected.end(); i++, j++) {
         std::cout << "expected tree: " << (*i)->toString() << "\n";
         std::cout << "actual tree:   " << (*j)->toString() << "\n";
+        std::flush(std::cout);
         EXPECT_EQ(**i, *j);
     }
 }
 
-void printTreeCounter() {
-    std::cout << "treeCounter: " << treeCounter() << "\n";
+void expectZeroTreeCounter() {
+    EXPECT_EQ(0, treeCounter());
 }
 
 TEST(P55_, AddAllPossibleLeafsToATree) {
     List<Tree<char>*> expected = {
-            node<char>('x',
-                node<char>('x'),
+            node('x',
+                node('x'),
                 emptyNode<char>()
             ),
-            node<char>('x',
+            node('x',
                 emptyNode<char>(),
-                node<char>('x')
+                node('x')
             )
     };
     List<Tree<char>*> actual = addAllPossibleLeafs(node('x'), 'x');
@@ -88,27 +89,26 @@ TEST(P55_, AddAllPossibleLeafsToATree) {
 
     for (auto tree : expected) delete(tree);
     for (auto tree : actual) delete(tree);
-
-    printTreeCounter();
+    expectZeroTreeCounter();
 }
 
 TEST(P55, ConstructCompletelyBalancedTree) {
     List<Tree<char>*> expected = {
-            node<char>('x',
-                node<char>('x', node<char>('x'), emptyNode<char>()),
-                node<char>('x')
+            node('x',
+                node('x', node('x'), emptyNode<char>()),
+                node('x')
             ),
-            node<char>('x',
-                node<char>('x', emptyNode<char>(), node<char>('x')),
-                node<char>('x')
+            node('x',
+                node('x', emptyNode<char>(), node('x')),
+                node('x')
             ),
-            node<char>('x',
-                node<char>('x'),
-                node<char>('x', node<char>('x'), emptyNode<char>())
+            node('x',
+                node('x'),
+                node('x', node('x'), emptyNode<char>())
             ),
-            node<char>('x',
-                node<char>('x'),
-                node<char>('x', emptyNode<char>(), node<char>('x'))
+            node('x',
+                node('x'),
+                node('x', emptyNode<char>(), node('x'))
             )
     };
     List<Tree<char>*> actual = constructBalancedTrees(4, 'x');
@@ -116,7 +116,6 @@ TEST(P55, ConstructCompletelyBalancedTree) {
     expectEqualLists(expected, actual);
 
     for (auto tree : expected) delete(tree);
-    for (auto tree : actual) delete(tree);
-
-    printTreeCounter();
+//    for (auto tree : actual) delete(tree);
+    expectZeroTreeCounter();
 }

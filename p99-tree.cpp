@@ -2,6 +2,7 @@
 #include <sstream>
 #include <list>
 #include <iostream>
+#include <CoreFoundation/CoreFoundation.h>
 
 
 template<typename T>
@@ -124,9 +125,9 @@ List<Tree<T>*> constructBalancedTrees(int numberOfNodes, T nodeValue) {
     List<Tree<T>*> result;
     auto balancedTrees = constructBalancedTrees(numberOfNodes - 1, nodeValue);
     for (auto tree : balancedTrees) {
-        for (auto leaf : addAllPossibleLeafs(tree, nodeValue)) {
-            if (leaf->isBalanced()) {
-                result.push_back(leaf);
+        for (auto updatedTree : addAllPossibleLeafs(tree, nodeValue)) {
+            if (updatedTree->isBalanced()) {
+                result.push_back(updatedTree);
             }
         }
     }
