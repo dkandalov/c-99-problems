@@ -10,6 +10,11 @@ using List = std::list<T>;
 
 // TODO use rule of three/five?
 
+int& treeCounter() {
+    static int counter = 0;
+    return counter;
+}
+
 template<typename T>
 class Tree {
 public:
@@ -26,16 +31,18 @@ public:
 template<typename T>
 class Node : public Tree<T> {
 public:
-
     const T value;
     const Tree<T>* left;
     const Tree<T>* right;
 
     Node(T value, const Tree<T>* left, const Tree<T>* right):
         value(value), left(left), right(right)
-    {}
+    {
+        treeCounter()++;
+    }
 
     virtual ~Node() {
+        treeCounter()--;
         delete(left);
         delete(right);
     }
@@ -123,7 +130,10 @@ List<Tree<T>*> constructBalancedTrees(int numberOfNodes, T nodeValue) {
             }
         }
     }
-    return result; // TODO too many results; memory leak
+    result.unique([](const Tree<T>* tree1, const Tree<T>* tree2) -> bool {
+        return (*tree1) == tree2;
+    });
+    return result;
 }
 
 template<typename T>

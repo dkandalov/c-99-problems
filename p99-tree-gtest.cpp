@@ -67,6 +67,10 @@ void expectEqualLists(List<Tree<char>*> expected, List<Tree<char>*> actual) {
     }
 }
 
+void printTreeCounter() {
+    std::cout << "treeCounter: " << treeCounter() << "\n";
+}
+
 TEST(P55_, AddAllPossibleLeafsToATree) {
     List<Tree<char>*> expected = {
             node<char>('x',
@@ -84,11 +88,28 @@ TEST(P55_, AddAllPossibleLeafsToATree) {
 
     for (auto tree : expected) delete(tree);
     for (auto tree : actual) delete(tree);
+
+    printTreeCounter();
 }
 
 TEST(P55, ConstructCompletelyBalancedTree) {
     List<Tree<char>*> expected = {
-            emptyNode<char>()
+            node<char>('x',
+                node<char>('x', node<char>('x'), emptyNode<char>()),
+                node<char>('x')
+            ),
+            node<char>('x',
+                node<char>('x', emptyNode<char>(), node<char>('x')),
+                node<char>('x')
+            ),
+            node<char>('x',
+                node<char>('x'),
+                node<char>('x', node<char>('x'), emptyNode<char>())
+            ),
+            node<char>('x',
+                node<char>('x'),
+                node<char>('x', emptyNode<char>(), node<char>('x'))
+            )
     };
     List<Tree<char>*> actual = constructBalancedTrees(4, 'x');
 
@@ -96,4 +117,6 @@ TEST(P55, ConstructCompletelyBalancedTree) {
 
     for (auto tree : expected) delete(tree);
     for (auto tree : actual) delete(tree);
+
+    printTreeCounter();
 }
