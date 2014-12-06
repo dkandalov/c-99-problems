@@ -2,6 +2,21 @@
 #include "p99-tree.cpp"
 #include "lib/gtest-1.7.0/include/gtest/gtest.h"
 
+void expectEqualLists(List<Tree<char>*> expected, List<Tree<char>*> actual) {
+    EXPECT_EQ(expected.size(), actual.size());
+    for (auto i = expected.begin(), j = actual.begin(); i != expected.end(); i++, j++) {
+        std::cout << "expected tree: " << (*i)->toString() << "\n";
+        std::cout << "actual tree:   " << (*j)->toString() << "\n";
+        std::flush(std::cout);
+        EXPECT_EQ(**i, *j);
+    }
+}
+
+void expectZeroTreeCounter() {
+    EXPECT_EQ(0, treeNodesCounter());
+}
+
+
 TEST(P5X, ConstructAndPrintTree) {
     Tree<char>* tree =
         node('a',
@@ -21,6 +36,7 @@ TEST(P5X, ConstructAndPrintTree) {
     EXPECT_EQ(7, tree->size());
 
     delete(tree);
+    expectZeroTreeCounter();
 }
 
 TEST(P5X, TreeEquality) {
@@ -56,20 +72,7 @@ TEST(P5X, TreeEquality) {
 
     delete(tree1);
     delete(tree2);
-}
-
-void expectEqualLists(List<Tree<char>*> expected, List<Tree<char>*> actual) {
-    EXPECT_EQ(expected.size(), actual.size());
-    for (auto i = expected.begin(), j = actual.begin(); i != expected.end(); i++, j++) {
-        std::cout << "expected tree: " << (*i)->toString() << "\n";
-        std::cout << "actual tree:   " << (*j)->toString() << "\n";
-        std::flush(std::cout);
-        EXPECT_EQ(**i, *j);
-    }
-}
-
-void expectZeroTreeCounter() {
-    EXPECT_EQ(0, treeCounter());
+    expectZeroTreeCounter();
 }
 
 TEST(P55_, AddAllPossibleLeafsToATree) {
@@ -83,12 +86,14 @@ TEST(P55_, AddAllPossibleLeafsToATree) {
                 node('x')
             )
     };
-    List<Tree<char>*> actual = addAllPossibleLeafs(node('x'), 'x');
+    Tree<char>* rootNode = node('x');
+    List<Tree<char>*> actual = addAllPossibleLeafs(rootNode, 'x');
 
     expectEqualLists(expected, actual);
 
-    for (auto tree : expected) delete(tree);
-    for (auto tree : actual) delete(tree);
+    delete(rootNode);
+    deleteAll(expected);
+    deleteAll(actual);
     expectZeroTreeCounter();
 }
 
@@ -115,7 +120,7 @@ TEST(P55, ConstructCompletelyBalancedTree) {
 
     expectEqualLists(expected, actual);
 
-    for (auto tree : expected) delete(tree);
-//    for (auto tree : actual) delete(tree);
+    deleteAll(expected);
+    deleteAll(actual);
     expectZeroTreeCounter();
 }

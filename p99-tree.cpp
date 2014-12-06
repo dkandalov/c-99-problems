@@ -2,7 +2,6 @@
 #include <sstream>
 #include <list>
 #include <iostream>
-#include <CoreFoundation/CoreFoundation.h>
 
 
 template<typename T>
@@ -11,13 +10,19 @@ using List = std::list<T>;
 
 // TODO use rule of three/five?
 
-int& treeCounter() {
-    static int counter = 0;
-    return counter;
+int& treeNodesCounter() {
+    static int amountOfNodes = 0;
+    return amountOfNodes;
 }
 
+class UsageCounter {
+public:
+    int counter;
+    UsageCounter() : counter(0) {}
+};
+
 template<typename T>
-class Tree {
+class Tree : public UsageCounter {
 public:
     virtual ~Tree() { }
     virtual std::string toString() const = 0;
@@ -30,22 +35,32 @@ public:
 };
 
 template<typename T>
+void deleteAll(List<Tree<T>*> listOfTrees) {
+    for (auto tree : listOfTrees) delete(tree);
+}
+
+
+template<typename T>
 class Node : public Tree<T> {
 public:
     const T value;
-    const Tree<T>* left;
-    const Tree<T>* right;
+    Tree<T>* left;
+    Tree<T>* right;
 
-    Node(T value, const Tree<T>* left, const Tree<T>* right):
+    Node(T value, Tree<T>* left, Tree<T>* right):
         value(value), left(left), right(right)
     {
-        treeCounter()++;
+        treeNodesCounter()++;
+        left->counter++;
+        right->counter++;
     }
 
     virtual ~Node() {
-        treeCounter()--;
-        delete(left);
-        delete(right);
+        treeNodesCounter()--;
+        left->counter--;
+        right->counter--;
+        if (left->counter == 0) delete(left);
+        if (right->counter == 0) delete(right);
     }
 
     bool operator==(const Tree<T>* tree) const {
@@ -112,10 +127,16 @@ Tree<T>* node(T value) {
 }
 
 template<typename T>
-Tree<T>* node(T value, const Tree<T>* left, const Tree<T>* right) {
+Tree<T>* node(T value, Tree<T>* left, Tree<T>* right) {
     return new Node<T>(value, left, right);
 }
 
+template<typename T>
+bool contains(Tree<T>* tree, List<Tree<T>*> list) {
+    return std::find_if(list.begin(), list.end(), [&](const Tree<T>* aTree) -> bool {
+        return (*tree) == aTree;
+    }) != list.end();
+}
 
 template<typename T>
 List<Tree<T>*> constructBalancedTrees(int numberOfNodes, T nodeValue) {
@@ -126,19 +147,19 @@ List<Tree<T>*> constructBalancedTrees(int numberOfNodes, T nodeValue) {
     auto balancedTrees = constructBalancedTrees(numberOfNodes - 1, nodeValue);
     for (auto tree : balancedTrees) {
         for (auto updatedTree : addAllPossibleLeafs(tree, nodeValue)) {
-            if (updatedTree->isBalanced()) {
+            if (updatedTree->isBalanced() && !contains(updatedTree, result)) {
                 result.push_back(updatedTree);
+            } else {
+                delete(updatedTree);
             }
         }
     }
-    result.unique([](const Tree<T>* tree1, const Tree<T>* tree2) -> bool {
-        return (*tree1) == tree2;
-    });
+    deleteAll(balancedTrees);
     return result;
 }
 
 template<typename T>
-List<Tree<T>*> addAllPossibleLeafs(const Tree<T>* tree, T nodeValue) {
+List<Tree<T>*> addAllPossibleLeafs(Tree<T>* tree, T nodeValue) {
     if (tree->isEmpty()) return { node(nodeValue) };
 
     const Node<T>* aNode = dynamic_cast<const Node<T>*>(tree);
