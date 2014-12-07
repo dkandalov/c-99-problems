@@ -2,7 +2,7 @@
 #include "p99-tree.cpp"
 #include "lib/gtest-1.7.0/include/gtest/gtest.h"
 
-void expectEqualLists(List<Tree<char>*> expected, List<Tree<char>*> actual) {
+void expectEqualTrees(List<Tree<char> *> expected, List<Tree<char> *> actual) {
     EXPECT_EQ(expected.size(), actual.size());
     for (auto i = expected.begin(), j = actual.begin(); i != expected.end(); i++, j++) {
         std::cout << "expected tree: " << (*i)->toString() << "\n";
@@ -89,7 +89,7 @@ TEST(P55_, AddAllPossibleLeafsToATree) {
     Tree<char>* rootNode = node('x');
     List<Tree<char>*> actual = addAllPossibleLeafs(rootNode, 'x');
 
-    expectEqualLists(expected, actual);
+    expectEqualTrees(expected, actual);
 
     delete(rootNode);
     deleteAll(expected);
@@ -117,10 +117,13 @@ TEST(P55, ConstructCompletelyBalancedTree) {
             )
     };
     List<Tree<char>*> actual = constructBalancedTrees(4, 'x');
+    List<Tree<char>*> actual2 = constructBalancedTrees2(4, 'x');
 
-    expectEqualLists(expected, actual);
+    expectEqualTrees(expected, actual);
+    expectEqualTrees(expected, actual2);
 
     deleteAll(expected);
     deleteAll(actual);
+    deleteAll(actual2);
     expectZeroTreeCounter();
 }

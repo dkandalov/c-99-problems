@@ -172,3 +172,26 @@ List<Tree<T>*> addAllPossibleLeafs(Tree<T>* tree, T nodeValue) {
     }
     return result;
 }
+
+template<typename T>
+List<Tree<T>*> constructBalancedTrees2(int numberOfNodes, T nodeValue) {
+    if (numberOfNodes == 0) return { emptyNode<T>() };
+    if (numberOfNodes == 1) return { node(nodeValue) };
+
+    List<Tree<T>*> result;
+    auto generateSubtrees = [&] (int leftSize, int rightSize) {
+        for (auto leftTree: constructBalancedTrees2(leftSize, nodeValue)) {
+            for (auto rightTree : constructBalancedTrees2(rightSize, nodeValue)) {
+                result.push_back(node(nodeValue, leftTree, rightTree));
+            }
+        }
+    };
+
+    if (numberOfNodes % 2 == 1) {
+        generateSubtrees(numberOfNodes / 2, numberOfNodes / 2);
+    } else {
+        generateSubtrees(numberOfNodes / 2, (numberOfNodes / 2) - 1);
+        generateSubtrees((numberOfNodes / 2) - 1, numberOfNodes / 2);
+    }
+    return result;
+}
