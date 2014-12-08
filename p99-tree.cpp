@@ -32,6 +32,8 @@ public:
         return size() == 0;
     }
     virtual bool isBalanced() = 0;
+    virtual bool isSymmetric() = 0;
+    virtual bool isMirrorOf(const Tree<T>* tree) const = 0;
 };
 
 template<typename T>
@@ -64,7 +66,7 @@ public:
     }
 
     bool operator==(const Tree<T>* tree) const {
-        const Node<T>* node = dynamic_cast<const Node<T>*>(tree);
+        auto node = dynamic_cast<const Node<T>*>(tree);
         return node != NULL &&
                 value == node->value &&
                 (*left) == node->left &&
@@ -77,6 +79,17 @@ public:
 
     bool isBalanced() {
         return abs(left->size() - right->size()) <= 1;
+    }
+
+    bool isSymmetric() {
+        return left->isMirrorOf(right);
+    }
+
+    bool isMirrorOf(const Tree<T>* tree) const {
+        auto that = dynamic_cast<const Node<T>*>(tree);
+        return that != NULL &&
+                this->left->isMirrorOf(that->right) &&
+                this->right->isMirrorOf(that->left);
     }
 
     std::string toString() const {
@@ -109,6 +122,14 @@ public:
 
     bool isBalanced() {
         return true;
+    }
+
+    bool isSymmetric() {
+        return true;
+    }
+
+    bool isMirrorOf(const Tree<T>* tree) const {
+        return (*this) == tree;
     }
 
     std::string toString() const {

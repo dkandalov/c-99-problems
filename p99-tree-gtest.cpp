@@ -127,3 +127,33 @@ TEST(P55, ConstructCompletelyBalancedTree) {
     deleteAll(actual2);
     expectZeroTreeCounter();
 }
+
+TEST(P56, ConstructOfSymmetricTree) {
+    auto tree = node('a');
+    EXPECT_TRUE(tree->isSymmetric());
+    delete(tree);
+
+    tree = node('a', node('b'), emptyNode<char>());
+    EXPECT_FALSE(tree->isSymmetric());
+    delete(tree);
+
+    tree = node('a', node('b'), node('c'));
+    EXPECT_TRUE(tree->isSymmetric());
+    delete(tree);
+
+    tree = node('a',
+            node('b', emptyNode<char>(), node('e')),
+            node('c', node('f'), emptyNode<char>())
+    );
+    EXPECT_TRUE(tree->isSymmetric());
+    delete(tree);
+
+    tree = node('a',
+            node('b', node('d'), emptyNode<char>()),
+            node('c', node('f'), emptyNode<char>())
+    );
+    EXPECT_FALSE(tree->isSymmetric());
+    delete(tree);
+
+    expectZeroTreeCounter();
+}
