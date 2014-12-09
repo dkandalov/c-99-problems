@@ -2,13 +2,19 @@
 #include "p99-tree.cpp"
 #include "lib/gtest-1.7.0/include/gtest/gtest.h"
 
-void expectEqualTrees(List<Tree<char> *> expected, List<Tree<char> *> actual) {
+template<typename T>
+void expectEqualTrees(Tree<T>* expected, Tree<T>* actual) {
+    std::cout << "expected tree: " << expected->toString() << "\n";
+    std::cout << "actual tree:   " << actual->toString() << "\n";
+    std::flush(std::cout);
+    EXPECT_EQ(*expected, actual);
+}
+
+template<typename T>
+void expectEqualTrees(List<Tree<T> *> expected, List<Tree<T> *> actual) {
     EXPECT_EQ(expected.size(), actual.size());
     for (auto i = expected.begin(), j = actual.begin(); i != expected.end(); i++, j++) {
-        std::cout << "expected tree: " << (*i)->toString() << "\n";
-        std::cout << "actual tree:   " << (*j)->toString() << "\n";
-        std::flush(std::cout);
-        EXPECT_EQ(**i, *j);
+        expectEqualTrees(*i, *j);
     }
 }
 
@@ -68,7 +74,7 @@ TEST(P5X, TreeEquality) {
             emptyNode<char>()
         );
 
-    EXPECT_EQ(*tree1, tree2);
+    expectEqualTrees(tree1, tree2);
 
     delete(tree1);
     delete(tree2);
@@ -152,6 +158,39 @@ TEST(P56, ConstructOfSymmetricTree) {
             node('b', node('d'), emptyNode<char>()),
             node('c', node('f'), emptyNode<char>())
     );
+    EXPECT_FALSE(tree->isSymmetric());
+    delete(tree);
+
+    expectZeroTreeCounter();
+}
+
+TEST(P57, CanAddElementsToTree) {
+    auto tree = emptyNode<int>();
+    auto actual = tree->addValue(1);
+    auto expected = node(1);
+
+    expectEqualTrees(expected, actual);
+
+    deleteAll((List<Tree<int>*>) {tree, actual, expected});
+    expectZeroTreeCounter();
+
+
+    tree = node(2, node(1), node(3));
+    actual = tree->addValue(0);
+    expected = node(2, node(1, node(0), emptyNode<int>()), node(3));
+
+    expectEqualTrees(expected, actual);
+
+    deleteAll((List<Tree<int>*>) {tree, actual, expected});
+    expectZeroTreeCounter();
+}
+
+TEST(P57_2, CanConstructTreeFromList) {
+    auto tree = fromList((List<int>){5, 3, 18, 1, 4, 12, 21});
+    EXPECT_TRUE(tree->isSymmetric());
+    delete(tree);
+
+    tree = fromList((List<int>){3, 2, 5, 7, 4});
     EXPECT_FALSE(tree->isSymmetric());
     delete(tree);
 

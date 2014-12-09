@@ -2,6 +2,7 @@
 #include <sstream>
 #include <list>
 #include <iostream>
+#include <CoreFoundation/CoreFoundation.h>
 
 
 template<typename T>
@@ -34,6 +35,8 @@ public:
     virtual bool isBalanced() = 0;
     virtual bool isSymmetric() = 0;
     virtual bool isMirrorOf(const Tree<T>* tree) const = 0;
+
+    virtual Tree<T>* addValue(T value) = 0;
 };
 
 template<typename T>
@@ -92,6 +95,14 @@ public:
                 this->right->isMirrorOf(that->left);
     }
 
+    Tree<T>* addValue(T value) {
+        if (value < this->value) {
+            return node(this->value, left->addValue(value), right);
+        } else {
+            return node(this->value, left, right->addValue(value));
+        }
+    }
+
     std::string toString() const {
         return "T(" +
             toString(value) + " " +
@@ -110,7 +121,13 @@ private:
 template<typename T>
 class EmptyNode : public Tree<T> {
 public:
-    virtual ~EmptyNode() {}
+    EmptyNode() {
+        treeNodesCounter()++;
+    }
+
+    virtual ~EmptyNode() {
+        treeNodesCounter()--;
+    }
 
     bool operator==(const Tree<T>* tree) const {
         return dynamic_cast<const EmptyNode<T>*>(tree) != NULL;
@@ -132,10 +149,15 @@ public:
         return (*this) == tree;
     }
 
+    Tree<T>* addValue(T value) {
+        return new Node<T>(value, new EmptyNode<T>(), new EmptyNode<T>());
+    }
+
     std::string toString() const {
         return ".";
     }
 };
+
 
 template<typename T>
 Tree<T>* emptyNode() {
@@ -158,6 +180,18 @@ bool contains(Tree<T>* tree, List<Tree<T>*> list) {
         return (*tree) == aTree;
     }) != list.end();
 }
+
+template<typename T>
+Tree<T>* fromList(List<T> values) {
+    Tree<T>*tree = emptyNode<T>();
+    for (auto value : values) {
+        auto newTree = tree->addValue(value);
+        delete(tree);
+        tree = newTree;
+    }
+    return tree;
+}
+
 
 template<typename T>
 List<Tree<T>*> constructBalancedTrees(int numberOfNodes, T nodeValue) {
