@@ -2,7 +2,8 @@
 #include <sstream>
 #include <list>
 #include <iostream>
-#include <CoreFoundation/CoreFoundation.h>
+#include <math.h>
+#include <CoreGraphics/CoreGraphics.h>
 
 
 template<typename T>
@@ -35,8 +36,9 @@ public:
     virtual bool isBalanced() = 0;
     virtual bool isSymmetric() = 0;
     virtual bool isMirrorOf(const Tree<T>* tree) const = 0;
-
     virtual Tree<T>* addValue(T value) = 0;
+    virtual int height() = 0;
+    virtual bool isHeightBalanced() = 0;
 };
 
 template<typename T>
@@ -103,6 +105,15 @@ public:
         }
     }
 
+    int height() {
+        return 1 + std::max(left->height(), right->height());
+    }
+
+    bool isHeightBalanced() {
+        bool thisIsBalanced = abs(left->height() - right->height()) <= 1;
+        return thisIsBalanced && left->isHeightBalanced() && right->isHeightBalanced();
+    }
+
     std::string toString() const {
         return "T(" +
             toString(value) + " " +
@@ -151,6 +162,14 @@ public:
 
     Tree<T>* addValue(T value) {
         return new Node<T>(value, new EmptyNode<T>(), new EmptyNode<T>());
+    }
+
+    int height() {
+        return 0;
+    }
+
+    bool isHeightBalanced() {
+        return true;
     }
 
     std::string toString() const {
@@ -248,5 +267,34 @@ List<Tree<T>*> constructBalancedTrees2(int numberOfNodes, T nodeValue) {
         generateSubtrees(numberOfNodes / 2, (numberOfNodes / 2) - 1);
         generateSubtrees((numberOfNodes / 2) - 1, numberOfNodes / 2);
     }
+    return result;
+}
+
+template<typename T>
+List<Tree<T>*> constructHeightBalancedTrees(int height, T value) {
+    List<Tree<T>*> allTrees = {emptyNode<T>()};
+    int maxAmountOfNodes = (int) (pow(2, height) - 1);
+
+    for (int i = 0; i < maxAmountOfNodes; i++) {
+        List<Tree<T>*> updatedTrees = {};
+        for (auto tree : allTrees) {
+            for (auto updatedTree : addAllPossibleLeafs(tree, value)) {
+                if (!contains(updatedTree, updatedTrees)) {
+                    updatedTrees.push_back(updatedTree);
+                } else {
+                    delete(updatedTree);
+                }
+            }
+        }
+        deleteAll(allTrees);
+        allTrees = updatedTrees;
+    }
+
+    List<Tree<T>*> result = {};
+    for (auto tree : allTrees) {
+        if (tree->height() == height) result.push_back(tree);
+        else delete(tree);
+    }
+
     return result;
 }

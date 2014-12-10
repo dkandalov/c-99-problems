@@ -196,3 +196,34 @@ TEST(P57_2, CanConstructTreeFromList) {
 
     expectZeroTreeCounter();
 }
+
+TEST(P58, GenerateAndTestBalancedSymmetricTrees) {
+    // already done in the first version of constructBalancedTrees()
+}
+
+TEST(P59, HeightOfTree) {
+    Tree<char>* tree = node('a', node('b'), node('c'));
+    EXPECT_EQ(2, tree->height());
+    delete(tree);
+
+    tree = node('a', node('b'), node('c', node('d'), emptyNode<char>()));
+    EXPECT_EQ(3, tree->height());
+    delete(tree);
+
+    expectZeroTreeCounter();
+}
+
+TEST(P59, ConstructHeightBalancedTrees) {
+    Tree<char>* expected = node('x',
+            node('x', node('x'), node('x')),
+            node('x', node('x'), node('x'))
+    );
+    auto allActual = constructHeightBalancedTrees(3, 'x');
+    auto actual = allActual.front();
+
+    expectEqualTrees(expected, actual);
+
+    delete(expected);
+    deleteAll(allActual);
+    expectZeroTreeCounter();
+}
