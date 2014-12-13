@@ -3,7 +3,6 @@
 #include <list>
 #include <iostream>
 #include <math.h>
-#include <CoreGraphics/CoreGraphics.h>
 
 
 template<typename T>
@@ -297,4 +296,12 @@ List<Tree<T>*> constructHeightBalancedTrees(int height, T value) {
     }
 
     return result;
+}
+
+int heightBalancedTreeMinAmountOfNodes(int height) {
+    if (height == 0) return 0;
+    if (height == 1) return 1;
+    if (height == 2) return 2;
+    return heightBalancedTreeMinAmountOfNodes(height - 1) +
+           heightBalancedTreeMinAmountOfNodes(height - 2) + 1;
 }

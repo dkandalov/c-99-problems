@@ -92,8 +92,8 @@ TEST(P55_, AddAllPossibleLeafsToATree) {
                 node('x')
             )
     };
-    Tree<char>* rootNode = node('x');
-    List<Tree<char>*> actual = addAllPossibleLeafs(rootNode, 'x');
+    auto rootNode = node('x');
+    auto actual = addAllPossibleLeafs(rootNode, 'x');
 
     expectEqualTrees(expected, actual);
 
@@ -122,8 +122,8 @@ TEST(P55, ConstructCompletelyBalancedTree) {
                 node('x', emptyNode<char>(), node('x'))
             )
     };
-    List<Tree<char>*> actual = constructBalancedTrees(4, 'x');
-    List<Tree<char>*> actual2 = constructBalancedTrees2(4, 'x');
+    auto actual = constructBalancedTrees(4, 'x');
+    auto actual2 = constructBalancedTrees2(4, 'x');
 
     expectEqualTrees(expected, actual);
     expectEqualTrees(expected, actual2);
@@ -226,4 +226,10 @@ TEST(P59, ConstructHeightBalancedTrees) {
     delete(expected);
     deleteAll(allActual);
     expectZeroTreeCounter();
+}
+
+TEST(P60, ConstructHeightBalancedTreesWithGivenNumberOfNodes) {
+    EXPECT_EQ(4, heightBalancedTreeMinAmountOfNodes(3));
+    EXPECT_EQ(7, heightBalancedTreeMinAmountOfNodes(4));
+    EXPECT_EQ(12, heightBalancedTreeMinAmountOfNodes(5));
 }
