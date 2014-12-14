@@ -3,6 +3,7 @@
 #include <list>
 #include <iostream>
 #include <math.h>
+#include <CoreGraphics/CoreGraphics.h>
 
 
 template<typename T>
@@ -285,16 +286,22 @@ List<Tree<T>*> constructHeightBalancedTrees(int height, T value) {
                 }
             }
         }
+        // TODO need to check trees with size < maxAmountOfNodes
         deleteAll(allTrees);
         allTrees = updatedTrees;
     }
 
     List<Tree<T>*> result = {};
+    std::cout << "============" << "\n";
+    for (auto tree : allTrees) std::cout << tree->toString() << "\n";
+    std::cout << "============" << "\n";
     for (auto tree : allTrees) {
-        if (tree->height() == height) result.push_back(tree);
-        else delete(tree);
+        if (tree->isHeightBalanced() && tree->height() == height) {
+            result.push_back(tree);
+        } else {
+            delete(tree);
+        }
     }
-
     return result;
 }
 
@@ -304,4 +311,37 @@ int heightBalancedTreeMinAmountOfNodes(int height) {
     if (height == 2) return 2;
     return heightBalancedTreeMinAmountOfNodes(height - 1) +
            heightBalancedTreeMinAmountOfNodes(height - 2) + 1;
+}
+
+int minHeightOfHeightBalancedTree(int amountOfNodes) {
+    return amountOfNodes == 0 ? 0 : minHeightOfHeightBalancedTree(amountOfNodes / 2) + 1;
+}
+
+int maxHeightOfHeightBalancedTree(int amountOfNodes) {
+    int height = 1;
+    while (amountOfNodes >= heightBalancedTreeMinAmountOfNodes(height)) {
+        height++;
+    }
+    return height - 1;
+}
+
+template<typename T>
+List<Tree<T>*> constructHeightBalancedTreesWithNodes(int amountOfNodes, T value) {
+    List<Tree<T>*> result;
+    int minHeight = minHeightOfHeightBalancedTree(amountOfNodes);
+    int maxHeight = maxHeightOfHeightBalancedTree(amountOfNodes);
+
+    for (int height = minHeight; height <= maxHeight; height++) {
+        std::cout << height << "\n";
+        for (auto tree : constructHeightBalancedTrees(height, value)) {
+            std::cout << tree->toString() << "\n";
+            std::flush(std::cout);
+            if (tree->size() == amountOfNodes) {
+                result.push_back(tree);
+            } else {
+                delete(tree);
+            }
+        }
+    }
+    return result;
 }

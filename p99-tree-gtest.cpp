@@ -219,9 +219,13 @@ TEST(P59, ConstructHeightBalancedTrees) {
             node('x', node('x'), node('x'))
     );
     auto allActual = constructHeightBalancedTrees(3, 'x');
-    auto actual = allActual.front();
+    std::cout << "---------" << "\n";
+    for (auto tree : allActual) std::cout << tree->toString() << "\n";
+    std::cout << "---------" << "\n";
 
+    auto actual = allActual.front();
     expectEqualTrees(expected, actual);
+    EXPECT_EQ(123, allActual.size());
 
     delete(expected);
     deleteAll(allActual);
@@ -232,4 +236,16 @@ TEST(P60, ConstructHeightBalancedTreesWithGivenNumberOfNodes) {
     EXPECT_EQ(4, heightBalancedTreeMinAmountOfNodes(3));
     EXPECT_EQ(7, heightBalancedTreeMinAmountOfNodes(4));
     EXPECT_EQ(12, heightBalancedTreeMinAmountOfNodes(5));
+
+    EXPECT_EQ(3, maxHeightOfHeightBalancedTree(4));
+    EXPECT_EQ(3, maxHeightOfHeightBalancedTree(5));
+    EXPECT_EQ(3, maxHeightOfHeightBalancedTree(6));
+    EXPECT_EQ(4, maxHeightOfHeightBalancedTree(7));
+
+    auto trees = constructHeightBalancedTreesWithNodes(4, 'x');
+    for (Tree<char>* tree : trees) std::cout << tree->toString() << "\n";
+    EXPECT_EQ(123, trees.size());
+
+    deleteAll(trees);
+    expectZeroTreeCounter();
 }
