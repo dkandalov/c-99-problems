@@ -4,6 +4,7 @@
 #include <iostream>
 #include <math.h>
 #include <CoreGraphics/CoreGraphics.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 
 template<typename T>
@@ -272,36 +273,33 @@ List<Tree<T>*> constructBalancedTrees2(int numberOfNodes, T nodeValue) {
 
 template<typename T>
 List<Tree<T>*> constructHeightBalancedTrees(int height, T value) {
+    List<Tree<T>*> result = {};
     List<Tree<T>*> allTrees = {emptyNode<T>()};
     int maxAmountOfNodes = (int) (pow(2, height) - 1);
 
     for (int i = 0; i < maxAmountOfNodes; i++) {
-        List<Tree<T>*> updatedTrees = {};
+        List<Tree<T>*> updatedAllTrees = {};
         for (auto tree : allTrees) {
             for (auto updatedTree : addAllPossibleLeafs(tree, value)) {
-                if (!contains(updatedTree, updatedTrees)) {
-                    updatedTrees.push_back(updatedTree);
+                if (!contains(updatedTree, updatedAllTrees)) {
+                    updatedAllTrees.push_back(updatedTree);
                 } else {
                     delete(updatedTree);
                 }
             }
         }
-        // TODO need to check trees with size < maxAmountOfNodes
-        deleteAll(allTrees);
-        allTrees = updatedTrees;
-    }
-
-    List<Tree<T>*> result = {};
-    std::cout << "============" << "\n";
-    for (auto tree : allTrees) std::cout << tree->toString() << "\n";
-    std::cout << "============" << "\n";
-    for (auto tree : allTrees) {
-        if (tree->isHeightBalanced() && tree->height() == height) {
-            result.push_back(tree);
-        } else {
-            delete(tree);
+        for (auto tree : allTrees) {
+            if (!contains(tree, result) &&
+                tree->isHeightBalanced() && tree->height() == height) {
+                result.push_back(tree);
+            } else {
+                delete(tree);
+            }
         }
+        allTrees = updatedAllTrees;
     }
+    deleteAll(allTrees);
+
     return result;
 }
 
@@ -332,10 +330,7 @@ List<Tree<T>*> constructHeightBalancedTreesWithNodes(int amountOfNodes, T value)
     int maxHeight = maxHeightOfHeightBalancedTree(amountOfNodes);
 
     for (int height = minHeight; height <= maxHeight; height++) {
-        std::cout << height << "\n";
         for (auto tree : constructHeightBalancedTrees(height, value)) {
-            std::cout << tree->toString() << "\n";
-            std::flush(std::cout);
             if (tree->size() == amountOfNodes) {
                 result.push_back(tree);
             } else {

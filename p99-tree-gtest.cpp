@@ -215,17 +215,14 @@ TEST(P59, HeightOfTree) {
 
 TEST(P59, ConstructHeightBalancedTrees) {
     Tree<char>* expected = node('x',
-            node('x', node('x'), node('x')),
-            node('x', node('x'), node('x'))
+            node('x', node('x'), emptyNode<char>()),
+            node('x')
     );
     auto allActual = constructHeightBalancedTrees(3, 'x');
-    std::cout << "---------" << "\n";
     for (auto tree : allActual) std::cout << tree->toString() << "\n";
-    std::cout << "---------" << "\n";
 
-    auto actual = allActual.front();
-    expectEqualTrees(expected, actual);
-    EXPECT_EQ(123, allActual.size());
+    EXPECT_EQ(14, allActual.size());
+    expectEqualTrees(expected, allActual.front());
 
     delete(expected);
     deleteAll(allActual);
@@ -244,8 +241,13 @@ TEST(P60, ConstructHeightBalancedTreesWithGivenNumberOfNodes) {
 
     auto trees = constructHeightBalancedTreesWithNodes(4, 'x');
     for (Tree<char>* tree : trees) std::cout << tree->toString() << "\n";
-    EXPECT_EQ(123, trees.size());
-
+    EXPECT_EQ(4, trees.size());
     deleteAll(trees);
+
+    // TODO too slow for amountOfNodes=15
+    trees = constructHeightBalancedTreesWithNodes(15, 'x');
+    EXPECT_EQ(123, trees.size());
+    deleteAll(trees);
+
     expectZeroTreeCounter();
 }
