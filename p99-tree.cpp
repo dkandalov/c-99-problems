@@ -65,9 +65,12 @@ public:
 
     virtual ~Node() {
         treeNodesCounter()--;
+
+        // it's important to attempt deletion of "left"
+        // before "right" in case it's the same object
         left->counter--;
-        right->counter--;
         if (left->counter == 0) delete(left);
+        right->counter--;
         if (right->counter == 0) delete(right);
     }
 
@@ -273,33 +276,28 @@ List<Tree<T>*> constructBalancedTrees2(int numberOfNodes, T nodeValue) {
 
 template<typename T>
 List<Tree<T>*> constructHeightBalancedTrees(int height, T value) {
+    if (height == 0) return {emptyNode<T>()};
+    if (height == 1) return {node(value)};
+    if (height == 2) return {
+                node(value, node(value), emptyNode<T>()),
+                node(value, emptyNode<T>(), node(value))
+    };
     List<Tree<T>*> result = {};
-    List<Tree<T>*> allTrees = {emptyNode<T>()};
-    int maxAmountOfNodes = (int) (pow(2, height) - 1);
 
-    for (int i = 0; i < maxAmountOfNodes; i++) {
-        List<Tree<T>*> updatedAllTrees = {};
-        for (auto tree : allTrees) {
-            for (auto updatedTree : addAllPossibleLeafs(tree, value)) {
-                if (!contains(updatedTree, updatedAllTrees)) {
-                    updatedAllTrees.push_back(updatedTree);
-                } else {
-                    delete(updatedTree);
-                }
-            }
+    List<Tree<T> *> trees = constructHeightBalancedTrees(height - 1, value);
+    List<Tree<T> *> smallerTrees = constructHeightBalancedTrees(height - 2, value);
+    for (auto tree1 : trees) {
+        for (auto tree2 : trees) {
+            result.push_back(node(value, tree1, tree2));
+            result.push_back(node(value, tree2, tree1));
         }
-        for (auto tree : allTrees) {
-            if (!contains(tree, result) &&
-                tree->isHeightBalanced() && tree->height() == height) {
-                result.push_back(tree);
-            } else {
-                delete(tree);
-            }
-        }
-        allTrees = updatedAllTrees;
     }
-    deleteAll(allTrees);
-
+    for (auto tree1 : trees) {
+        for (auto tree2 : smallerTrees) {
+            result.push_back(node(value, tree1, tree2));
+            result.push_back(node(value, tree2, tree1));
+        }
+    }
     return result;
 }
 

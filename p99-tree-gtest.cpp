@@ -198,7 +198,7 @@ TEST(P57_2, CanConstructTreeFromList) {
 }
 
 TEST(P58, GenerateAndTestBalancedSymmetricTrees) {
-    // already done in the first version of constructBalancedTrees()
+    // TODO
 }
 
 TEST(P59, HeightOfTree) {
@@ -216,12 +216,12 @@ TEST(P59, HeightOfTree) {
 TEST(P59, ConstructHeightBalancedTrees) {
     Tree<char>* expected = node('x',
             node('x', node('x'), emptyNode<char>()),
-            node('x')
+            node('x', node('x'), emptyNode<char>())
     );
     auto allActual = constructHeightBalancedTrees(3, 'x');
     for (auto tree : allActual) std::cout << tree->toString() << "\n";
 
-    EXPECT_EQ(14, allActual.size());
+    EXPECT_EQ(12, allActual.size()); // TODO compare amount with scala implementation
     expectEqualTrees(expected, allActual.front());
 
     delete(expected);
@@ -244,9 +244,8 @@ TEST(P60, ConstructHeightBalancedTreesWithGivenNumberOfNodes) {
     EXPECT_EQ(4, trees.size());
     deleteAll(trees);
 
-    // TODO too slow for amountOfNodes=15
     trees = constructHeightBalancedTreesWithNodes(15, 'x');
-    EXPECT_EQ(123, trees.size());
+    EXPECT_EQ(2048, trees.size());
     deleteAll(trees);
 
     expectZeroTreeCounter();
