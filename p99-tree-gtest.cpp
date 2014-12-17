@@ -93,7 +93,7 @@ TEST(P55_, AddAllPossibleLeafsToATree) {
             )
     };
     auto rootNode = node('x');
-    auto actual = addAllPossibleLeafs(rootNode, 'x');
+    auto actual = rootNode->addAllPossibleLeafs('x');
 
     expectEqualTrees(expected, actual);
 
@@ -197,8 +197,24 @@ TEST(P57_2, CanConstructTreeFromList) {
     expectZeroTreeCounter();
 }
 
-TEST(P58, GenerateAndTestBalancedSymmetricTrees) {
-    // TODO
+TEST(P58, GenerateAllSymmerticBalancedBinaryTreesWithGivenNumberOfNodes) {
+    List<Tree<char>*> expectedTrees = {
+            node('x',
+                node('x', node('x'), emptyNode<char>()),
+                node('x', emptyNode<char>(), node('x'))
+            ),
+            node('x',
+                node('x', emptyNode<char>(), node('x')),
+                node('x', node('x'), emptyNode<char>())
+            )
+    };
+    auto actualTrees = symmetricBalancedTrees(5, 'x');
+
+    expectEqualTrees(expectedTrees, actualTrees);
+
+    deleteAll(expectedTrees);
+    deleteAll(actualTrees);
+    expectZeroTreeCounter();
 }
 
 TEST(P59, HeightOfTree) {

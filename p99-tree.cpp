@@ -2,8 +2,6 @@
 #include <sstream>
 #include <list>
 #include <iostream>
-#include <math.h>
-#include <CoreGraphics/CoreGraphics.h>
 #include <CoreFoundation/CoreFoundation.h>
 
 
@@ -40,6 +38,7 @@ public:
     virtual Tree<T>* addValue(T value) = 0;
     virtual int height() = 0;
     virtual bool isHeightBalanced() = 0;
+    virtual List<Tree<T>*> addAllPossibleLeafs(T value) = 0;
 };
 
 template<typename T>
@@ -118,6 +117,17 @@ public:
         return thisIsBalanced && left->isHeightBalanced() && right->isHeightBalanced();
     }
 
+    List<Tree<T>*> addAllPossibleLeafs(T value) {
+        List<Tree<T>*> result;
+        for (Tree<T>* leafTree : left->addAllPossibleLeafs(value)) {
+            result.push_back(node(value, leafTree, right));
+        }
+        for (Tree<T>* leafTree : right->addAllPossibleLeafs(value)) {
+            result.push_back(node(value, left, leafTree));
+        }
+        return result;
+    }
+
     std::string toString() const {
         return "T(" +
             toString(value) + " " +
@@ -176,6 +186,10 @@ public:
         return true;
     }
 
+    List<Tree<T>*> addAllPossibleLeafs(T value) {
+        return { new Node<T>(value, new EmptyNode<T>(), new EmptyNode<T>()) };
+    }
+
     std::string toString() const {
         return ".";
     }
@@ -217,14 +231,14 @@ Tree<T>* fromList(List<T> values) {
 
 
 template<typename T>
-List<Tree<T>*> constructBalancedTrees(int numberOfNodes, T nodeValue) {
+List<Tree<T>*> constructBalancedTrees(int numberOfNodes, T value) {
     if (numberOfNodes == 0) return {};
-    if (numberOfNodes == 1) return { node(nodeValue) };
+    if (numberOfNodes == 1) return { node(value) };
 
     List<Tree<T>*> result;
-    auto balancedTrees = constructBalancedTrees(numberOfNodes - 1, nodeValue);
+    auto balancedTrees = constructBalancedTrees(numberOfNodes - 1, value);
     for (auto tree : balancedTrees) {
-        for (auto updatedTree : addAllPossibleLeafs(tree, nodeValue)) {
+        for (auto updatedTree : tree->addAllPossibleLeafs(value)) {
             if (updatedTree->isBalanced() && !contains(updatedTree, result)) {
                 result.push_back(updatedTree);
             } else {
@@ -237,30 +251,15 @@ List<Tree<T>*> constructBalancedTrees(int numberOfNodes, T nodeValue) {
 }
 
 template<typename T>
-List<Tree<T>*> addAllPossibleLeafs(Tree<T>* tree, T nodeValue) {
-    if (tree->isEmpty()) return { node(nodeValue) };
-
-    const Node<T>* aNode = dynamic_cast<const Node<T>*>(tree);
-    List<Tree<T>*> result;
-    for (Tree<T>* leafTree : addAllPossibleLeafs(aNode->left, nodeValue)) {
-        result.push_back(node(aNode->value, leafTree, aNode->right));
-    }
-    for (Tree<T>* leafTree : addAllPossibleLeafs(aNode->right, nodeValue)) {
-        result.push_back(node(aNode->value, aNode->left, leafTree));
-    }
-    return result;
-}
-
-template<typename T>
-List<Tree<T>*> constructBalancedTrees2(int numberOfNodes, T nodeValue) {
+List<Tree<T>*> constructBalancedTrees2(int numberOfNodes, T value) {
     if (numberOfNodes == 0) return { emptyNode<T>() };
-    if (numberOfNodes == 1) return { node(nodeValue) };
+    if (numberOfNodes == 1) return { node(value) };
 
     List<Tree<T>*> result;
     auto generateSubtrees = [&] (int leftSize, int rightSize) {
-        for (auto leftTree: constructBalancedTrees2(leftSize, nodeValue)) {
-            for (auto rightTree : constructBalancedTrees2(rightSize, nodeValue)) {
-                result.push_back(node(nodeValue, leftTree, rightTree));
+        for (auto leftTree: constructBalancedTrees2(leftSize, value)) {
+            for (auto rightTree : constructBalancedTrees2(rightSize, value)) {
+                result.push_back(node(value, leftTree, rightTree));
             }
         }
     };
@@ -270,6 +269,29 @@ List<Tree<T>*> constructBalancedTrees2(int numberOfNodes, T nodeValue) {
     } else {
         generateSubtrees(numberOfNodes / 2, (numberOfNodes / 2) - 1);
         generateSubtrees((numberOfNodes / 2) - 1, numberOfNodes / 2);
+    }
+    return result;
+}
+
+template<typename T>
+List<Tree<T>*> symmetricBalancedTrees(int numberOfNodes, T value) {
+    List<Tree<T>*> allTrees = {emptyNode<T>()};
+    for (int i = 0; i < numberOfNodes; i++) {
+        List<Tree<T>*> trees;
+        for (auto tree : allTrees) {
+            trees.splice(trees.end(), tree->addAllPossibleLeafs(value));
+        }
+        deleteAll(allTrees);
+        allTrees = trees;
+    }
+
+    List<Tree<T>*> result;
+    for (auto tree : allTrees) {
+        if (tree->isSymmetric() && !(contains(tree, result))) {
+            result.push_back(tree);
+        } else {
+            delete(tree);
+        }
     }
     return result;
 }
