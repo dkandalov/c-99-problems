@@ -237,7 +237,7 @@ TEST(P59, ConstructHeightBalancedTrees) {
     auto allActual = constructHeightBalancedTrees(3, 'x');
     for (auto tree : allActual) std::cout << tree->toString() << "\n";
 
-    EXPECT_EQ(12, allActual.size()); // TODO compare amount with scala implementation
+    EXPECT_EQ(15, allActual.size());
     expectEqualTrees(expected, allActual.front());
 
     delete(expected);
@@ -265,4 +265,14 @@ TEST(P60, ConstructHeightBalancedTreesWithGivenNumberOfNodes) {
     deleteAll(trees);
 
     expectZeroTreeCounter();
+}
+
+TEST(P61, CountTheLeafsOfABinaryTree) {
+    Tree<char>* tree = emptyNode<char>();
+    EXPECT_EQ(0, tree->leafCount());
+    delete(tree);
+
+    tree = node('x', node('x'), node('x'));
+    EXPECT_EQ(3, tree->leafCount());
+    delete(tree);
 }

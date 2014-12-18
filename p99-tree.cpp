@@ -38,6 +38,7 @@ public:
     virtual Tree<T>* addValue(T value) = 0;
     virtual int height() = 0;
     virtual bool isHeightBalanced() = 0;
+    virtual int leafCount() = 0;
     virtual List<Tree<T>*> addAllPossibleLeafs(T value) = 0;
 };
 
@@ -128,6 +129,10 @@ public:
         return result;
     }
 
+    int leafCount() {
+        return 1 + left->leafCount() + right->leafCount();
+    }
+
     std::string toString() const {
         return "T(" +
             toString(value) + " " +
@@ -188,6 +193,10 @@ public:
 
     List<Tree<T>*> addAllPossibleLeafs(T value) {
         return { new Node<T>(value, new EmptyNode<T>(), new EmptyNode<T>()) };
+    }
+
+    int leafCount() {
+        return 0;
     }
 
     std::string toString() const {
