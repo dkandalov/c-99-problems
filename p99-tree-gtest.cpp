@@ -231,12 +231,12 @@ TEST(P59, HeightOfTree) {
 
 TEST(P59, ConstructHeightBalancedTrees) {
     Tree<char>* expected = node('x',
-            node('x', node('x'), emptyNode<char>()),
-            node('x', node('x'), emptyNode<char>())
+            node('x', node('x'), node('x')),
+            node('x', node('x'), node('x'))
     );
     auto allActual = constructHeightBalancedTrees(3, 'x');
-    for (auto tree : allActual) std::cout << tree->toString() << "\n";
 
+    for (auto tree : allActual) std::cout << tree->toString() << "\n";
     EXPECT_EQ(15, allActual.size());
     expectEqualTrees(expected, allActual.front());
 

@@ -309,10 +309,6 @@ template<typename T>
 List<Tree<T>*> constructHeightBalancedTrees(int height, T value) {
     if (height == 0) return {emptyNode<T>()};
     if (height == 1) return {node(value)};
-    if (height == 2) return {
-                node(value, node(value), emptyNode<T>()),
-                node(value, emptyNode<T>(), node(value))
-    };
     List<Tree<T>*> result = {};
 
     List<Tree<T> *> trees = constructHeightBalancedTrees(height - 1, value);
@@ -320,7 +316,6 @@ List<Tree<T>*> constructHeightBalancedTrees(int height, T value) {
     for (auto tree1 : trees) {
         for (auto tree2 : trees) {
             result.push_back(node(value, tree1, tree2));
-            result.push_back(node(value, tree2, tree1));
         }
     }
     for (auto tree1 : trees) {
