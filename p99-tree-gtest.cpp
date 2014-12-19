@@ -261,7 +261,7 @@ TEST(P60, ConstructHeightBalancedTreesWithGivenNumberOfNodes) {
     deleteAll(trees);
 
     trees = constructHeightBalancedTreesWithNodes(15, 'x');
-    EXPECT_EQ(2048, trees.size());
+    EXPECT_EQ(1553, trees.size());
     deleteAll(trees);
 
     expectZeroTreeCounter();
@@ -275,4 +275,34 @@ TEST(P61, CountTheLeafsOfABinaryTree) {
     tree = node('x', node('x'), node('x'));
     EXPECT_EQ(3, tree->leafCount());
     delete(tree);
+
+    expectZeroTreeCounter();
+}
+
+TEST(P61A, CollectLeavesOfABinaryTreeIntoAList) {
+    Tree<char>* tree = emptyNode<char>();
+    List<char> expected = {};
+    EXPECT_EQ(expected, tree->leafList());
+    delete(tree);
+
+    tree = node('a', node('b'), node('c', node('d'), emptyNode<char>()));
+    expected = {'b', 'd'};
+    EXPECT_EQ(expected, tree->leafList());
+    delete(tree);
+
+    expectZeroTreeCounter();
+}
+
+TEST(P62, CollectInternalNodesOfABinaryTreeIntoAList) {
+    Tree<char>* tree = emptyNode<char>();
+    List<char> expected = {};
+    EXPECT_EQ(expected, tree->internalList());
+    delete(tree);
+
+    tree = node('a', node('b'), node('c', node('d'), emptyNode<char>()));
+    expected = {'a', 'c'};
+    EXPECT_EQ(expected, tree->internalList());
+    delete(tree);
+
+    expectZeroTreeCounter();
 }

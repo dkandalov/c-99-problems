@@ -39,6 +39,8 @@ public:
     virtual int height() = 0;
     virtual bool isHeightBalanced() = 0;
     virtual int leafCount() = 0;
+    virtual List<T> leafList() = 0;
+    virtual List<T> internalList() = 0;
     virtual List<Tree<T>*> addAllPossibleLeafs(T value) = 0;
 };
 
@@ -133,6 +135,27 @@ public:
         return 1 + left->leafCount() + right->leafCount();
     }
 
+    List<T> leafList() {
+        if (left->size() == 0 && right->size() == 0) {
+            return {value};
+        } else {
+            List<T> result = left->leafList();
+            result.splice(result.end(), right->leafList());
+            return result;
+        }
+    }
+
+    List<T> internalList() {
+        if (left->size() == 0 && right->size() == 0) {
+            return {};
+        } else {
+            List<T> result = {value};
+            result.splice(result.end(), left->internalList());
+            result.splice(result.end(), right->internalList());
+            return result;
+        };
+    }
+
     std::string toString() const {
         return "T(" +
             toString(value) + " " +
@@ -197,6 +220,14 @@ public:
 
     int leafCount() {
         return 0;
+    }
+
+    List<T> leafList() {
+        return {};
+    }
+
+    List<T> internalList() {
+        return {};
     }
 
     std::string toString() const {
