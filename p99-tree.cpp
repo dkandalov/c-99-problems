@@ -2,7 +2,6 @@
 #include <sstream>
 #include <list>
 #include <iostream>
-#include <CoreFoundation/CoreFoundation.h>
 
 
 template<typename T>
@@ -394,4 +393,20 @@ List<Tree<T>*> constructHeightBalancedTreesWithNodes(int amountOfNodes, T value)
         }
     }
     return result;
+}
+
+template<typename T>
+Tree<T>* completeBinaryTree(int index, int amountOfNodes, T value) {
+    if (index > amountOfNodes) return emptyNode<T>();
+    else {
+        return new Node<T>(value,
+                completeBinaryTree(index * 2, amountOfNodes, value),
+                completeBinaryTree(index * 2 + 1, amountOfNodes, value));
+    }
+}
+
+template<typename T>
+Tree<T>* completeBinaryTree(int amountOfNodes, T value) {
+    if (amountOfNodes == 0) return emptyNode<T>();
+    return completeBinaryTree(1, amountOfNodes, value);
 }

@@ -306,3 +306,16 @@ TEST(P62, CollectInternalNodesOfABinaryTreeIntoAList) {
 
     expectZeroTreeCounter();
 }
+
+TEST(P63, ConstructCompleteBinaryTree) {
+    Tree<char>* expected = node('x',
+            node('x', node('x'), node('x')),
+            node('x', node('x'), emptyNode<char>())
+    );
+    auto actual = completeBinaryTree(6, 'x');
+    expectEqualTrees(expected, actual);
+
+    delete(expected);
+    delete(actual);
+    expectZeroTreeCounter();
+}
