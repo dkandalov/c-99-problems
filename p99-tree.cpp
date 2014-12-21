@@ -41,6 +41,7 @@ public:
     virtual List<T> leafList() = 0;
     virtual List<T> internalList() = 0;
     virtual List<Tree<T>*> addAllPossibleLeafs(T value) = 0;
+    virtual Tree<T>* layout() = 0;
 };
 
 template<typename T>
@@ -48,6 +49,7 @@ void deleteAll(List<Tree<T>*> listOfTrees) {
     for (auto tree : listOfTrees) delete(tree);
 }
 
+class PositionedNode;
 
 template<typename T>
 class Node : public Tree<T> {
@@ -155,6 +157,10 @@ public:
         };
     }
 
+    Tree<T>* layout() {
+        return new PositionedNode(value, left, right, 0, 0);
+    }
+
     std::string toString() const {
         return "T(" +
             toString(value) + " " +
@@ -162,7 +168,7 @@ public:
         ")";
     }
 
-private:
+protected:
     std::string toString(const T t) const {
         std::stringstream s;
         s << t;
@@ -170,6 +176,27 @@ private:
     }
 };
 
+
+template<typename T>
+class PositionedNode: public Node<T> {
+
+public:
+    const int x;
+    const int y;
+
+    PositionedNode(T value, Tree<T>* left, Tree<T>* right, int x, int y) :
+            Node<T>(value, left, right), x(x), y(y) {}
+
+    std::string toString() const {
+        return "T[" + std::to_string(x) + "," + std::to_string(y) +
+                "(" + toString(this->value) + " " +
+                this->left->toString() + " " + this->right->toString() +
+                ")";
+    }
+};
+
+
+// TODO try refactoring to no type parameter
 template<typename T>
 class EmptyNode : public Tree<T> {
 public:
@@ -227,6 +254,10 @@ public:
 
     List<T> internalList() {
         return {};
+    }
+
+    Tree<T>* layout() {
+        return this;
     }
 
     std::string toString() const {

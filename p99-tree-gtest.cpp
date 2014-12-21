@@ -319,3 +319,14 @@ TEST(P63, ConstructCompleteBinaryTree) {
     delete(actual);
     expectZeroTreeCounter();
 }
+
+TEST(P64, LayoutABinaryTree1) {
+    Tree<char>* tree = node('a',
+            node('b', emptyNode<char>(), node('c')),
+            node('d')
+    );
+    tree->layout();
+
+    delete(tree);
+    expectZeroTreeCounter();
+}
