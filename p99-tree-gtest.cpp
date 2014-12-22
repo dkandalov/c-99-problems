@@ -325,8 +325,12 @@ TEST(P64, LayoutABinaryTree1) {
             node('b', emptyNode<char>(), node('c')),
             node('d')
     );
-    tree->layout();
+    Tree<char>* layoutTree = tree->layout();
+    EXPECT_EQ("T[3,1](a T[1,2](b . T[2,3](c . .)) T[4,2](d . .))", layoutTree->toString());
+
+    // TODO test with Tree.fromList(List('n','k','m','c','a','h','g','e','u','p','s','q'))
 
     delete(tree);
+    delete(layoutTree);
     expectZeroTreeCounter();
 }

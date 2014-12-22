@@ -42,6 +42,8 @@ public:
     virtual List<T> internalList() = 0;
     virtual List<Tree<T>*> addAllPossibleLeafs(T value) = 0;
     virtual Tree<T>* layout() = 0;
+    virtual Tree<T>* layoutWithShift(int xShift, int yShift) = 0;
+    virtual int width() = 0;
 };
 
 template<typename T>
@@ -49,7 +51,6 @@ void deleteAll(List<Tree<T>*> listOfTrees) {
     for (auto tree : listOfTrees) delete(tree);
 }
 
-class PositionedNode;
 
 template<typename T>
 class Node : public Tree<T> {
@@ -157,19 +158,23 @@ public:
         };
     }
 
-    Tree<T>* layout() {
-        return new PositionedNode(value, left, right, 0, 0);
+    virtual Tree<T>* layout();
+
+    virtual Tree<T>* layoutWithShift(int xShift, int yShift);
+
+    int width() {
+        return 1 + left->width() + right->width();
     }
 
     std::string toString() const {
         return "T(" +
-            toString(value) + " " +
-            left->toString() + " " + right->toString() +
+                asString(value) + " " +
+                left->toString() + " " + right->toString() +
         ")";
     }
 
 protected:
-    std::string toString(const T t) const {
+    std::string asString(const T t) const {
         std::stringstream s;
         s << t;
         return s.str();
@@ -188,12 +193,29 @@ public:
             Node<T>(value, left, right), x(x), y(y) {}
 
     std::string toString() const {
-        return "T[" + std::to_string(x) + "," + std::to_string(y) +
-                "(" + toString(this->value) + " " +
+        return "T[" + std::to_string(x) + "," + std::to_string(y) + "]" +
+                "(" + this->asString(this->value) + " " +
                 this->left->toString() + " " + this->right->toString() +
                 ")";
     }
 };
+
+template<typename T>
+Tree<T>* Node<T>::layout() {
+    return layoutWithShift(1, 1);
+}
+template<typename T>
+Tree<T>* Node<T>::layoutWithShift(int xShift, int yShift) {
+    auto leftLayout = left->layoutWithShift(xShift, yShift + 1);
+    auto rightLayout = right->layoutWithShift(xShift + leftLayout->width() + 1, yShift + 1);
+    return new PositionedNode<T>(
+            value,
+            leftLayout,
+            rightLayout,
+            xShift + leftLayout->width(),
+            yShift
+    );
+}
 
 
 // TODO try refactoring to no type parameter
@@ -258,6 +280,14 @@ public:
 
     Tree<T>* layout() {
         return this;
+    }
+
+    Tree<T>* layoutWithShift(int xShift, int yShift) {
+        return this;
+    }
+
+    int width() {
+        return 0;
     }
 
     std::string toString() const {
