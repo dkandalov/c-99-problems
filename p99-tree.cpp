@@ -45,7 +45,7 @@ public:
     virtual Tree<T>* layout() = 0;
     virtual Tree<T>* layoutWithShift(int xShift, int yShift) = 0;
     virtual Tree<T>* layout2() = 0;
-    virtual Tree<T>* layout2WithShift(int xShift, int yShift, int level) = 0;
+    virtual Tree<T>* layout2WithShift(int x, int y, int leftXShift, int level) = 0;
     virtual int width() = 0;
 };
 
@@ -165,7 +165,7 @@ public:
     virtual Tree<T>* layoutWithShift(int xShift, int yShift);
 
     virtual Tree<T>* layout2();
-    virtual Tree<T>* layout2WithShift(int xShift, int yShift, int level);
+    virtual Tree<T>* layout2WithShift(int x, int y, int leftXShift, int level);
 
     int width() {
         return 1 + left->width() + right->width();
@@ -224,20 +224,32 @@ Tree<T>* Node<T>::layoutWithShift(int xShift, int yShift) {
 
 template<typename T>
 Tree<T>* Node<T>::layout2() {
-    return layout2WithShift(1, 1, this->height() - 2);
+    int xShift = 1;
+    int yShift = 1;
+
+    int level = this->height() - 2;
+    auto tree = this->left;
+    while (tree->size() > 0) {
+        int levelShift = level < 0 ? 0 : (int) pow(2, level);
+
+        xShift += levelShift;
+
+        auto treeNode = dynamic_cast<Node<T>*>(tree);
+        if (treeNode == NULL) break;
+        tree = treeNode->left;
+        level--;
+    }
+
+    return layout2WithShift(xShift, yShift, -1, this->height() - 2);
 }
 template<typename T>
-Tree<T>* Node<T>::layout2WithShift(int xShift, int yShift, int level) {
+Tree<T>* Node<T>::layout2WithShift(int x, int y, int leftXShift, int level) {
     int levelShift = level < 0 ? 0 : (int) pow(2, level);
 
-    auto leftLayout = left->layout2WithShift(xShift, yShift + 1, level - 1);
-    int newX = xShift;
-    if (dynamic_cast<PositionedNode<T>*>(leftLayout) != NULL) {
-        newX = (dynamic_cast<PositionedNode<T>*>(leftLayout))->x + levelShift;
-    }
-    auto rightLayout = right->layout2WithShift(newX + levelShift, yShift + 1, level - 1);
+    auto leftLayout = left->layout2WithShift(x - levelShift, y + 1, leftXShift, level - 1);
+    auto rightLayout = right->layout2WithShift(x + levelShift, y + 1, leftXShift, level - 1);
 
-    return new PositionedNode<T>(value, leftLayout, rightLayout, newX, yShift);
+    return new PositionedNode<T>(value, leftLayout, rightLayout, x, y);
 }
 
 
@@ -314,7 +326,7 @@ public:
         return this;
     }
 
-    Tree<T>* layout2WithShift(int xShift, int yShift, int level) {
+    Tree<T>* layout2WithShift(int xShift, int yShift, int leftXShift, int level) {
         return this;
     }
 
