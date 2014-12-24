@@ -351,3 +351,42 @@ TEST(P64, LayoutABinaryTree1_ComplexTest) {
     delete(layoutTree);
     expectZeroTreeCounter();
 }
+
+TEST(P65, LayoutABinaryTree2) {
+    Tree<char>* tree = node('a',
+            node('b', emptyNode<char>(), node('c')),
+            node('d')
+    );
+    Tree<char>* layoutTree = tree->layout2();
+    EXPECT_EQ("T[3,1](a T[1,2](b . T[2,3](c . .)) T[5,2](d . .))", layoutTree->toString());
+
+    delete(tree);
+    delete(layoutTree);
+    expectZeroTreeCounter();
+}
+
+TEST(P65, LayoutABinaryTree2_ComplexTest) {
+    Tree<char>* tree = fromList<char>({'n','k','m','c','a','e','d','g','u','p','q'});
+    Tree<char>* layoutTree = tree->layout2();
+
+    EXPECT_EQ(
+            "T[15,1](n "
+                "T[7,2](k "
+                    "T[3,3](c "
+                        "T[1,4](a . .) "
+                        "T[5,4](e T[4,5](d . .) T[6,5](g . .))"
+                    ") "
+                    "T[11,3](m . .)"
+                ") "
+                "T[23,2](u "
+                    "T[19,3](p . T[21,4](q . .)) "
+                    "."
+                ")"
+            ")",
+            layoutTree->toString()
+    );
+
+    delete(tree);
+    delete(layoutTree);
+    expectZeroTreeCounter();
+}

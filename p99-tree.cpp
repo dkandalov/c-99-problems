@@ -2,6 +2,7 @@
 #include <sstream>
 #include <list>
 #include <iostream>
+#include <cmath>
 
 
 template<typename T>
@@ -43,6 +44,8 @@ public:
     virtual List<Tree<T>*> addAllPossibleLeafs(T value) = 0;
     virtual Tree<T>* layout() = 0;
     virtual Tree<T>* layoutWithShift(int xShift, int yShift) = 0;
+    virtual Tree<T>* layout2() = 0;
+    virtual Tree<T>* layout2WithShift(int xShift, int yShift, int level) = 0;
     virtual int width() = 0;
 };
 
@@ -159,8 +162,10 @@ public:
     }
 
     virtual Tree<T>* layout();
-
     virtual Tree<T>* layoutWithShift(int xShift, int yShift);
+
+    virtual Tree<T>* layout2();
+    virtual Tree<T>* layout2WithShift(int xShift, int yShift, int level);
 
     int width() {
         return 1 + left->width() + right->width();
@@ -216,6 +221,25 @@ Tree<T>* Node<T>::layoutWithShift(int xShift, int yShift) {
             yShift
     );
 }
+
+template<typename T>
+Tree<T>* Node<T>::layout2() {
+    return layout2WithShift(1, 1, this->height() - 2);
+}
+template<typename T>
+Tree<T>* Node<T>::layout2WithShift(int xShift, int yShift, int level) {
+    int levelShift = level < 0 ? 0 : (int) pow(2, level);
+
+    auto leftLayout = left->layout2WithShift(xShift, yShift + 1, level - 1);
+    int newX = xShift;
+    if (dynamic_cast<PositionedNode<T>*>(leftLayout) != NULL) {
+        newX = (dynamic_cast<PositionedNode<T>*>(leftLayout))->x + levelShift;
+    }
+    auto rightLayout = right->layout2WithShift(newX + levelShift, yShift + 1, level - 1);
+
+    return new PositionedNode<T>(value, leftLayout, rightLayout, newX, yShift);
+}
+
 
 
 // TODO try refactoring to no type parameter
@@ -283,6 +307,14 @@ public:
     }
 
     Tree<T>* layoutWithShift(int xShift, int yShift) {
+        return this;
+    }
+
+    Tree<T>* layout2() {
+        return this;
+    }
+
+    Tree<T>* layout2WithShift(int xShift, int yShift, int level) {
         return this;
     }
 
