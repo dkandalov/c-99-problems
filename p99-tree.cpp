@@ -46,6 +46,7 @@ public:
     virtual Tree<T>* layoutWithShift(int xShift, int yShift) = 0;
     virtual Tree<T>* layout2() = 0;
     virtual Tree<T>* layout2WithShift(int x, int y, int leftXShift, int level) = 0;
+    virtual Tree<T>* layout3() = 0;
     virtual int width() = 0;
 };
 
@@ -161,11 +162,13 @@ public:
         };
     }
 
-    virtual Tree<T>* layout();
-    virtual Tree<T>* layoutWithShift(int xShift, int yShift);
+    Tree<T>* layout();
+    Tree<T>* layoutWithShift(int xShift, int yShift);
 
-    virtual Tree<T>* layout2();
-    virtual Tree<T>* layout2WithShift(int x, int y, int leftXShift, int level);
+    Tree<T>* layout2();
+    Tree<T>* layout2WithShift(int x, int y, int leftXShift, int level);
+
+    Tree<T>* layout3();
 
     int width() {
         return 1 + left->width() + right->width();
@@ -205,56 +208,7 @@ public:
     }
 };
 
-template<typename T>
-Tree<T>* Node<T>::layout() {
-    return layoutWithShift(1, 1);
-}
-template<typename T>
-Tree<T>* Node<T>::layoutWithShift(int xShift, int yShift) {
-    auto leftLayout = left->layoutWithShift(xShift, yShift + 1);
-    auto rightLayout = right->layoutWithShift(xShift + leftLayout->width() + 1, yShift + 1);
-    return new PositionedNode<T>(
-            value,
-            leftLayout,
-            rightLayout,
-            xShift + leftLayout->width(),
-            yShift
-    );
-}
 
-template<typename T>
-Tree<T>* Node<T>::layout2() {
-    int xShift = 1;
-    int yShift = 1;
-
-    int level = this->height() - 2;
-    auto tree = this->left;
-    while (tree->size() > 0) {
-        int levelShift = level < 0 ? 0 : (int) pow(2, level);
-
-        xShift += levelShift;
-
-        auto treeNode = dynamic_cast<Node<T>*>(tree);
-        if (treeNode == NULL) break;
-        tree = treeNode->left;
-        level--;
-    }
-
-    return layout2WithShift(xShift, yShift, -1, this->height() - 2);
-}
-template<typename T>
-Tree<T>* Node<T>::layout2WithShift(int x, int y, int leftXShift, int level) {
-    int levelShift = level < 0 ? 0 : (int) pow(2, level);
-
-    auto leftLayout = left->layout2WithShift(x - levelShift, y + 1, leftXShift, level - 1);
-    auto rightLayout = right->layout2WithShift(x + levelShift, y + 1, leftXShift, level - 1);
-
-    return new PositionedNode<T>(value, leftLayout, rightLayout, x, y);
-}
-
-
-
-// TODO try refactoring to no type parameter
 template<typename T>
 class EmptyNode : public Tree<T> {
 public:
@@ -330,6 +284,10 @@ public:
         return this;
     }
 
+    Tree<T>* layout3() {
+        return this;
+    }
+
     int width() {
         return 0;
     }
@@ -338,6 +296,59 @@ public:
         return ".";
     }
 };
+
+
+template<typename T>
+Tree<T>* Node<T>::layout() {
+    return layoutWithShift(1, 1);
+}
+template<typename T>
+Tree<T>* Node<T>::layoutWithShift(int xShift, int yShift) {
+    auto leftLayout = left->layoutWithShift(xShift, yShift + 1);
+    auto rightLayout = right->layoutWithShift(xShift + leftLayout->width() + 1, yShift + 1);
+    return new PositionedNode<T>(
+            value,
+            leftLayout,
+            rightLayout,
+            xShift + leftLayout->width(),
+            yShift
+    );
+}
+
+template<typename T>
+Tree<T>* Node<T>::layout2() {
+    int xShift = 1;
+    int yShift = 1;
+
+    int level = this->height() - 2;
+    auto tree = this->left;
+    while (tree->size() > 0) {
+        int levelShift = level < 0 ? 0 : (int) pow(2, level);
+
+        xShift += levelShift;
+
+        auto treeNode = dynamic_cast<Node<T>*>(tree);
+        if (treeNode == NULL) break;
+        tree = treeNode->left;
+        level--;
+    }
+
+    return layout2WithShift(xShift, yShift, -1, this->height() - 2);
+}
+template<typename T>
+Tree<T>* Node<T>::layout2WithShift(int x, int y, int leftXShift, int level) {
+    int levelShift = level < 0 ? 0 : (int) pow(2, level);
+
+    auto leftLayout = left->layout2WithShift(x - levelShift, y + 1, leftXShift, level - 1);
+    auto rightLayout = right->layout2WithShift(x + levelShift, y + 1, leftXShift, level - 1);
+
+    return new PositionedNode<T>(value, leftLayout, rightLayout, x, y);
+}
+
+template<typename T>
+Tree<T>* Node<T>::layout3() {
+    return this;
+}
 
 
 template<typename T>

@@ -390,3 +390,16 @@ TEST(P65, LayoutABinaryTree2_ComplexTest) {
     delete(layoutTree);
     expectZeroTreeCounter();
 }
+
+TEST(P66, LayoutABinaryTree3) {
+    Tree<char>* tree = node('a',
+            node('b', emptyNode<char>(), node('c')),
+            node('d')
+    );
+    Tree<char>* layoutTree = tree->layout3();
+    EXPECT_EQ("T[2,1](a T[1,2](b . T[2,3](c . .)) T[3,2](d . .))", layoutTree->toString());
+
+//    delete(tree);
+//    delete(layoutTree);
+//    expectZeroTreeCounter();
+}
