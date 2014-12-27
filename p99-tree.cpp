@@ -47,6 +47,7 @@ public:
     virtual Tree<T>* layout2() = 0;
     virtual Tree<T>* layout2WithShift(int x, int y, int leftXShift, int level) = 0;
     virtual Tree<T>* layout3() = 0;
+    virtual Tree<T>* layout3WithShift(int x, int y) = 0;
     virtual int width() = 0;
 };
 
@@ -169,6 +170,7 @@ public:
     Tree<T>* layout2WithShift(int x, int y, int leftXShift, int level);
 
     Tree<T>* layout3();
+    Tree<T>* layout3WithShift(int x, int y);
 
     int width() {
         return 1 + left->width() + right->width();
@@ -288,6 +290,10 @@ public:
         return this;
     }
 
+    Tree<T>* layout3WithShift(int x, int y) {
+        return this;
+    }
+
     int width() {
         return 0;
     }
@@ -347,7 +353,18 @@ Tree<T>* Node<T>::layout2WithShift(int x, int y, int leftXShift, int level) {
 
 template<typename T>
 Tree<T>* Node<T>::layout3() {
-    return this;
+    return layout3WithShift(1, 1);
+}
+
+template<typename T>
+Tree<T>* Node<T>::layout3WithShift(int xShift, int yShift) {
+    Tree<T>* leftLayout = left->layout3WithShift(xShift, yShift + 1);
+    int x = leftLayout->isEmpty() ? xShift : (dynamic_cast<PositionedNode<T>*>(leftLayout))->x + 1;
+    Tree<T>* rightLayout = right->layout3WithShift(x + 1, yShift + 1);
+
+    // TODO detect node position collision
+
+    return new PositionedNode<T>(value, leftLayout, rightLayout, x, yShift);
 }
 
 
