@@ -403,3 +403,33 @@ TEST(P66, LayoutABinaryTree3_SimpleCase) {
     delete(layoutTree);
     expectZeroTreeCounter();
 }
+
+TEST(P66, LayoutABinaryTree3_ComlexCase) {
+    Tree<char>* tree = node('n',
+            node('k',
+                    node('c',
+                            node('a'),
+                            node('e', node('d'), node('g'))),
+                    node('m')),
+            node('u',
+                    node('p',
+                            emptyNode<char>(),
+                            node('q')),
+                    emptyNode<char>())
+    );
+    Tree<char>* layoutTree = tree->layout3();
+    EXPECT_EQ(""
+            "T[5,1](n "
+              "T[3,2](k "
+                "T[2,3](c "
+                  "T[1,4](a . .) "
+                  "T[3,4](e T[2,5](d . .) T[4,5](g . .))) T[4,3](m . .)) "
+              "T[7,2](u "
+                "T[6,3](p . T[7,4](q . .)) .))",
+            layoutTree->toString()
+    );
+
+    delete(tree);
+    delete(layoutTree);
+    expectZeroTreeCounter();
+}

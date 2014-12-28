@@ -3,6 +3,7 @@
 #include <list>
 #include <iostream>
 #include <cmath>
+#include <CoreGraphics/CoreGraphics.h>
 
 
 template<typename T>
@@ -47,7 +48,7 @@ public:
     virtual Tree<T>* layout2() = 0;
     virtual Tree<T>* layout2WithShift(int x, int y, int leftXShift, int level) = 0;
     virtual Tree<T>* layout3() = 0;
-    virtual Tree<T>* layout3WithShift(int x, int y) = 0;
+    virtual Tree<T>* layout3WithShift(int x, int y, bool parentX) = 0;
     virtual int width() = 0;
 };
 
@@ -170,7 +171,7 @@ public:
     Tree<T>* layout2WithShift(int x, int y, int leftXShift, int level);
 
     Tree<T>* layout3();
-    Tree<T>* layout3WithShift(int x, int y);
+    Tree<T>* layout3WithShift(int x, int y, bool leftmostXIsFixed);
 
     int width() {
         return 1 + left->width() + right->width();
@@ -290,7 +291,7 @@ public:
         return this;
     }
 
-    Tree<T>* layout3WithShift(int x, int y) {
+    Tree<T>* layout3WithShift(int x, int y, bool leftmostXIsFixed) {
         return this;
     }
 
@@ -353,18 +354,26 @@ Tree<T>* Node<T>::layout2WithShift(int x, int y, int leftXShift, int level) {
 
 template<typename T>
 Tree<T>* Node<T>::layout3() {
-    return layout3WithShift(1, 1);
+    return layout3WithShift(1, 1, false);
 }
 
 template<typename T>
-Tree<T>* Node<T>::layout3WithShift(int xShift, int yShift) {
-    Tree<T>* leftLayout = left->layout3WithShift(xShift, yShift + 1);
-    int x = leftLayout->isEmpty() ? xShift : (dynamic_cast<PositionedNode<T>*>(leftLayout))->x + 1;
-    Tree<T>* rightLayout = right->layout3WithShift(x + 1, yShift + 1);
+Tree<T>* Node<T>::layout3WithShift(int x, int y, bool leftmostXIsFixed) {
+    Tree<T>* leftLayout;
+    Tree<T>* rightLayout;
+    if (leftmostXIsFixed) {
+        leftLayout = left->layout3WithShift(x - 1, y + 1, leftmostXIsFixed);
+        rightLayout = right->layout3WithShift(x + 1, y + 1, leftmostXIsFixed);
+    } else {
+        leftLayout = left->layout3WithShift(x, y + 1, leftmostXIsFixed);
+        x = leftLayout->isEmpty() ? x : (dynamic_cast<PositionedNode<T>*>(leftLayout))->x + 1;
+        leftmostXIsFixed = true;
+        rightLayout = right->layout3WithShift(x + 1, y + 1, leftmostXIsFixed);
+    }
 
     // TODO detect node position collision
 
-    return new PositionedNode<T>(value, leftLayout, rightLayout, x, yShift);
+    return new PositionedNode<T>(value, leftLayout, rightLayout, x, y);
 }
 
 
