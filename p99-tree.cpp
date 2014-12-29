@@ -3,7 +3,8 @@
 #include <list>
 #include <iostream>
 #include <cmath>
-#include <CoreGraphics/CoreGraphics.h>
+#include <set>
+#include <functional>
 
 
 template<typename T>
@@ -48,7 +49,7 @@ public:
     virtual Tree<T>* layout2() = 0;
     virtual Tree<T>* layout2WithShift(int x, int y, int leftXShift, int level) = 0;
     virtual Tree<T>* layout3() = 0;
-    virtual Tree<T>* layout3WithShift(int x, int y, bool parentX) = 0;
+    virtual Tree<T>* layout3WithShift(int x, int y, bool parentX, int childShift) = 0;
     virtual int width() = 0;
 };
 
@@ -171,7 +172,7 @@ public:
     Tree<T>* layout2WithShift(int x, int y, int leftXShift, int level);
 
     Tree<T>* layout3();
-    Tree<T>* layout3WithShift(int x, int y, bool leftmostXIsFixed);
+    Tree<T>* layout3WithShift(int x, int y, bool leftmostXIsFixed, int childShift);
 
     int width() {
         return 1 + left->width() + right->width();
@@ -190,6 +191,8 @@ protected:
         s << t;
         return s.str();
     }
+
+    bool positionsCollide(Tree<T>* pTree, Tree<T>* layout);
 };
 
 
@@ -291,7 +294,7 @@ public:
         return this;
     }
 
-    Tree<T>* layout3WithShift(int x, int y, bool leftmostXIsFixed) {
+    Tree<T>* layout3WithShift(int x, int y, bool leftmostXIsFixed, int childShift) {
         return this;
     }
 
@@ -354,28 +357,51 @@ Tree<T>* Node<T>::layout2WithShift(int x, int y, int leftXShift, int level) {
 
 template<typename T>
 Tree<T>* Node<T>::layout3() {
-    return layout3WithShift(1, 1, false);
+    return layout3WithShift(1, 1, false, 1);
 }
 
 template<typename T>
-Tree<T>* Node<T>::layout3WithShift(int x, int y, bool leftmostXIsFixed) {
+Tree<T>* Node<T>::layout3WithShift(int x, int y, bool leftmostXIsFixed, int childShift) {
     Tree<T>* leftLayout;
     Tree<T>* rightLayout;
+    int newX = x;
     if (leftmostXIsFixed) {
-        leftLayout = left->layout3WithShift(x - 1, y + 1, leftmostXIsFixed);
-        rightLayout = right->layout3WithShift(x + 1, y + 1, leftmostXIsFixed);
+        leftLayout = left->layout3WithShift(x - 1, y + 1, leftmostXIsFixed, childShift);
+        rightLayout = right->layout3WithShift(x + 1, y + 1, leftmostXIsFixed, childShift);
     } else {
-        leftLayout = left->layout3WithShift(x, y + 1, leftmostXIsFixed);
-        x = leftLayout->isEmpty() ? x : (dynamic_cast<PositionedNode<T>*>(leftLayout))->x + 1;
+        leftLayout = left->layout3WithShift(x, y + 1, leftmostXIsFixed, childShift);
+        newX = leftLayout->isEmpty() ? x : (dynamic_cast<PositionedNode<T>*>(leftLayout))->x + 1;
         leftmostXIsFixed = true;
-        rightLayout = right->layout3WithShift(x + 1, y + 1, leftmostXIsFixed);
+        rightLayout = right->layout3WithShift(newX + 1, y + 1, leftmostXIsFixed, childShift);
     }
 
-    // TODO detect node position collision
-
-    return new PositionedNode<T>(value, leftLayout, rightLayout, x, y);
+    if (positionsCollide(leftLayout, rightLayout)) {
+        return this->layout3WithShift(x, y, leftmostXIsFixed, childShift + 1);
+    } else {
+        return new PositionedNode<T>(value, leftLayout, rightLayout, newX, y);
+    }
 }
 
+template<typename T>
+bool Node<T>::positionsCollide(Tree<T>* left, Tree<T>* right) {
+    bool result = false;
+    std::set<std::tuple<int, int>> positions;
+    std::function<void(Tree<T>*)> traverse = [&](Tree<T>* tree) {
+        auto positionedNode = dynamic_cast<PositionedNode<T>*>(tree);
+        if (positionedNode != NULL) {
+            std::tuple<int, int> position = std::make_tuple(positionedNode->x, positionedNode->y);
+            auto insertResult = positions.insert(position);
+            bool inserted = std::get<1>(insertResult);
+            result |= inserted;
+
+            traverse(positionedNode->left);
+            traverse(positionedNode->right);
+        }
+    };
+//    traverse(left);  TODO broken
+//    traverse(right);
+    return result;
+}
 
 template<typename T>
 Tree<T>* emptyNode() {

@@ -404,7 +404,7 @@ TEST(P66, LayoutABinaryTree3_SimpleCase) {
     expectZeroTreeCounter();
 }
 
-TEST(P66, LayoutABinaryTree3_ComlexCase) {
+TEST(P66, LayoutABinaryTree3_ComplexCase) {
     Tree<char>* tree = node('n',
             node('k',
                     node('c',
