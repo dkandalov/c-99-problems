@@ -404,6 +404,23 @@ TEST(P66, LayoutABinaryTree3_SimpleCase) {
     expectZeroTreeCounter();
 }
 
+TEST(P66, LayoutABinaryTree3_CaseWithCollision) {
+    Tree<char>* tree = node('a',
+            node('b', emptyNode<char>(), node('c')),
+            node('d', node('e'), emptyNode<char>())
+    );
+    Tree<char>* layoutTree = tree->layout3();
+    EXPECT_EQ("T[3,1](a "
+                "T[1,2](b . T[2,3](c . .)) "
+                "T[5,2](d T[4,3](e . .) .))",
+            layoutTree->toString()
+    );
+
+    delete(tree);
+    delete(layoutTree);
+    expectZeroTreeCounter();
+}
+
 TEST(P66, LayoutABinaryTree3_ComplexCase) {
     Tree<char>* tree = node('n',
             node('k',

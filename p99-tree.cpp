@@ -366,17 +366,19 @@ Tree<T>* Node<T>::layout3WithShift(int x, int y, bool leftmostXIsFixed, int chil
     Tree<T>* rightLayout;
     int newX = x;
     if (leftmostXIsFixed) {
-        leftLayout = left->layout3WithShift(x - 1, y + 1, leftmostXIsFixed, childShift);
-        rightLayout = right->layout3WithShift(x + 1, y + 1, leftmostXIsFixed, childShift);
+        leftLayout = left->layout3WithShift(x - childShift, y + 1, leftmostXIsFixed, 1);
+        rightLayout = right->layout3WithShift(x + childShift, y + 1, leftmostXIsFixed, 1);
     } else {
-        leftLayout = left->layout3WithShift(x, y + 1, leftmostXIsFixed, childShift);
+        leftLayout = left->layout3WithShift(x, y + 1, leftmostXIsFixed, 1);
         newX = leftLayout->isEmpty() ? x : (dynamic_cast<PositionedNode<T>*>(leftLayout))->x + 1;
         leftmostXIsFixed = true;
-        rightLayout = right->layout3WithShift(newX + 1, y + 1, leftmostXIsFixed, childShift);
+        rightLayout = right->layout3WithShift(newX + 1, y + 1, leftmostXIsFixed, 1);
     }
 
     if (positionsCollide(leftLayout, rightLayout)) {
-        return this->layout3WithShift(x, y, leftmostXIsFixed, childShift + 1);
+        delete(leftLayout);
+        delete(rightLayout);
+        return this->layout3WithShift(newX + 1, y, leftmostXIsFixed, childShift + 1);
     } else {
         return new PositionedNode<T>(value, leftLayout, rightLayout, newX, y);
     }
@@ -392,14 +394,15 @@ bool Node<T>::positionsCollide(Tree<T>* left, Tree<T>* right) {
             std::tuple<int, int> position = std::make_tuple(positionedNode->x, positionedNode->y);
             auto insertResult = positions.insert(position);
             bool inserted = std::get<1>(insertResult);
-            result |= inserted;
-
+            if (!inserted) {
+                result = true;
+            }
             traverse(positionedNode->left);
             traverse(positionedNode->right);
         }
     };
-//    traverse(left);  TODO broken
-//    traverse(right);
+    traverse(left);
+    traverse(right);
     return result;
 }
 
