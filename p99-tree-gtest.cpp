@@ -450,3 +450,19 @@ TEST(P66, LayoutABinaryTree3_ComplexCase) {
     delete(layoutTree);
     expectZeroTreeCounter();
 }
+
+TEST(P67, StringRepresentationOfBinaryTrees) {
+    Tree<char>* tree = node('a',
+            node('b',
+                    node('d'),
+                    node('e')),
+            node('c',
+                    emptyNode<char>(),
+                    node('f', node('g'), emptyNode<char>()))
+    );
+
+    EXPECT_EQ("a(b(d,e),c(,f(g,)))", tree->asString());
+
+    delete(tree);
+    expectZeroTreeCounter();
+}

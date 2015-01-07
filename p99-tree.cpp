@@ -51,6 +51,7 @@ public:
     virtual Tree<T>* layout3() = 0;
     virtual Tree<T>* layout3WithShift(int x, int y, bool parentX, int childShift) = 0;
     virtual int width() = 0;
+    virtual std::string asString() const = 0;
 };
 
 template<typename T>
@@ -178,15 +179,26 @@ public:
         return 1 + left->width() + right->width();
     }
 
+    std::string asString() const {
+        if (left->isEmpty() && right->isEmpty()) {
+            return convertToString(value);
+        } else {
+            return convertToString(value) + "(" +
+                    left->asString() + "," +
+                    right->asString() +
+            ")";
+        }
+    }
+
     std::string toString() const {
         return "T(" +
-                asString(value) + " " +
+                convertToString(value) + " " +
                 left->toString() + " " + right->toString() +
         ")";
     }
 
 protected:
-    std::string asString(const T t) const {
+    std::string convertToString(const T t) const {
         std::stringstream s;
         s << t;
         return s.str();
@@ -208,7 +220,7 @@ public:
 
     std::string toString() const {
         return "T[" + std::to_string(x) + "," + std::to_string(y) + "]" +
-                "(" + this->asString(this->value) + " " +
+                "(" + this->convertToString(this->value) + " " +
                 this->left->toString() + " " + this->right->toString() +
                 ")";
     }
@@ -302,6 +314,10 @@ public:
         return 0;
     }
 
+    std::string asString() const {
+        return "";
+    }
+
     std::string toString() const {
         return ".";
     }
@@ -359,7 +375,6 @@ template<typename T>
 Tree<T>* Node<T>::layout3() {
     return layout3WithShift(1, 1, false, 1);
 }
-
 template<typename T>
 Tree<T>* Node<T>::layout3WithShift(int x, int y, bool leftmostXIsFixed, int childShift) {
     Tree<T>* leftLayout;
