@@ -52,6 +52,7 @@ public:
     virtual Tree<T>* layout3WithShift(int x, int y, bool parentX, int childShift) = 0;
     virtual int width() = 0;
     virtual std::string asString() const = 0;
+    static Tree<char>* fromString(std::string string);
 };
 
 template<typename T>
@@ -596,3 +597,27 @@ Tree<T>* completeBinaryTree(int amountOfNodes, T value) {
     if (amountOfNodes == 0) return emptyNode<T>();
     return completeBinaryTree(1, amountOfNodes, value);
 }
+
+unsigned long indexOfChildNodesSeparator(std::string nodeWithChildren) {
+    int openParens = 0;
+    for (unsigned long i = 0; i < nodeWithChildren.length(); i++) {
+        char c = nodeWithChildren.at(i);
+        if (c == '(') openParens++;
+        else if (c == ')') openParens--;
+        else if (c == ',' && openParens == 1) return i;
+    }
+    throw std::invalid_argument("No child node separator in string:" + nodeWithChildren);
+}
+
+template<typename T>
+Tree<char>* Tree<T>::fromString(std::string s) {
+    if (s.empty()) return new EmptyNode<char>();
+    if (s.size() == 1) {
+        return new Node<char>(s.at(0), new EmptyNode<char>(), new EmptyNode<char>());
+    }
+    unsigned long separatorIndex = indexOfChildNodesSeparator(s);
+    auto leftString = s.substr(2, separatorIndex - 2);
+    auto rightString = s.substr(separatorIndex + 1, s.length() - separatorIndex - 2);
+    return new Node<char>(s.at(0), fromString(leftString), fromString(rightString));
+}
+
