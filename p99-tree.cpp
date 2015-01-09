@@ -4,7 +4,6 @@
 #include <iostream>
 #include <cmath>
 #include <set>
-#include <functional>
 
 
 template<typename T>
@@ -53,6 +52,8 @@ public:
     virtual int width() = 0;
     virtual std::string asString() const = 0;
     static Tree<char>* fromString(std::string string);
+    virtual List<T> preorder() const = 0;
+    virtual List<T> inorder() const = 0;
 };
 
 template<typename T>
@@ -191,6 +192,20 @@ public:
         }
     }
 
+    List<T> preorder() const {
+        List<T> result = {value};
+        result.splice(result.end(), left->preorder());
+        result.splice(result.end(), right->preorder());
+        return result;
+    }
+
+    List<T> inorder() const {
+        List<T> result = left->inorder();
+        result.splice(result.end(), {value});
+        result.splice(result.end(), right->inorder());
+        return result;
+    }
+
     std::string toString() const {
         return "T(" +
                 convertToString(value) + " " +
@@ -317,6 +332,14 @@ public:
 
     std::string asString() const {
         return "";
+    }
+
+    List<T> preorder() const {
+        return {};
+    }
+
+    List<T> inorder() const {
+        return {};
     }
 
     std::string toString() const {

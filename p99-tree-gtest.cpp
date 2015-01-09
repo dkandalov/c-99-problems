@@ -469,3 +469,16 @@ TEST(P67, StringRepresentationOfBinaryTrees) {
     delete(actual);
     expectZeroTreeCounter();
 }
+
+TEST(P68, PreorderAndInorderSequencesOfABinaryTrees) {
+    auto tree = Tree<char>::fromString("a(b(d,e),c(,f(g,)))");
+
+    List<char> expected = {'a', 'b', 'd', 'e', 'c', 'f', 'g'};
+    EXPECT_EQ(expected, tree->preorder());
+
+    expected = {'d', 'b', 'e', 'a', 'c', 'g', 'f'};
+    EXPECT_EQ(expected, tree->inorder());
+
+    delete(tree);
+    expectZeroTreeCounter();
+}
