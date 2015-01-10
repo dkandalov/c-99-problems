@@ -8,6 +8,7 @@
 
 template<typename T>
 using List = std::list<T>;
+// TODO use vector instead of list ?
 
 
 // TODO use rule of three/five?
@@ -54,6 +55,7 @@ public:
     static Tree<char>* fromString(std::string string);
     virtual List<T> preorder() const = 0;
     virtual List<T> inorder() const = 0;
+    static Tree<T>* sequenceToTree(List<T> preorder, List<T> inorder);
 };
 
 template<typename T>
@@ -644,3 +646,57 @@ Tree<char>* Tree<T>::fromString(std::string s) {
     return new Node<char>(s.at(0), fromString(leftString), fromString(rightString));
 }
 
+template<typename T>
+List<T> partBefore(T value, List<T> list) {
+    List<T> result;
+    for (auto item : list) {
+        if (item == value) break;
+        result.push_back(item);
+    }
+    return result;
+}
+template<typename T>
+List<T> partAfter(T value, List<T> list) {
+    List<T> result;
+    bool canConsume = false;
+    for (auto item : list) {
+        if (canConsume) result.push_back(item);
+        if (item == value) canConsume = true;
+    }
+    return result;
+}
+template<typename T>
+List<T> drop(int amount, List<T> list) {
+    List<T> result;
+    for (auto item : list) {
+        if (amount <= 0) result.push_back(item);
+        else amount--;
+    }
+    return result;
+}
+template<typename T>
+List<T> take(int amount, List<T> list) {
+    List<T> result;
+    for (auto item : list) {
+        if (amount == 0) break;
+        result.push_back(item);
+        amount--;
+    }
+    return result;
+}
+
+template<typename T>
+Tree<T>* Tree<T>::sequenceToTree(List<T> preorder, List<T> inorder) {
+    if (preorder.empty() || inorder.empty()) return new EmptyNode<T>();
+
+    T value = preorder.front();
+
+    auto inorderLeft = partBefore(value, inorder);
+    auto inorderRight = partAfter(value, inorder);
+    auto preorderLeft = take(inorderLeft.size(), drop(1, preorder));
+    auto preorderRight = drop(1 + inorderLeft.size(), preorder);
+
+    auto left = sequenceToTree(preorderLeft, inorderLeft);
+    auto right = sequenceToTree(preorderRight, inorderRight);
+    return new Node<T>(value, left, right);
+}
