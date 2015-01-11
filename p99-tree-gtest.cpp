@@ -496,3 +496,29 @@ TEST(P68, PreorderAndInorderSequencesOfABinaryTrees_PartB) {
     delete(actual);
     expectZeroTreeCounter();
 }
+
+TEST(P68, PreorderAndInorderSequencesOfABinaryTrees_PartB_ComplexCase) {
+    auto expected =
+            node('a',
+                    node('b',
+                            node('d'),
+                            node('e')),
+                    node('c',
+                            emptyNode<char>(),
+                            node('f',
+                                    node('g'),
+                                    emptyNode<char>()
+                            )
+                    )
+            );
+    auto actual = Tree<char>::sequenceToTree(
+            {'a', 'b', 'd', 'e', 'c', 'f', 'g'},
+            {'d', 'b', 'e', 'a', 'c', 'g', 'f'}
+    );
+
+    expectEqualTrees(expected, actual);
+
+    delete(expected);
+    delete(actual);
+    expectZeroTreeCounter();
+}

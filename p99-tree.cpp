@@ -56,6 +56,7 @@ public:
     virtual List<T> preorder() const = 0;
     virtual List<T> inorder() const = 0;
     static Tree<T>* sequenceToTree(List<T> preorder, List<T> inorder);
+    static Tree<T>* sequenceToTree2(typename List<T>::iterator preorder, typename List<T>::iterator inorder);
 };
 
 template<typename T>
