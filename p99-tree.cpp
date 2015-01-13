@@ -1,14 +1,17 @@
 #include <string>
-#include <sstream>
 #include <list>
+#include <vector>
+#include <set>
+#include <sstream>
 #include <iostream>
 #include <cmath>
-#include <set>
 
 
 template<typename T>
 using List = std::list<T>;
-// TODO use vector instead of list ?
+
+template<typename T>
+using Vector = std::vector<T>;
 
 
 // TODO use rule of three/five?
@@ -55,8 +58,7 @@ public:
     static Tree<char>* fromString(std::string string);
     virtual List<T> preorder() const = 0;
     virtual List<T> inorder() const = 0;
-    static Tree<T>* sequenceToTree(List<T> preorder, List<T> inorder);
-    static Tree<T>* sequenceToTree2(typename List<T>::iterator preorder, typename List<T>::iterator inorder);
+    static Tree<T>* sequenceToTree(Vector<T> preorder, Vector<T> inorder);
 };
 
 template<typename T>
@@ -648,46 +650,26 @@ Tree<char>* Tree<T>::fromString(std::string s) {
 }
 
 template<typename T>
-List<T> partBefore(T value, List<T> list) {
-    List<T> result;
-    for (auto item : list) {
-        if (item == value) break;
-        result.push_back(item);
-    }
-    return result;
+Vector<T> partBefore(T value, Vector<T> vector) {
+    auto it = std::find(vector.begin(), vector.end(), value);
+    return it == vector.end() ? vector : Vector<T>(vector.begin(), it);
 }
 template<typename T>
-List<T> partAfter(T value, List<T> list) {
-    List<T> result;
-    bool canConsume = false;
-    for (auto item : list) {
-        if (canConsume) result.push_back(item);
-        if (item == value) canConsume = true;
-    }
-    return result;
+Vector<T> partAfter(T value, Vector<T> vector) {
+    auto it = std::find(vector.begin(), vector.end(), value);
+    return it == vector.end() ? vector : Vector<T>(it + 1, vector.end());
 }
 template<typename T>
-List<T> drop(int amount, List<T> list) {
-    List<T> result;
-    for (auto item : list) {
-        if (amount <= 0) result.push_back(item);
-        else amount--;
-    }
-    return result;
+Vector<T> drop(int amount, Vector<T> vector) {
+    return Vector<T>(vector.begin() + amount, vector.end());
 }
 template<typename T>
-List<T> take(int amount, List<T> list) {
-    List<T> result;
-    for (auto item : list) {
-        if (amount == 0) break;
-        result.push_back(item);
-        amount--;
-    }
-    return result;
+Vector<T> take(int amount, Vector<T> vector) {
+    return Vector<T>(vector.begin(), vector.begin() + amount);
 }
 
 template<typename T>
-Tree<T>* Tree<T>::sequenceToTree(List<T> preorder, List<T> inorder) {
+Tree<T>* Tree<T>::sequenceToTree(Vector<T> preorder, Vector<T> inorder) {
     if (preorder.empty() || inorder.empty()) return new EmptyNode<T>();
 
     T value = preorder.front();
