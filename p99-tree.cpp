@@ -59,6 +59,8 @@ public:
     virtual List<T> preorder() const = 0;
     virtual List<T> inorder() const = 0;
     static Tree<T>* sequenceToTree(Vector<T> preorder, Vector<T> inorder);
+    virtual std::string toDotString() const = 0;
+    static Tree<char>* fromDotString(std::string s);
 };
 
 template<typename T>
@@ -211,6 +213,10 @@ public:
         return result;
     }
 
+    std::string toDotString() const {
+        return convertToString(value) + left->toDotString() + right->toDotString();
+    }
+
     std::string toString() const {
         return "T(" +
                 convertToString(value) + " " +
@@ -345,6 +351,10 @@ public:
 
     List<T> inorder() const {
         return {};
+    }
+
+    std::string toDotString() const {
+        return ".";
     }
 
     std::string toString() const {
@@ -682,4 +692,22 @@ Tree<T>* Tree<T>::sequenceToTree(Vector<T> preorder, Vector<T> inorder) {
     auto left = sequenceToTree(preorderLeft, inorderLeft);
     auto right = sequenceToTree(preorderRight, inorderRight);
     return new Node<T>(value, left, right);
+}
+
+template<typename T>
+Tree<char>* Tree<T>::fromDotString(std::string s) {
+    Vector<Tree<char>*> nodes;
+    while (!s.empty()) {
+        if (s.back() == '.') {
+            nodes.push_back(new EmptyNode<char>());
+        } else {
+            auto left = nodes.back();
+            nodes.pop_back();
+            auto right = nodes.back();
+            nodes.pop_back();
+            nodes.push_back(new Node<char>(s.back(), left, right));
+        }
+        s = s.substr(0, s.size() - 1);
+    }
+    return nodes.front();
 }

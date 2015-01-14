@@ -522,3 +522,28 @@ TEST(P68, PreorderAndInorderSequencesOfABinaryTrees_PartB_ComplexCase) {
     delete(actual);
     expectZeroTreeCounter();
 }
+
+TEST(P69, DotStringRepresentationOfBinaryTrees) {
+    auto expected =
+            node('a',
+                    node('b',
+                            node('d'),
+                            node('e')),
+                    node('c',
+                            emptyNode<char>(),
+                            node('f',
+                                    node('g'),
+                                    emptyNode<char>()
+                            )
+                    )
+            );
+    
+    EXPECT_EQ("abd..e..c.fg...", expected->toDotString());
+
+    Tree<char>* actual = Tree<char>::fromDotString("abd..e..c.fg...");
+    expectEqualTrees(expected, actual);
+
+    delete(actual);
+    delete(expected);
+    expectZeroTreeCounter();
+}
