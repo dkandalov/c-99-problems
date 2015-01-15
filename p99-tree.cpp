@@ -711,3 +711,30 @@ Tree<char>* Tree<T>::fromDotString(std::string s) {
     }
     return nodes.front();
 }
+
+
+
+template<typename T>
+class MTree : public UsageCounter {
+public:
+    const T value;
+    Vector<MTree<T>*> children;
+
+    MTree(const T value) : MTree(value, {}) {}
+
+    MTree(const T value, const Vector<MTree<T>*>& children)
+            : value(value), children(children) {
+        treeNodesCounter()++;
+        for (auto child : children) {
+            child->counter++;
+        }
+    }
+
+    virtual ~MTree() {
+        treeNodesCounter()--;
+        for (auto child : children) {
+            child->counter--;
+            if (child->counter == 0) delete(child);
+        }
+    }
+};
