@@ -549,7 +549,7 @@ TEST(P69, DotStringRepresentationOfBinaryTrees) {
 }
 
 TEST(P70, CanCreateMultiwayTrees) {
-    auto tree = new MTree<char>('a', {});
+    auto tree = new MTree<char>('a');
     EXPECT_EQ('a', tree->value);
     EXPECT_EQ(0, tree->children.size());
     delete(tree);
@@ -559,6 +559,20 @@ TEST(P70, CanCreateMultiwayTrees) {
     });
     EXPECT_EQ('a', tree->value);
     EXPECT_EQ(3, tree->children.size());
+    delete(tree);
+
+    expectZeroTreeCounter();
+}
+
+TEST(P79C, CountAmountOfNodesInMultiwayTree) {
+    auto tree = new MTree<char>('a');
+    EXPECT_EQ(1, tree->nodeCount());
+    delete(tree);
+
+    tree = new MTree<char>('a', {
+            new MTree<char>('b'), new MTree<char>('c'), new MTree<char>('d')
+    });
+    EXPECT_EQ(4, tree->nodeCount());
     delete(tree);
 
     expectZeroTreeCounter();

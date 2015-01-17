@@ -737,4 +737,12 @@ public:
             if (child->counter == 0) delete(child);
         }
     }
+
+    int nodeCount() const {
+        int result = 1;
+        for (auto child : children) {
+            result += child->nodeCount();
+        }
+        return result;
+    }
 };
