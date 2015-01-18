@@ -745,4 +745,44 @@ public:
         }
         return result;
     }
+
+    // <tree> ::= <value><up>|<value><children><up>
+    // <children> ::= <tree>+
+    // <value> ::= [a-z]
+    // <up> ::= ^
+    static MTree<char>* stringToMTree(std::string s) {
+        Vector<MTree<char>*> result;
+
+        int i = 0;
+        while (i < s.size()) {
+            bool moveLevelUp = s[i] == '^';
+
+            if (!moveLevelUp) {
+                char value = s[i];
+                result.push_back(new MTree<char>(value));
+                std::cout << i << " - " << value << "\n";
+
+            }
+            if (moveLevelUp && result.size() > 1) {
+                auto tree = result.back();
+                result.pop_back();
+                result.back()->children.push_back(tree);
+                std::cout << i << "^" << "\n";
+            }
+
+            i++;
+        }
+
+        return result.front();
+    }
+
+    bool operator==(const MTree<T> *tree) const {
+        if (value != tree->value) return false;
+        if (children.size() != tree->children.size()) return false;
+
+        for (int i = 0; i < children.size(); i++) {
+            if (children[i] != tree->children[i]) return false;
+        }
+        return true;
+    }
 };

@@ -548,7 +548,7 @@ TEST(P69, DotStringRepresentationOfBinaryTrees) {
     expectZeroTreeCounter();
 }
 
-TEST(P70, CanCreateMultiwayTrees) {
+TEST(P70A, CanCreateMultiwayTrees) {
     auto tree = new MTree<char>('a');
     EXPECT_EQ('a', tree->value);
     EXPECT_EQ(0, tree->children.size());
@@ -564,7 +564,7 @@ TEST(P70, CanCreateMultiwayTrees) {
     expectZeroTreeCounter();
 }
 
-TEST(P79C, CountAmountOfNodesInMultiwayTree) {
+TEST(P70C, CountAmountOfNodesInMultiwayTree) {
     auto tree = new MTree<char>('a');
     EXPECT_EQ(1, tree->nodeCount());
     delete(tree);
@@ -574,6 +574,36 @@ TEST(P79C, CountAmountOfNodesInMultiwayTree) {
     });
     EXPECT_EQ(4, tree->nodeCount());
     delete(tree);
+
+    expectZeroTreeCounter();
+}
+
+TEST(P70, TreeConstructionFromNodeString) {
+    auto actual = MTree<char>::stringToMTree("a^");
+    auto expected = new MTree<char>('a');
+    EXPECT_EQ(*expected, actual);
+    delete(actual);
+    delete(expected);
+
+    actual = MTree<char>::stringToMTree("ab^c^d^^");
+    expected = new MTree<char>('a', {
+        new MTree<char>('b'),
+        new MTree<char>('c'),
+        new MTree<char>('d')
+    });
+    EXPECT_EQ(*expected, actual);
+    delete(actual);
+    delete(expected);
+
+//    actual = MTree<char>::stringToMTree("afg^^c^bd^e^^^");
+//    expected = new MTree<char>('a', {
+//        new MTree<char>('f', { new MTree<char>('g') }),
+//        new MTree<char>('c'),
+//        new MTree<char>('b', {new MTree<char>('d'), new MTree<char>('e')})
+//    });
+//    EXPECT_EQ(*expected, actual);
+//    delete(actual);
+//    delete(expected);
 
     expectZeroTreeCounter();
 }
