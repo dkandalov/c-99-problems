@@ -760,14 +760,13 @@ public:
             if (!moveLevelUp) {
                 char value = s[i];
                 result.push_back(new MTree<char>(value));
-                std::cout << i << " - " << value << "\n";
-
             }
+
             if (moveLevelUp && result.size() > 1) {
-                auto tree = result.back();
+                auto childTree = result.back();
                 result.pop_back();
-                result.back()->children.push_back(tree);
-                std::cout << i << "^" << "\n";
+                auto parentTree = result.back();
+                parentTree->addChild(childTree);
             }
 
             i++;
@@ -776,13 +775,39 @@ public:
         return result.front();
     }
 
+    std::string toString() {
+        std::string childrenAsString = "";
+        for (auto child : children) {
+            childrenAsString += child->toString();
+        }
+        return convertToString(value) + childrenAsString + "^";
+    }
+
     bool operator==(const MTree<T> *tree) const {
         if (value != tree->value) return false;
         if (children.size() != tree->children.size()) return false;
 
         for (int i = 0; i < children.size(); i++) {
-            if (children[i] != tree->children[i]) return false;
+            if ((*children[i]) != tree->children[i]) return false;
         }
         return true;
     }
+
+    bool operator!=(const MTree<T> *tree) const {
+        return !(this->operator==(tree));
+    }
+
+private:
+
+    void addChild(MTree<T>* tree) {
+        tree->counter++;
+        children.push_back(tree);
+    }
+
+    std::string convertToString(const T t) const {
+        std::stringstream s;
+        s << t;
+        return s.str();
+    }
+
 };

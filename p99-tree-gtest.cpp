@@ -11,6 +11,14 @@ void expectEqualTrees(Tree<T>* expected, Tree<T>* actual) {
 }
 
 template<typename T>
+void expectEqualTrees(MTree<T>* expected, MTree<T>* actual) {
+    std::cout << "expected tree: " << expected->toString() << "\n";
+    std::cout << "actual tree:   " << actual->toString() << "\n";
+    std::flush(std::cout);
+    EXPECT_EQ(*expected, actual);
+}
+
+template<typename T>
 void expectEqualTrees(List<Tree<T> *> expected, List<Tree<T> *> actual) {
     EXPECT_EQ(expected.size(), actual.size());
     for (auto i = expected.begin(), j = actual.begin(); i != expected.end(); i++, j++) {
@@ -581,7 +589,7 @@ TEST(P70C, CountAmountOfNodesInMultiwayTree) {
 TEST(P70, TreeConstructionFromNodeString) {
     auto actual = MTree<char>::stringToMTree("a^");
     auto expected = new MTree<char>('a');
-    EXPECT_EQ(*expected, actual);
+    expectEqualTrees(expected, actual);
     delete(actual);
     delete(expected);
 
@@ -591,19 +599,19 @@ TEST(P70, TreeConstructionFromNodeString) {
         new MTree<char>('c'),
         new MTree<char>('d')
     });
-    EXPECT_EQ(*expected, actual);
+    expectEqualTrees(expected, actual);
     delete(actual);
     delete(expected);
 
-//    actual = MTree<char>::stringToMTree("afg^^c^bd^e^^^");
-//    expected = new MTree<char>('a', {
-//        new MTree<char>('f', { new MTree<char>('g') }),
-//        new MTree<char>('c'),
-//        new MTree<char>('b', {new MTree<char>('d'), new MTree<char>('e')})
-//    });
-//    EXPECT_EQ(*expected, actual);
-//    delete(actual);
-//    delete(expected);
+    actual = MTree<char>::stringToMTree("afg^^c^bd^e^^^");
+    expected = new MTree<char>('a', {
+        new MTree<char>('f', { new MTree<char>('g') }),
+        new MTree<char>('c'),
+        new MTree<char>('b', { new MTree<char>('d'), new MTree<char>('e') })
+    });
+    expectEqualTrees(expected, actual);
+    delete(actual);
+    delete(expected);
 
     expectZeroTreeCounter();
 }
