@@ -615,3 +615,19 @@ TEST(P70, TreeConstructionFromNodeString) {
 
     expectZeroTreeCounter();
 }
+
+TEST(P71, InternalPathLengthOfATree) {
+    auto tree = MTree<char>::stringToMTree("a^");
+    EXPECT_EQ(0, tree->internalPathLength());
+    delete(tree);
+
+    tree = new MTree<char>('a', {
+            new MTree<char>('f', { new MTree<char>('g') }),
+            new MTree<char>('c'),
+            new MTree<char>('b', { new MTree<char>('d'), new MTree<char>('e') })
+    });
+    EXPECT_EQ(9, tree->internalPathLength());
+    delete(tree);
+
+    expectZeroTreeCounter();
+}

@@ -783,6 +783,18 @@ public:
         return convertToString(value) + childrenAsString + "^";
     }
 
+    int internalPathLength() const {
+        return internalPathLength(0);
+    }
+
+    int internalPathLength(int level) const {
+        int childPathLength = 0;
+        for (auto child : children) {
+            childPathLength += child->internalPathLength(level + 1);
+        }
+        return childPathLength + level;
+    }
+
     bool operator==(const MTree<T> *tree) const {
         if (value != tree->value) return false;
         if (children.size() != tree->children.size()) return false;
