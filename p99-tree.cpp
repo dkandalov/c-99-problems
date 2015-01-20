@@ -804,6 +804,18 @@ public:
         return result;
     }
 
+    std::string lispyTree() const {
+        if (children.empty()) return convertToString(value);
+
+        std::string result = "(" + convertToString(value);
+        for (auto child : children) {
+            result += " " + child->lispyTree();
+        }
+        result += ")";
+
+        return result;
+    }
+
     bool operator==(const MTree<T> *tree) const {
         if (value != tree->value) return false;
         if (children.size() != tree->children.size()) return false;

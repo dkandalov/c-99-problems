@@ -645,3 +645,16 @@ TEST(P72, ConstructPostOrderSequenceOfTreeNodes) {
     delete(tree);
     expectZeroTreeCounter();
 }
+
+TEST(P73, LispLikeTreeRepresentation) {
+    auto tree = new MTree<char>('a', {
+            new MTree<char>('f', { new MTree<char>('g') }),
+            new MTree<char>('c'),
+            new MTree<char>('b', { new MTree<char>('d'), new MTree<char>('e') })
+    });
+
+    EXPECT_EQ("(a (f g) c (b d e))", tree->lispyTree());
+
+    delete(tree);
+    expectZeroTreeCounter();
+}
