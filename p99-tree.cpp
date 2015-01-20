@@ -795,6 +795,15 @@ public:
         return childPathLength + level;
     }
 
+    List<T> postorder() const {
+        List<T> result;
+        for (auto child : children) {
+            result.splice(result.end(), child->postorder());
+        }
+        result.push_back(value);
+        return result;
+    }
+
     bool operator==(const MTree<T> *tree) const {
         if (value != tree->value) return false;
         if (children.size() != tree->children.size()) return false;

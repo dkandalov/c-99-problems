@@ -631,3 +631,17 @@ TEST(P71, InternalPathLengthOfATree) {
 
     expectZeroTreeCounter();
 }
+
+TEST(P72, ConstructPostOrderSequenceOfTreeNodes) {
+    auto tree = new MTree<char>('a', {
+            new MTree<char>('f', { new MTree<char>('g') }),
+            new MTree<char>('c'),
+            new MTree<char>('b', { new MTree<char>('d'), new MTree<char>('e') })
+    });
+    List<char> expected = {'g', 'f', 'c', 'd', 'e', 'b', 'a'};
+
+    EXPECT_EQ(expected, tree->postorder());
+
+    delete(tree);
+    expectZeroTreeCounter();
+}
