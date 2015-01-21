@@ -17,6 +17,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 add_library(p99 p99.cpp)
 add_library(p99-tree p99-tree.cpp)
+add_library(p99-graph p99-graph.cpp)
 add_executable(main main.cpp)
 
 target_link_libraries(main p99)
@@ -30,7 +31,7 @@ if (test)
     enable_testing()
     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-    add_executable(runUnitGTests p99-gtest.cpp p99-tree-gtest.cpp)
+    add_executable(runUnitGTests p99-gtest.cpp p99-tree-gtest.cpp p99-graph-gtest.cpp)
     target_link_libraries(runUnitGTests gtest gtest_main)
     target_link_libraries(runUnitGTests p99)
 
