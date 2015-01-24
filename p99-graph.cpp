@@ -22,6 +22,8 @@ public:
         Vector<Edge> adj;
 
         Vector<Node> neighbors() {
+            // adj.map(edgeTarget(_, this).get)
+
             return nullptr;
         }
     };
@@ -29,13 +31,31 @@ public:
     Map<T, Node> nodes;
     Vector<Edge> edges;
 
-    bool equals(GraphBase<T, U>* graph) {
+    // If the edge E connects N to another node, returns
+    // the other node, otherwise returns None.
+    virtual Node* edgeTarget(Edge edge, Node node) const = 0;
+
+    virtual bool equals(GraphBase<T, U>* graph) {
         return false;
     }
 
-    Node addNode(T value) {
+    Node* addNode(T value) {
         auto node = new Node(value);
 //        nodes = Map(value -> n) ++ nodes
         return node;
     }
 };
+
+template<typename T, typename U>
+class Graph : public GraphBase<T, U> {
+public:
+    bool equals(GraphBase<T, U>* graph) {
+        return false;
+    }
+
+    GraphBase::Node* edgeTarget(GraphBase::Edge edge, GraphBase::Node node) const {
+        return nullptr;
+    }
+
+};
+
