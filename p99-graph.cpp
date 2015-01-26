@@ -19,21 +19,23 @@ public:
     };
     class Node {
         T value;
-        Vector<Edge> adj;
-
-        Vector<Node> neighbors() {
-            // adj.map(edgeTarget(_, this).get)
-
-            return nullptr;
-        }
+        Vector<Edge*> adj;
     };
 
     Map<T, Node> nodes;
     Vector<Edge> edges;
 
+    Vector<Node*> neighborsOf(Node* node) const {
+        Vector<Node*> result;
+        for (auto edge : node->adj) {
+            result.push_back(edgeTarget(edge, this));
+        }
+        return result;
+    }
+
     // If the edge E connects N to another node, returns
     // the other node, otherwise returns None.
-    virtual Node* edgeTarget(Edge edge, Node node) const = 0;
+    virtual Node* edgeTarget(Edge* edge, Node* node) const = 0;
 
     virtual bool equals(GraphBase<T, U>* graph) {
         return false;
@@ -49,13 +51,38 @@ public:
 template<typename T, typename U>
 class Graph : public GraphBase<T, U> {
 public:
-    bool equals(GraphBase<T, U>* graph) {
+    bool equals(GraphBase<T, U>* graph) override {
         return false;
     }
 
-    GraphBase::Node* edgeTarget(GraphBase::Edge edge, GraphBase::Node node) const {
+    typename GraphBase<T, U>::Node* edgeTarget(
+            typename GraphBase<T, U>::Edge* edge,
+            typename GraphBase<T, U>::Node* node) const override {
+
         return nullptr;
     }
 
+    void addEdge(T n1, T n2, U value) {
+    }
 };
+
+template<typename T, typename U>
+class Digraph : public GraphBase<T, U> {
+
+public:
+    bool equals(GraphBase<T, U>* graph) override {
+        return false;
+    }
+
+    typename GraphBase<T, U>::Node* edgeTarget(
+            typename GraphBase<T, U>::Edge* edge,
+            typename GraphBase<T, U>::Node* node) const override {
+
+        return nullptr;
+    }
+
+    void addArc(T source, T dest, U value) {
+    }
+};
+
 
