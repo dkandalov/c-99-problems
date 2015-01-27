@@ -12,23 +12,30 @@ class GraphBase {
 public:
     class Node;
     class Edge {
+    public:
         U value;
-        Node n1;
-        Node n2;
+        Node* n1;
+        Node* n2;
+
+        Edge(Node* n2, Node* n1, U value) : n2(n2), n1(n1), value(value) {}
+
         // def toTuple = (n1.value, n2.value, value)
     };
     class Node {
+    public:
         T value;
         Vector<Edge*> adj;
+
+        Node(T value) : value(value) {}
     };
 
-    Map<T, Node> nodes;
-    Vector<Edge> edges;
+    Map<T, Node*> nodes;
+    Vector<Edge*> edges;
 
     Vector<Node*> neighborsOf(Node* node) const {
         Vector<Node*> result;
         for (auto edge : node->adj) {
-            result.push_back(edgeTarget(edge, this));
+            result.push_back(edgeTarget(edge, node));
         }
         return result;
     }
@@ -43,46 +50,55 @@ public:
 
     Node* addNode(T value) {
         auto node = new Node(value);
-//        nodes = Map(value -> n) ++ nodes
+        nodes[value] = node;
         return node;
     }
 };
 
+
 template<typename T, typename U>
 class Graph : public GraphBase<T, U> {
 public:
+    using Edge = typename GraphBase<T, U>::Edge;
+    using Node = typename GraphBase<T, U>::Node;
+
     bool equals(GraphBase<T, U>* graph) override {
         return false;
     }
 
-    typename GraphBase<T, U>::Node* edgeTarget(
-            typename GraphBase<T, U>::Edge* edge,
-            typename GraphBase<T, U>::Node* node) const override {
-
-        return nullptr;
+    Node* edgeTarget(Edge* edge, Node* node) const override {
+        if (edge->n1 == node) return edge->n2;
+        else if (edge->n2 == node) return edge->n1;
+        else return nullptr;
     }
 
     void addEdge(T n1, T n2, U value) {
+        auto edge = new Edge(this->nodes[n1], this->nodes[n2], value);
+        this->edges.push_back(edge);
+        this->nodes[n1]->adj.push_back(edge);
+        this->nodes[n2]->adj.push_back(edge);
     }
 };
 
+
 template<typename T, typename U>
 class Digraph : public GraphBase<T, U> {
-
 public:
+    using Edge = typename GraphBase<T, U>::Edge;
+    using Node = typename GraphBase<T, U>::Node;
+
     bool equals(GraphBase<T, U>* graph) override {
         return false;
     }
 
-    typename GraphBase<T, U>::Node* edgeTarget(
-            typename GraphBase<T, U>::Edge* edge,
-            typename GraphBase<T, U>::Node* node) const override {
-
-        return nullptr;
+    Node* edgeTarget(Edge* edge, Node* node) const override {
+        if (edge->n1 == node) return edge->n2;
+        else return nullptr;
     }
 
     void addArc(T source, T dest, U value) {
+        auto edge = new Edge(this->nodes[source], this->nodes[dest], value);
+        this->edges.push_back(edge);
+        this->nodes[source]->adj.push_back(edge);
     }
 };
-
-
