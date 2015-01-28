@@ -5,6 +5,8 @@ template<typename T>
 using Vector = std::vector<T>;
 template<typename T, typename U>
 using Map = std::map<T, U>;
+template<typename T>
+using Tuple = std::tuple<T, T>;
 
 
 template<typename T, typename U>
@@ -77,6 +79,18 @@ public:
         this->edges.push_back(edge);
         this->nodes[n1]->adj.push_back(edge);
         this->nodes[n2]->adj.push_back(edge);
+    }
+
+    static Graph<T, U>* term(Vector<T> nodeValues, Vector<Tuple<T>> edgeValues) {
+        Graph* graph = new Graph();
+        for (auto value : nodeValues) {
+            graph->addNode(value);
+        }
+        for (auto tuple : edgeValues) {
+            int defaultEdgeLabel = '\0';
+            graph->addEdge(std::get<0>(tuple), std::get<1>(tuple), defaultEdgeLabel);
+        }
+        return graph;
     }
 };
 
