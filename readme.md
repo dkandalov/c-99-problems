@@ -1,4 +1,4 @@
-This project contains code for 99 problems in scala rewritten in C++ with CLion.
+This project contains code for 99 problems in scala written in C++ with CLion.
 See http://aperiodic.net/phil/scala/s-99/
 
 See also my solution in scala
