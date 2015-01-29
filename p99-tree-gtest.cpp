@@ -26,7 +26,7 @@ void expectEqualTrees(List<Tree<T> *> expected, List<Tree<T> *> actual) {
     }
 }
 
-void expectZeroTreeCounter() {
+void expectAllTreeNodesToBeDeleted() {
     EXPECT_EQ(0, treeNodesCounter());
 }
 
@@ -50,7 +50,7 @@ TEST(P5X, ConstructAndPrintTree) {
     EXPECT_EQ(7, tree->size());
 
     delete(tree);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P5X, TreeEquality) {
@@ -86,7 +86,7 @@ TEST(P5X, TreeEquality) {
 
     delete(tree1);
     delete(tree2);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P55_, AddAllPossibleLeafsToATree) {
@@ -108,7 +108,7 @@ TEST(P55_, AddAllPossibleLeafsToATree) {
     delete(rootNode);
     deleteAll(expected);
     deleteAll(actual);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P55, ConstructCompletelyBalancedTree) {
@@ -139,7 +139,7 @@ TEST(P55, ConstructCompletelyBalancedTree) {
     deleteAll(expected);
     deleteAll(actual);
     deleteAll(actual2);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P56, ConstructOfSymmetricTree) {
@@ -169,7 +169,7 @@ TEST(P56, ConstructOfSymmetricTree) {
     EXPECT_FALSE(tree->isSymmetric());
     delete(tree);
 
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P57, CanAddElementsToTree) {
@@ -180,7 +180,7 @@ TEST(P57, CanAddElementsToTree) {
     expectEqualTrees(expected, actual);
 
     deleteAll((List<Tree<int>*>) {tree, actual, expected});
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 
 
     tree = node(2, node(1), node(3));
@@ -190,7 +190,7 @@ TEST(P57, CanAddElementsToTree) {
     expectEqualTrees(expected, actual);
 
     deleteAll((List<Tree<int>*>) {tree, actual, expected});
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P57_2, CanConstructTreeFromList) {
@@ -202,7 +202,7 @@ TEST(P57_2, CanConstructTreeFromList) {
     EXPECT_FALSE(tree->isSymmetric());
     delete(tree);
 
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P58, GenerateAllSymmerticBalancedBinaryTreesWithGivenNumberOfNodes) {
@@ -222,7 +222,7 @@ TEST(P58, GenerateAllSymmerticBalancedBinaryTreesWithGivenNumberOfNodes) {
 
     deleteAll(expectedTrees);
     deleteAll(actualTrees);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P59, HeightOfTree) {
@@ -234,7 +234,7 @@ TEST(P59, HeightOfTree) {
     EXPECT_EQ(3, tree->height());
     delete(tree);
 
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P59, ConstructHeightBalancedTrees) {
@@ -250,7 +250,7 @@ TEST(P59, ConstructHeightBalancedTrees) {
 
     delete(expected);
     deleteAll(allActual);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P60, ConstructHeightBalancedTreesWithGivenNumberOfNodes) {
@@ -272,7 +272,7 @@ TEST(P60, ConstructHeightBalancedTreesWithGivenNumberOfNodes) {
     EXPECT_EQ(1553, trees.size());
     deleteAll(trees);
 
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P61, CountTheLeafsOfABinaryTree) {
@@ -284,7 +284,7 @@ TEST(P61, CountTheLeafsOfABinaryTree) {
     EXPECT_EQ(3, tree->leafCount());
     delete(tree);
 
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P61A, CollectLeavesOfABinaryTreeIntoAList) {
@@ -298,7 +298,7 @@ TEST(P61A, CollectLeavesOfABinaryTreeIntoAList) {
     EXPECT_EQ(expected, tree->leafList());
     delete(tree);
 
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P62, CollectInternalNodesOfABinaryTreeIntoAList) {
@@ -312,7 +312,7 @@ TEST(P62, CollectInternalNodesOfABinaryTreeIntoAList) {
     EXPECT_EQ(expected, tree->internalList());
     delete(tree);
 
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P63, ConstructCompleteBinaryTree) {
@@ -325,7 +325,7 @@ TEST(P63, ConstructCompleteBinaryTree) {
 
     delete(expected);
     delete(actual);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P64, LayoutABinaryTree1) {
@@ -338,7 +338,7 @@ TEST(P64, LayoutABinaryTree1) {
 
     delete(tree);
     delete(layoutTree);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P64, LayoutABinaryTree1_ComplexTest) {
@@ -357,7 +357,7 @@ TEST(P64, LayoutABinaryTree1_ComplexTest) {
 
     delete(tree);
     delete(layoutTree);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P65, LayoutABinaryTree2) {
@@ -370,7 +370,7 @@ TEST(P65, LayoutABinaryTree2) {
 
     delete(tree);
     delete(layoutTree);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P65, LayoutABinaryTree2_ComplexTest) {
@@ -396,7 +396,7 @@ TEST(P65, LayoutABinaryTree2_ComplexTest) {
 
     delete(tree);
     delete(layoutTree);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P66, LayoutABinaryTree3_SimpleCase) {
@@ -409,7 +409,7 @@ TEST(P66, LayoutABinaryTree3_SimpleCase) {
 
     delete(tree);
     delete(layoutTree);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P66, LayoutABinaryTree3_CaseWithCollision) {
@@ -426,7 +426,7 @@ TEST(P66, LayoutABinaryTree3_CaseWithCollision) {
 
     delete(tree);
     delete(layoutTree);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P66, LayoutABinaryTree3_ComplexCase) {
@@ -456,7 +456,7 @@ TEST(P66, LayoutABinaryTree3_ComplexCase) {
 
     delete(tree);
     delete(layoutTree);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P67, StringRepresentationOfBinaryTrees) {
@@ -475,7 +475,7 @@ TEST(P67, StringRepresentationOfBinaryTrees) {
 
     delete(expected);
     delete(actual);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P68, PreorderAndInorderSequencesOfABinaryTrees_PartA) {
@@ -488,7 +488,7 @@ TEST(P68, PreorderAndInorderSequencesOfABinaryTrees_PartA) {
     EXPECT_EQ(expected, tree->inorder());
 
     delete(tree);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P68, PreorderAndInorderSequencesOfABinaryTrees_PartB) {
@@ -502,7 +502,7 @@ TEST(P68, PreorderAndInorderSequencesOfABinaryTrees_PartB) {
 
     delete(expected);
     delete(actual);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P68, PreorderAndInorderSequencesOfABinaryTrees_PartB_ComplexCase) {
@@ -528,7 +528,7 @@ TEST(P68, PreorderAndInorderSequencesOfABinaryTrees_PartB_ComplexCase) {
 
     delete(expected);
     delete(actual);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P69, DotStringRepresentationOfBinaryTrees) {
@@ -553,7 +553,7 @@ TEST(P69, DotStringRepresentationOfBinaryTrees) {
 
     delete(actual);
     delete(expected);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P70A, CanCreateMultiwayTrees) {
@@ -569,7 +569,7 @@ TEST(P70A, CanCreateMultiwayTrees) {
     EXPECT_EQ(3, tree->children.size());
     delete(tree);
 
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P70C, CountAmountOfNodesInMultiwayTree) {
@@ -583,7 +583,7 @@ TEST(P70C, CountAmountOfNodesInMultiwayTree) {
     EXPECT_EQ(4, tree->nodeCount());
     delete(tree);
 
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P70, TreeConstructionFromNodeString) {
@@ -613,7 +613,7 @@ TEST(P70, TreeConstructionFromNodeString) {
     delete(actual);
     delete(expected);
 
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P71, InternalPathLengthOfATree) {
@@ -629,7 +629,7 @@ TEST(P71, InternalPathLengthOfATree) {
     EXPECT_EQ(9, tree->internalPathLength());
     delete(tree);
 
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P72, ConstructPostOrderSequenceOfTreeNodes) {
@@ -643,7 +643,7 @@ TEST(P72, ConstructPostOrderSequenceOfTreeNodes) {
     EXPECT_EQ(expected, tree->postorder());
 
     delete(tree);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }
 
 TEST(P73, LispLikeTreeRepresentation) {
@@ -656,5 +656,5 @@ TEST(P73, LispLikeTreeRepresentation) {
     EXPECT_EQ("(a (f g) c (b d e))", tree->lispyTree());
 
     delete(tree);
-    expectZeroTreeCounter();
+    expectAllTreeNodesToBeDeleted();
 }

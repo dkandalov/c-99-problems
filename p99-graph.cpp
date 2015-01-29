@@ -1,19 +1,38 @@
 #include <vector>
 #include <map>
 
+// from http://stackoverflow.com/questions/1926605/how-to-count-the-number-of-objects-created-in-c
+template<typename T>
+struct Counted {
+    Counted() {
+        objectsCreated++;
+        objectsAlive++;
+    }
+
+    virtual ~Counted() {
+        --objectsAlive;
+    }
+
+    static int objectsCreated;
+    static int objectsAlive;
+};
+template<typename T> int Counted<T>::objectsCreated(0);
+template<typename T> int Counted<T>::objectsAlive(0);
+
+
 template<typename T>
 using Vector = std::vector<T>;
 template<typename T, typename U>
 using Map = std::map<T, U>;
-template<typename T>
-using Tuple = std::tuple<T, T>;
+template<typename T, typename U>
+using Tuple = std::tuple<T, U>;
 
 
 template<typename T, typename U>
 class GraphBase {
 public:
     class Node;
-    class Edge {
+    class Edge : Counted<Edge> {
     public:
         U value;
         Node* n1;
@@ -23,7 +42,7 @@ public:
 
         // def toTuple = (n1.value, n2.value, value)
     };
-    class Node {
+    class Node : Counted<Node> {
     public:
         T value;
         Vector<Edge*> adj;
@@ -33,6 +52,16 @@ public:
 
     Map<T, Node*> nodes;
     Vector<Edge*> edges;
+
+
+    virtual ~GraphBase() {
+        for (auto nodeEntry : nodes) {
+            delete(nodeEntry.second);
+        }
+        for (auto edge : edges) {
+            delete(edge);
+        }
+    }
 
     Vector<Node*> neighborsOf(Node* node) const {
         Vector<Node*> result;
@@ -59,7 +88,7 @@ public:
 
 
 template<typename T, typename U>
-class Graph : public GraphBase<T, U> {
+class Graph : public GraphBase<T, U>, Counted<Graph<T, U>> {
 public:
     using Edge = typename GraphBase<T, U>::Edge;
     using Node = typename GraphBase<T, U>::Node;
@@ -81,8 +110,8 @@ public:
         this->nodes[n2]->adj.push_back(edge);
     }
 
-    static Graph<T, U>* term(Vector<T> nodeValues, Vector<Tuple<T>> edgeValues) {
-        Graph* graph = new Graph();
+    static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, U>>& edgeValues) {
+        auto graph = new Graph();
         for (auto value : nodeValues) {
             graph->addNode(value);
         }
@@ -90,6 +119,11 @@ public:
             int defaultEdgeLabel = '\0';
             graph->addEdge(std::get<0>(tuple), std::get<1>(tuple), defaultEdgeLabel);
         }
+        return graph;
+    }
+
+    static Graph* adjacent(const Vector<Tuple<T, Vector<T>>>& adjacencyList) {
+        auto graph = new Graph();
         return graph;
     }
 };
