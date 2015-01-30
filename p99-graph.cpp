@@ -1,5 +1,6 @@
 #include <vector>
 #include <map>
+#include <iostream>
 
 // from http://stackoverflow.com/questions/1926605/how-to-count-the-number-of-objects-created-in-c
 template<typename T>
@@ -53,6 +54,8 @@ public:
     Map<T, Node*> nodes;
     Vector<Edge*> edges;
 
+    static const int defaultEdgeLabel = '\0';
+
 
     virtual ~GraphBase() {
         for (auto nodeEntry : nodes) {
@@ -104,26 +107,38 @@ public:
     }
 
     void addEdge(T n1, T n2, U value) {
+        if (this->nodes.count(n1) == 0) throw std::invalid_argument("No nodes for value");
+        if (this->nodes.count(n2) == 0) throw std::invalid_argument("No nodes for value");
+
         auto edge = new Edge(this->nodes[n1], this->nodes[n2], value);
         this->edges.push_back(edge);
         this->nodes[n1]->adj.push_back(edge);
         this->nodes[n2]->adj.push_back(edge);
     }
 
-    static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, U>>& edgeValues) {
+    static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, U>>& edgeTuples) {
         auto graph = new Graph();
         for (auto value : nodeValues) {
             graph->addNode(value);
         }
-        for (auto tuple : edgeValues) {
-            int defaultEdgeLabel = '\0';
-            graph->addEdge(std::get<0>(tuple), std::get<1>(tuple), defaultEdgeLabel);
+        for (auto tuple : edgeTuples) {
+            graph->addEdge(std::get<0>(tuple), std::get<1>(tuple), Graph::defaultEdgeLabel);
         }
         return graph;
     }
 
     static Graph* adjacent(const Vector<Tuple<T, Vector<T>>>& adjacencyList) {
         auto graph = new Graph();
+        for (auto tuple : adjacencyList) {
+            graph->addNode(std::get<0>(tuple));
+        }
+        for (auto tuple : adjacencyList) {
+            auto nodeValue = std::get<0>(tuple);
+            auto adjacentNodeValues = std::get<1>(tuple);
+            for (auto value : adjacentNodeValues) {
+                graph->addEdge(nodeValue, value, Graph::defaultEdgeLabel);
+            }
+        }
         return graph;
     }
 };
@@ -148,5 +163,22 @@ public:
         auto edge = new Edge(this->nodes[source], this->nodes[dest], value);
         this->edges.push_back(edge);
         this->nodes[source]->adj.push_back(edge);
+    }
+
+    static Digraph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, U>>& arcTuples) {
+        auto graph = new Digraph();
+        for (auto value : nodeValues) {
+            graph->addNode(value);
+        }
+        for (auto tuple : arcTuples) {
+            graph->addArc(std::get<0>(tuple), std::get<1>(tuple), Digraph::defaultEdgeLabel);
+        }
+        return graph;
+    }
+
+    static Digraph* adjacent(const Vector<Tuple<T, Vector<T>>>& adjacencyList) {
+        auto graph = new Digraph();
+        // TODO
+        return graph;
     }
 };
