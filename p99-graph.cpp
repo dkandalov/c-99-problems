@@ -78,7 +78,8 @@ public:
     // the other node, otherwise returns None.
     virtual Node* edgeTarget(Edge* edge, Node* node) const = 0;
 
-    virtual bool equals(GraphBase<T, U>* graph) {
+    virtual bool operator ==(GraphBase<T, U>* that) {
+        // TODO
         return false;
     }
 
@@ -96,7 +97,7 @@ public:
     using Edge = typename GraphBase<T, U>::Edge;
     using Node = typename GraphBase<T, U>::Node;
 
-    bool equals(GraphBase<T, U>* graph) override {
+    bool operator ==(GraphBase<T, U>* graph) override {
         return false;
     }
 
@@ -150,7 +151,7 @@ public:
     using Edge = typename GraphBase<T, U>::Edge;
     using Node = typename GraphBase<T, U>::Node;
 
-    bool equals(GraphBase<T, U>* graph) override {
+    bool operator ==(GraphBase<T, U>* graph) override {
         return false;
     }
 
@@ -178,7 +179,16 @@ public:
 
     static Digraph* adjacent(const Vector<Tuple<T, Vector<T>>>& adjacencyList) {
         auto graph = new Digraph();
-        // TODO
+        for (auto tuple : adjacencyList) {
+            graph->addNode(std::get<0>(tuple));
+        }
+        for (auto tuple : adjacencyList) {
+            auto nodeValue = std::get<0>(tuple);
+            auto adjacentNodeValues = std::get<1>(tuple);
+            for (auto value : adjacentNodeValues) {
+                graph->addArc(nodeValue, value, Digraph::defaultEdgeLabel);
+            }
+        }
         return graph;
     }
 };

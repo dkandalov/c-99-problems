@@ -19,35 +19,45 @@ void expectAllGraphObjectsToBeDeleted() {
 }
 
 TEST(P80, GraphCanBeCreatedFromTermsAndAdjacencyList) {
-    auto graph = CharGraph::term(
+    auto graph1 = CharGraph::term(
         {'a', 'b', 'c'},
         {CharTuple('a', 'b'), CharTuple('b', 'c')}
     );
-    delete(graph);
-
-    graph = CharGraph::adjacent({
+    auto graph2 = CharGraph::adjacent({
             CharAdjacency('a', {'b'}),
             CharAdjacency('b', {'c'}),
             CharAdjacency('c', {})
     });
-    delete(graph);
 
+    delete(graph1);
+    delete(graph2);
     expectAllGraphObjectsToBeDeleted();
 }
 
 TEST(P80, DirectedGraphCanBeCreatedFromTermsAndAdjacencyList) {
-    auto graph = CharDigraph::term(
+    auto graph1 = CharDigraph::term(
         {'a', 'b', 'c'},
         {CharTuple('a', 'b'), CharTuple('b', 'c')}
     );
-    delete(graph);
 
-    graph = CharDigraph::adjacent({
+    auto graph2 = CharDigraph::adjacent({
             CharAdjacency('a', {'b'}),
             CharAdjacency('b', {'c'}),
             CharAdjacency('c', {})
     });
-    delete(graph);
 
+    delete(graph1);
+    delete(graph2);
+    expectAllGraphObjectsToBeDeleted();
+}
+
+TEST(P80, GraphEquality) {
+    auto graph1 = CharGraph::term(
+            {'a', 'b', 'c'},
+            {CharTuple('a', 'b'), CharTuple('b', 'c')}
+    );
+    EXPECT_TRUE((*graph1) == graph1);
+
+    delete(graph1);
     expectAllGraphObjectsToBeDeleted();
 }
