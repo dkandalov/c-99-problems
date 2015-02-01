@@ -39,7 +39,6 @@ TEST(P80, DirectedGraphCanBeCreatedFromTermsAndAdjacencyList) {
         {'a', 'b', 'c'},
         {CharTuple('a', 'b'), CharTuple('b', 'c')}
     );
-
     auto graph2 = CharDigraph::adjacent({
             CharAdjacency('a', {'b'}),
             CharAdjacency('b', {'c'}),
@@ -56,8 +55,29 @@ TEST(P80, GraphEquality) {
             {'a', 'b', 'c'},
             {CharTuple('a', 'b'), CharTuple('b', 'c')}
     );
+    auto graph2 = CharGraph::term(
+            {'a', 'b', 'c'},
+            {CharTuple('a', 'b'), CharTuple('b', 'c')}
+    );
     EXPECT_TRUE((*graph1) == graph1);
+    EXPECT_TRUE((*graph1) == graph2);
+    EXPECT_TRUE((*graph2) == graph1);
+
+    auto graph3 = CharGraph::term(
+        {'a', 'b', 'c', 'd'},
+        {CharTuple('a', 'b'), CharTuple('b', 'c')}
+    );
+    EXPECT_TRUE((*graph1) != graph3);
+
+    auto graph4 = CharGraph::term(
+        {'a', 'b', 'c'},
+        {CharTuple('a', 'b'), CharTuple('b', 'c'), CharTuple{'c', 'a'}}
+    );
+    EXPECT_TRUE((*graph1) != graph4);
 
     delete(graph1);
+    delete(graph2);
+    delete(graph3);
+    delete(graph4);
     expectAllGraphObjectsToBeDeleted();
 }

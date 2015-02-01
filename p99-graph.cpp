@@ -41,7 +41,9 @@ public:
 
         Edge(Node* n2, Node* n1, U value) : n2(n2), n1(n1), value(value) {}
 
-        // def toTuple = (n1.value, n2.value, value)
+        std::tuple<T, T, U> toTuple() {
+            return std::make_tuple(n1->value, n2->value, value);
+        }
     };
     class Node : Counted<Node> {
     public:
@@ -79,8 +81,26 @@ public:
     virtual Node* edgeTarget(Edge* edge, Node* node) const = 0;
 
     virtual bool operator ==(GraphBase<T, U>* that) {
-        // TODO
-        return false;
+        bool nodesAreEqual = (this->nodes.size() == that->nodes.size() &&
+            std::equal(this->nodes.begin(), this->nodes.end(), that->nodes.begin(),
+                [](decltype(*this->nodes.begin()) a, decltype(*this->nodes.begin()) b) {
+                    return a.first == b.first;
+                })
+        );
+
+        Vector<std::tuple<T, T, U>> thisEdgeTuples(edges.size());
+        std::transform(edges.begin(), edges.end(), thisEdgeTuples.begin(), [](Edge* it){return it->toTuple();});
+        Vector<std::tuple<T, T, U>> thatEdgeTuples(that->edges.size());
+        std::transform(that->edges.begin(), that->edges.end(), thatEdgeTuples.begin(), [](Edge* it){return it->toTuple();});
+        bool edgesAreEqual = (edges.size() == that->edges.size() &&
+            std::equal(thisEdgeTuples.begin(), thisEdgeTuples.end(), thatEdgeTuples.begin())
+        );
+
+        return nodesAreEqual && edgesAreEqual;
+    }
+
+    bool operator !=(GraphBase<T, U>* that) {
+        return !((*this) == that);
     }
 
     Node* addNode(T value) {
@@ -97,8 +117,8 @@ public:
     using Edge = typename GraphBase<T, U>::Edge;
     using Node = typename GraphBase<T, U>::Node;
 
-    bool operator ==(GraphBase<T, U>* graph) override {
-        return false;
+    bool operator ==(GraphBase<T, U>* that) override {
+        return dynamic_cast<Graph*>(that) != NULL && GraphBase<T, U>::operator==(that);
     }
 
     Node* edgeTarget(Edge* edge, Node* node) const override {
@@ -151,8 +171,8 @@ public:
     using Edge = typename GraphBase<T, U>::Edge;
     using Node = typename GraphBase<T, U>::Node;
 
-    bool operator ==(GraphBase<T, U>* graph) override {
-        return false;
+    bool operator ==(GraphBase<T, U>* that) override {
+        return dynamic_cast<Digraph*>(that) != NULL && GraphBase<T, U>::operator==(that);
     }
 
     Node* edgeTarget(Edge* edge, Node* node) const override {
