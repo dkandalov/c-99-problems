@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include "p99-graph.cpp"
 
-using CharGraph = Graph<char, char>;
-using CharDigraph = Digraph<char, char>;
+using CharGraph = Graph<char, int>;
+using CharDigraph = Digraph<char, int>;
 using CharTuple = Tuple<char, char>;
 using CharAdjacency = Tuple<char, Vector<char>>;
 

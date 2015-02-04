@@ -27,6 +27,8 @@ template<typename T, typename U>
 using Map = std::map<T, U>;
 template<typename T, typename U>
 using Tuple = std::tuple<T, U>;
+template<typename T, typename U, typename V>
+using Tuple3 = std::tuple<T, U, V>;
 
 
 template<typename T, typename U>
@@ -56,7 +58,7 @@ public:
     Map<T, Node*> nodes;
     Vector<Edge*> edges;
 
-    static const int defaultEdgeLabel = '\0';
+    static const U defaultEdgeLabel = NULL;
 
 
     virtual ~GraphBase() {
@@ -137,13 +139,21 @@ public:
         this->nodes[n2]->adj.push_back(edge);
     }
 
-    static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, U>>& edgeTuples) {
+    static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
+        Vector<Tuple3<T, T, U>> edges;
+        for (Tuple<T, T> tuple : edgeTuples) {
+            edges.push_back(Tuple3<T, T, U>(std::get<0>(tuple), std::get<1>(tuple), Graph::defaultEdgeLabel));
+        }
+        return termLabel(nodeValues, edges);
+    }
+
+    static Graph* termLabel(const Vector<T>& nodeValues, const Vector<Tuple3<T, T, U>>& edgeTuples) {
         auto graph = new Graph();
         for (auto value : nodeValues) {
             graph->addNode(value);
         }
         for (auto tuple : edgeTuples) {
-            graph->addEdge(std::get<0>(tuple), std::get<1>(tuple), Graph::defaultEdgeLabel);
+            graph->addEdge(std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple));
         }
         return graph;
     }
@@ -186,7 +196,7 @@ public:
         this->nodes[source]->adj.push_back(edge);
     }
 
-    static Digraph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, U>>& arcTuples) {
+    static Digraph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& arcTuples) {
         auto graph = new Digraph();
         for (auto value : nodeValues) {
             graph->addNode(value);
