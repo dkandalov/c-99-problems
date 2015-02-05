@@ -55,11 +55,9 @@ public:
         Node(T value) : value(value) {}
     };
 
+
     Map<T, Node*> nodes;
     Vector<Edge*> edges;
-
-    static const U defaultEdgeLabel = NULL;
-
 
     virtual ~GraphBase() {
         for (auto nodeEntry : nodes) {
@@ -142,7 +140,7 @@ public:
     static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
         Vector<Tuple3<T, T, U>> edges;
         for (Tuple<T, T> tuple : edgeTuples) {
-            edges.push_back(Tuple3<T, T, U>(std::get<0>(tuple), std::get<1>(tuple), Graph::defaultEdgeLabel));
+            edges.push_back(Tuple3<T, T, U>(std::get<0>(tuple), std::get<1>(tuple), U()));
         }
         return termLabel(nodeValues, edges);
     }
@@ -159,15 +157,29 @@ public:
     }
 
     static Graph* adjacent(const Vector<Tuple<T, Vector<T>>>& adjacencyList) {
+        Vector<Tuple<T, Vector<Tuple<T, U>>>> list;
+        for (auto tuple : adjacencyList) {
+            Vector<Tuple<T, U>> newAdjacent;
+            for (auto value : std::get<1>(tuple)) {
+                newAdjacent.push_back(std::make_tuple(value, U()));
+            }
+            list.push_back(std::make_tuple(std::get<0>(tuple), newAdjacent));
+        }
+        return adjacentLabel(list);
+    }
+
+    static Graph* adjacentLabel(const Vector<Tuple<T, Vector<Tuple<T, U>>>>& adjacencyList) {
         auto graph = new Graph();
         for (auto tuple : adjacencyList) {
             graph->addNode(std::get<0>(tuple));
         }
         for (auto tuple : adjacencyList) {
             auto nodeValue = std::get<0>(tuple);
-            auto adjacentNodeValues = std::get<1>(tuple);
-            for (auto value : adjacentNodeValues) {
-                graph->addEdge(nodeValue, value, Graph::defaultEdgeLabel);
+            auto adjacent = std::get<1>(tuple);
+            for (auto nodeAndLabel : adjacent) {
+                auto adjacentNodeValue = std::get<0>(nodeAndLabel);
+                auto label = std::get<1>(nodeAndLabel);
+                graph->addEdge(nodeValue, adjacentNodeValue, label);
             }
         }
         return graph;
@@ -202,7 +214,7 @@ public:
             graph->addNode(value);
         }
         for (auto tuple : arcTuples) {
-            graph->addArc(std::get<0>(tuple), std::get<1>(tuple), Digraph::defaultEdgeLabel);
+            graph->addArc(std::get<0>(tuple), std::get<1>(tuple), U());
         }
         return graph;
     }
@@ -216,7 +228,7 @@ public:
             auto nodeValue = std::get<0>(tuple);
             auto adjacentNodeValues = std::get<1>(tuple);
             for (auto value : adjacentNodeValues) {
-                graph->addArc(nodeValue, value, Digraph::defaultEdgeLabel);
+                graph->addArc(nodeValue, value, U());
             }
         }
         return graph;
