@@ -137,6 +137,12 @@ public:
         this->nodes[n2]->adj.push_back(edge);
     }
 
+    Tuple<Vector<T>, Vector<Tuple3<T, T, U>>> toTermForm() {
+        Tuple<Vector<T>, Vector<Tuple3<T, T, U>>> result;
+
+        return result;
+    }
+
     static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
         Vector<Tuple3<T, T, U>> edges;
         for (Tuple<T, T> tuple : edgeTuples) {

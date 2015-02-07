@@ -4,6 +4,7 @@
 using CharGraph = Graph<char, int>;
 using CharDigraph = Digraph<char, int>;
 using CharTuple = Tuple<char, char>;
+using CharTuple3 = Tuple3<char, char, char>;
 using CharAdjacency = Tuple<char, Vector<char>>;
 
 void expectAllGraphObjectsToBeDeleted() {
@@ -80,4 +81,21 @@ TEST(P80, GraphEquality) {
     delete(graph3);
     delete(graph4);
     expectAllGraphObjectsToBeDeleted();
+}
+
+TEST(P80, ConverstionToTermForm) {
+    auto graph1 = CharGraph::term(
+        {'a', 'b', 'c'},
+        { CharTuple('a', 'b'), CharTuple('b', 'c') }
+    );
+    Vector<char> nodeValues = {'a', 'b', 'c'};
+    Vector<Tuple3<char, char, char>> edges = { CharTuple3('a', 'b', ' '), CharTuple3('b', 'c', ' ') };
+    Tuple<Vector<char>, Vector<CharTuple3>> expected = std::make_tuple(
+            nodeValues,
+            edges
+    );
+    auto actual = graph1->toTermForm();
+    EXPECT_EQ(expected, actual);
+
+    delete(graph1);
 }
