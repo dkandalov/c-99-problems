@@ -209,17 +209,37 @@ public:
     }
 
     static Digraph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& arcTuples) {
+        Vector<Tuple3<T, T, U>> updatedArcTuples;
+        for (auto tuple : arcTuples) {
+            updatedArcTuples.push_back(std::make_tuple(std::get<0>(tuple), std::get<1>(tuple), U()));
+        }
+        return termLabel(nodeValues, updatedArcTuples);
+    }
+
+    static Digraph* termLabel(const Vector<T>& nodeValues, const Vector<Tuple3<T, T, U>>& arcTuples) {
         auto graph = new Digraph();
         for (auto value : nodeValues) {
             graph->addNode(value);
         }
         for (auto tuple : arcTuples) {
-            graph->addArc(std::get<0>(tuple), std::get<1>(tuple), U());
+            graph->addArc(std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple));
         }
         return graph;
     }
 
     static Digraph* adjacent(const Vector<Tuple<T, Vector<T>>>& adjacencyList) {
+        Vector<Tuple<T, Vector<Tuple<T, U>>>> list;
+        for (auto tuple : adjacencyList) {
+            Vector<Tuple<T, U>> newAdjacent;
+            for (auto value : std::get<1>(tuple)) {
+                newAdjacent.push_back(std::make_tuple(value, U()));
+            }
+            list.push_back(std::make_tuple(std::get<0>(tuple), newAdjacent));
+        }
+        return adjacentLabel(list);
+    }
+
+    static Digraph* adjacentLabel(const Vector<Tuple<T, Vector<Tuple<T, U>>>>& adjacencyList) {
         auto graph = new Digraph();
         for (auto tuple : adjacencyList) {
             graph->addNode(std::get<0>(tuple));
@@ -227,8 +247,10 @@ public:
         for (auto tuple : adjacencyList) {
             auto nodeValue = std::get<0>(tuple);
             auto adjacentNodeValues = std::get<1>(tuple);
-            for (auto value : adjacentNodeValues) {
-                graph->addArc(nodeValue, value, U());
+            for (auto nodeAndLabel : adjacentNodeValues) {
+                auto adjacentNodeValue = std::get<0>(nodeAndLabel);
+                auto label = std::get<1>(nodeAndLabel);
+                graph->addArc(nodeValue, adjacentNodeValue, label);
             }
         }
         return graph;
