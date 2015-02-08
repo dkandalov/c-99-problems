@@ -41,7 +41,7 @@ public:
         Node* n1;
         Node* n2;
 
-        Edge(Node* n2, Node* n1, U value) : n2(n2), n1(n1), value(value) {}
+        Edge(Node* n1, Node* n2, U value) : n1(n1), n2(n2), value(value) {}
 
         std::tuple<T, T, U> toTuple() {
             return std::make_tuple(n1->value, n2->value, value);
@@ -138,9 +138,17 @@ public:
     }
 
     Tuple<Vector<T>, Vector<Tuple3<T, T, U>>> toTermForm() {
-        Tuple<Vector<T>, Vector<Tuple3<T, T, U>>> result;
+        Vector<T> nodeValues;
+        for (auto nodeEntry : this->nodes) {
+            nodeValues.push_back(nodeEntry.first);
+        }
 
-        return result;
+        Vector<Tuple3<T, T, U>> edgeValues;
+        for (auto edge : this->edges) {
+            edgeValues.push_back(Tuple3<T,T,U>(edge->n1->value, edge->n2->value, edge->value));
+        }
+
+        return Tuple<Vector<T>, Vector<Tuple3<T, T, U>>>(nodeValues, edgeValues);
     }
 
     static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
