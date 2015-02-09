@@ -6,6 +6,7 @@ using CharDigraph = Digraph<char, int>;
 using CharTuple = Tuple<char, char>;
 using CharTuple3 = Tuple3<char, char, int>;
 using CharAdjacency = Tuple<char, Vector<char>>;
+using CharAdjacencyLabeled = Tuple<char, Vector<Tuple<char, int>>>;
 
 void expectAllGraphObjectsToBeDeleted() {
 //    std::cout << "graphs created: " << Counted<CharGraph>::objectsCreated << "\n";
@@ -83,18 +84,51 @@ TEST(P80, GraphEquality) {
     expectAllGraphObjectsToBeDeleted();
 }
 
-TEST(P80, ConverstionToTermForm) {
-    auto graph1 = CharGraph::term(
+TEST(P80, GraphConverstionToTermForm) {
+    auto graph = CharGraph::term(
         {'a', 'b', 'c'},
         { CharTuple('a', 'b'), CharTuple('b', 'c') }
     );
     Vector<char> nodeValues = {'a', 'b', 'c'};
     Vector<CharTuple3> edges = { CharTuple3('a', 'b', 0), CharTuple3('b', 'c', 0) };
-    Tuple<Vector<char>, Vector<CharTuple3>> expected = std::make_tuple(
-            nodeValues,
-            edges
-    );
-    EXPECT_EQ(expected, graph1->toTermForm());
+    auto expected = std::make_tuple(nodeValues, edges);
 
-    delete(graph1);
+    EXPECT_EQ(expected, graph->toTermForm());
+
+    delete(graph);
+    expectAllGraphObjectsToBeDeleted();
+}
+
+TEST(P80, GraphConverstionToAdjacentForm) {
+    auto graph = CharGraph::term(
+        {'a', 'b', 'c'},
+        { CharTuple('a', 'b'), CharTuple('b', 'c') }
+    );
+    Vector<CharAdjacencyLabeled> expected = {
+            CharAdjacencyLabeled('a', {Tuple<char, int>('b', 0)}),
+            CharAdjacencyLabeled('b', {Tuple<char, int>('a', 0), Tuple<char, int>('c', 0)}),
+            CharAdjacencyLabeled('c', {Tuple<char, int>('b', 0)})
+    };
+
+    EXPECT_EQ(expected, graph->toAdjacentForm());
+
+    delete(graph);
+    expectAllGraphObjectsToBeDeleted();
+}
+
+TEST(P80, DigraphConverstionToAdjacentForm) {
+    auto digraph = CharDigraph::term(
+        {'a', 'b', 'c'},
+        { CharTuple('a', 'b'), CharTuple('b', 'c') }
+    );
+    Vector<CharAdjacencyLabeled> expected = {
+            CharAdjacencyLabeled('a', {Tuple<char, int>('b', 0)}),
+            CharAdjacencyLabeled('b', {Tuple<char, int>('c', 0)}),
+            CharAdjacencyLabeled('c', {})
+    };
+
+    EXPECT_EQ(expected, digraph->toAdjacentForm());
+
+    delete(digraph);
+    expectAllGraphObjectsToBeDeleted();
 }

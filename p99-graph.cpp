@@ -108,6 +108,38 @@ public:
         nodes[value] = node;
         return node;
     }
+
+    Tuple<Vector<T>, Vector<Tuple3<T, T, U>>> toTermForm() {
+        Vector<T> nodeValues;
+        for (auto nodeEntry : this->nodes) {
+            nodeValues.push_back(nodeEntry.first);
+        }
+
+        Vector<Tuple3<T, T, U>> edgeValues;
+        for (auto edge : this->edges) {
+            edgeValues.push_back(Tuple3<T,T,U>(edge->n1->value, edge->n2->value, edge->value));
+        }
+
+        return Tuple<Vector<T>, Vector<Tuple3<T,T,U>>>(nodeValues, edgeValues);
+    }
+
+    Vector<Tuple<T, Vector<Tuple<T,U>>>> toAdjacentForm() {
+        Vector<Tuple<T, Vector<Tuple<T,U>>>> result;
+        for (auto entry : this->nodes) {
+            auto node = entry.second;
+
+            Vector<Tuple<T,U>> adjacent;
+            for (auto edge : node->adj) {
+                if (edge->n1 == node) {
+                    adjacent.push_back(Tuple<T,U>(edge->n2->value, edge->value));
+                } else {
+                    adjacent.push_back(Tuple<T,U>(edge->n1->value, edge->value));
+                }
+            }
+            result.push_back(Tuple<T, Vector<Tuple<T,U>>>(node->value, adjacent));
+        }
+        return result;
+    }
 };
 
 
@@ -135,20 +167,6 @@ public:
         this->edges.push_back(edge);
         this->nodes[n1]->adj.push_back(edge);
         this->nodes[n2]->adj.push_back(edge);
-    }
-
-    Tuple<Vector<T>, Vector<Tuple3<T, T, U>>> toTermForm() {
-        Vector<T> nodeValues;
-        for (auto nodeEntry : this->nodes) {
-            nodeValues.push_back(nodeEntry.first);
-        }
-
-        Vector<Tuple3<T, T, U>> edgeValues;
-        for (auto edge : this->edges) {
-            edgeValues.push_back(Tuple3<T,T,U>(edge->n1->value, edge->n2->value, edge->value));
-        }
-
-        return Tuple<Vector<T>, Vector<Tuple3<T, T, U>>>(nodeValues, edgeValues);
     }
 
     static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
