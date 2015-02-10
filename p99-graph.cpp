@@ -21,6 +21,7 @@ template<typename T> int Counted<T>::objectsCreated(0);
 template<typename T> int Counted<T>::objectsAlive(0);
 
 
+using String = std::string;
 template<typename T>
 using Vector = std::vector<T>;
 template<typename T, typename U>
@@ -109,7 +110,7 @@ public:
         return node;
     }
 
-    Tuple<Vector<T>, Vector<Tuple3<T, T, U>>> toTermForm() {
+    Tuple<Vector<T>, Vector<Tuple3<T, T, U>>> toTermForm() const {
         Vector<T> nodeValues;
         for (auto nodeEntry : this->nodes) {
             nodeValues.push_back(nodeEntry.first);
@@ -140,6 +141,8 @@ public:
         }
         return result;
     }
+
+    virtual String toString() const = 0;
 };
 
 
@@ -216,6 +219,18 @@ public:
         }
         return graph;
     }
+
+    String toString() const override {
+        String result = "[";
+        auto terms = std::get<1>(this->toTermForm());
+        for (auto term : terms) {
+            result += std::get<0>(term);
+            result += "-";
+            result += std::get<1>(term);
+        }
+        // TODO
+        return result + "]";
+    }
 };
 
 
@@ -286,5 +301,9 @@ public:
             }
         }
         return graph;
+    }
+
+    String toString() const override {
+        return "TODO";
     }
 };

@@ -132,3 +132,14 @@ TEST(P80, DigraphConverstionToAdjacentForm) {
     delete(digraph);
     expectAllGraphObjectsToBeDeleted();
 }
+
+TEST(P80, GraphToString) {
+    auto graph = CharGraph::term(
+        {'a', 'b', 'c'},
+        { CharTuple('a', 'b'), CharTuple('b', 'c') }
+    );
+    EXPECT_EQ("[a-b, b-c]", graph->toString());
+
+    delete(graph);
+    expectAllGraphObjectsToBeDeleted();
+}
