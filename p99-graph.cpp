@@ -221,15 +221,16 @@ public:
     }
 
     String toString() const override {
-        String result = "[";
+        String result = "";
         auto terms = std::get<1>(this->toTermForm());
-        for (auto term : terms) {
+        for (int i = 0; i < terms.size(); i++) {
+            auto term = terms[i];
+            if (i != 0) result += ", ";
             result += std::get<0>(term);
             result += "-";
             result += std::get<1>(term);
         }
-        // TODO
-        return result + "]";
+        return "[" + result + "]";
     }
 };
 
@@ -304,6 +305,14 @@ public:
     }
 
     String toString() const override {
-        return "TODO";
-    }
-};
+        String result = "";
+        auto terms = std::get<1>(this->toTermForm());
+        for (int i = 0; i < terms.size(); i++) {
+            auto term = terms[i];
+            if (i != 0) result += ", ";
+            result += std::get<0>(term);
+            result += ">";
+            result += std::get<1>(term);
+        }
+        return "[" + result + "]";
+    }};

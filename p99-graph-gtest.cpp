@@ -143,3 +143,14 @@ TEST(P80, GraphToString) {
     delete(graph);
     expectAllGraphObjectsToBeDeleted();
 }
+
+TEST(P80, DigraphToString) {
+    auto graph = CharDigraph::term(
+        {'a', 'b', 'c'},
+        { CharTuple('a', 'b'), CharTuple('b', 'c') }
+    );
+    EXPECT_EQ("[a>b, b>c]", graph->toString());
+
+    delete(graph);
+    expectAllGraphObjectsToBeDeleted();
+}
