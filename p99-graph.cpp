@@ -1,6 +1,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <sstream>
 
 // from http://stackoverflow.com/questions/1926605/how-to-count-the-number-of-objects-created-in-c
 template<typename T>
@@ -143,6 +144,14 @@ public:
     }
 
     virtual String toString() const = 0;
+
+protected:
+    template<typename O>
+    static std::string convertToString(const O o) {
+        std::stringstream s;
+        s << o;
+        return s.str();
+    }
 };
 
 
@@ -220,15 +229,29 @@ public:
         return graph;
     }
 
+    static Graph* fromString(const String s) {
+        return new Graph();// TODO
+    }
+
+    static Graph* fromStringLabel(const String s) {
+        return new Graph();// TODO
+    }
+
     String toString() const override {
         String result = "";
         auto terms = std::get<1>(this->toTermForm());
         for (int i = 0; i < terms.size(); i++) {
             auto term = terms[i];
+            auto node1Value = Graph::convertToString(std::get<0>(term));
+            auto node2Value = Graph::convertToString(std::get<1>(term));
+
             if (i != 0) result += ", ";
-            result += std::get<0>(term);
-            result += "-";
-            result += std::get<1>(term);
+            result += node1Value + "-" + node2Value;
+
+            auto label = std::get<2>(term);
+            if (label != U()) {
+                result += "/" + Graph::convertToString(label);
+            }
         }
         return "[" + result + "]";
     }
@@ -315,4 +338,6 @@ public:
             result += std::get<1>(term);
         }
         return "[" + result + "]";
-    }};
+    }
+    
+};

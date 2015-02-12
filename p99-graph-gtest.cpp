@@ -140,16 +140,23 @@ TEST(P80, GraphToString) {
     );
     EXPECT_EQ("[a-b, b-c]", graph->toString());
 
+    auto labledGraph = CharGraph::termLabel(
+        {'a', 'b', 'c'},
+        { CharTuple3('a', 'b', 1), CharTuple3('b', 'c', 2) }
+    );
+    EXPECT_EQ("[a-b/1, b-c/2]", labledGraph->toString());
+
     delete(graph);
+    delete(labledGraph);
     expectAllGraphObjectsToBeDeleted();
 }
 
 TEST(P80, DigraphToString) {
     auto graph = CharDigraph::term(
         {'a', 'b', 'c'},
-        { CharTuple('a', 'b'), CharTuple('b', 'c') }
+        { CharTuple('a', 'b'), CharTuple('b', 'a'), CharTuple('b', 'c') }
     );
-    EXPECT_EQ("[a>b, b>c]", graph->toString());
+    EXPECT_EQ("[a>b, b>a, b>c]", graph->toString());
 
     delete(graph);
     expectAllGraphObjectsToBeDeleted();
