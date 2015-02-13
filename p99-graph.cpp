@@ -249,12 +249,18 @@ public:
         return graph;
     }
 
-    static Graph* fromString(const String s) {
-        return new Graph();// TODO
+    static Graph<char, int>* fromString(const String s) {
+        auto ss = s.substr(1, s.size() - 2);
+        std::istringstream f(ss);
+        String nodeConnection;
+        while (getline(f, nodeConnection, ',')) {
+            aaa
+        }
+        return new Graph<char, int>();
     }
 
-    static Graph* fromStringLabel(const String s) {
-        return new Graph();// TODO
+    static Graph<char, int>* fromStringLabel(const String s) {
+        return new Graph<char, int>();// TODO
     }
 
     String toString() const override {
