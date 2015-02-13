@@ -158,6 +158,13 @@ TEST(P80, DigraphToString) {
     );
     EXPECT_EQ("[a>b, b>a, b>c]", graph->toString());
 
+    auto labledGraph = CharDigraph::termLabel(
+        {'a', 'b', 'c'},
+        { CharTuple3('a', 'b', 1), CharTuple3('b', 'a', 2), CharTuple3('b', 'c', 3) }
+    );
+    EXPECT_EQ("[a>b/1, b>a/2, b>c/3]", labledGraph->toString());
+
     delete(graph);
+    delete(labledGraph);
     expectAllGraphObjectsToBeDeleted();
 }

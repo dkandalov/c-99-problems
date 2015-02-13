@@ -145,6 +145,26 @@ public:
 
     virtual String toString() const = 0;
 
+    String toStringWith(String connectionSymbol) const {
+        String result = "";
+        auto terms = std::get<1>(this->toTermForm());
+        for (int i = 0; i < terms.size(); i++) {
+            auto term = terms[i];
+            auto node1Value = convertToString(std::get<0>(term));
+            auto node2Value = convertToString(std::get<1>(term));
+
+            if (i != 0) result += ", ";
+            result += node1Value + connectionSymbol + node2Value;
+
+            auto label = std::get<2>(term);
+            if (label != U()) {
+                result += "/" + convertToString(label);
+            }
+        }
+        return "[" + result + "]";
+    }
+
+
 protected:
     template<typename O>
     static std::string convertToString(const O o) {
@@ -238,22 +258,7 @@ public:
     }
 
     String toString() const override {
-        String result = "";
-        auto terms = std::get<1>(this->toTermForm());
-        for (int i = 0; i < terms.size(); i++) {
-            auto term = terms[i];
-            auto node1Value = Graph::convertToString(std::get<0>(term));
-            auto node2Value = Graph::convertToString(std::get<1>(term));
-
-            if (i != 0) result += ", ";
-            result += node1Value + "-" + node2Value;
-
-            auto label = std::get<2>(term);
-            if (label != U()) {
-                result += "/" + Graph::convertToString(label);
-            }
-        }
-        return "[" + result + "]";
+        return Graph::toStringWith("-");
     }
 };
 
@@ -328,16 +333,6 @@ public:
     }
 
     String toString() const override {
-        String result = "";
-        auto terms = std::get<1>(this->toTermForm());
-        for (int i = 0; i < terms.size(); i++) {
-            auto term = terms[i];
-            if (i != 0) result += ", ";
-            result += std::get<0>(term);
-            result += ">";
-            result += std::get<1>(term);
-        }
-        return "[" + result + "]";
+        return Digraph::toStringWith(">");
     }
-    
 };
