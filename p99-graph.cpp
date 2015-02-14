@@ -105,10 +105,9 @@ public:
         return !((*this) == that);
     }
 
-    Node* addNode(T value) {
-        auto node = new Node(value);
-        nodes[value] = node;
-        return node;
+    void addNode(T value) {
+        if (nodes.count(value) != 0) return;
+        nodes[value] = new Node(value);
     }
 
     Tuple<Vector<T>, Vector<Tuple3<T, T, U>>> toTermForm() const {
@@ -192,8 +191,8 @@ public:
     }
 
     void addEdge(T n1, T n2, U value) {
-        if (this->nodes.count(n1) == 0) throw std::invalid_argument("No nodes for value");
-        if (this->nodes.count(n2) == 0) throw std::invalid_argument("No nodes for value");
+        if (this->nodes.count(n1) == 0) throw std::invalid_argument("No nodes for value: " + Graph::convertToString(n1));
+        if (this->nodes.count(n2) == 0) throw std::invalid_argument("No nodes for value: " + Graph::convertToString(n2));
 
         auto edge = new Edge(this->nodes[n1], this->nodes[n2], value);
         this->edges.push_back(edge);
@@ -250,13 +249,19 @@ public:
     }
 
     static Graph<char, int>* fromString(const String s) {
+        Graph<char, int>* graph = new Graph<char, int>();
+
         auto ss = s.substr(1, s.size() - 2);
-        std::istringstream f(ss);
-        String nodeConnection;
-        while (getline(f, nodeConnection, ',')) {
-            aaa
+        auto tokens = parse(ss);
+        for (auto token : tokens) {
+            graph->addNode(std::get<0>(token));
+            graph->addNode(std::get<1>(token));
+            if (std::get<0>(token) != std::get<1>(token)) {
+                graph->addEdge(std::get<0>(token), std::get<1>(token), std::get<2>(token));
+            }
         }
-        return new Graph<char, int>();
+
+        return graph;
     }
 
     static Graph<char, int>* fromStringLabel(const String s) {
@@ -265,6 +270,34 @@ public:
 
     String toString() const override {
         return Graph::toStringWith("-");
+    }
+
+private:
+
+    static Vector<Tuple3<char, char, int>> parse(String s) {
+        Vector<Tuple3<char, char, int>> tokens;
+        for (int i = 0; i < s.size();) {
+            char node1Value = s[i];
+            char node2Value = s[i];
+            i += 1;
+
+            if (i + 1 < s.size() && s[i] == '-') {
+                node2Value = s[i + 1];
+                i += 2;
+            }
+
+            int label = 0;
+            if (i + 1 < s.size() && s[i] == '/') {
+                label = s[i + 1] - '0';
+                i += 2;
+            }
+            std::cout << node1Value << "\n";
+            std::cout << node2Value << "\n";
+            tokens.push_back(Tuple3<char, char, int>(node1Value, node2Value, label));
+
+            i += 2;
+        }
+        return tokens;
     }
 };
 
