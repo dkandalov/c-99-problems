@@ -146,18 +146,29 @@ public:
 
     String toStringWith(String connectionSymbol) const {
         String result = "";
-        auto terms = std::get<1>(this->toTermForm());
-        for (int i = 0; i < terms.size(); i++) {
-            auto term = terms[i];
-            auto node1Value = convertToString(std::get<0>(term));
-            auto node2Value = convertToString(std::get<1>(term));
+        int counter = 0;
+        for (auto entry : nodes) {
+            auto node = entry.second;
+            if (node->adj.size() == 0) {
+                if (counter++ > 0) result += ", ";
+                result += convertToString(node->value);
 
-            if (i != 0) result += ", ";
-            result += node1Value + connectionSymbol + node2Value;
+            } else {
+                for (int i = 0; i < node->adj.size(); i++) {
+                    auto edge = node->adj[i];
+                    if (edge->n1->value != node->value) continue;
 
-            auto label = std::get<2>(term);
-            if (label != U()) {
-                result += "/" + convertToString(label);
+                    if (counter++ > 0) result += ", ";
+                    result += convertToString(edge->n1->value)
+                            + connectionSymbol
+                            + convertToString(edge->n2->value);
+
+                    auto label = edge->value;
+                    if (label != U()) {
+                        result += "/" + convertToString(label);
+                    }
+
+                }
             }
         }
         return "[" + result + "]";
@@ -251,8 +262,7 @@ public:
     static Graph<char, int>* fromString(const String s) {
         Graph<char, int>* graph = new Graph<char, int>();
 
-        auto ss = s.substr(1, s.size() - 2);
-        auto tokens = parse(ss);
+        auto tokens = parse(s.substr(1, s.size() - 2));
         for (auto token : tokens) {
             graph->addNode(std::get<0>(token));
             graph->addNode(std::get<1>(token));
@@ -291,8 +301,6 @@ private:
                 label = s[i + 1] - '0';
                 i += 2;
             }
-            std::cout << node1Value << "\n";
-            std::cout << node2Value << "\n";
             tokens.push_back(Tuple3<char, char, int>(node1Value, node2Value, label));
 
             i += 2;

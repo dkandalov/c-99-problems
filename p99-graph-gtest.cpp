@@ -171,7 +171,7 @@ TEST(P80, DigraphToString) {
 
 TEST(P80, GraphFromString) {
     auto graph = CharGraph::fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]");
-    EXPECT_EQ("[b-c, f-c, g-h, d, f-b, k-f, h-g]", graph->toString());
+    EXPECT_EQ("[b-c, d, f-c, f-b, g-h, h-g, k-f]", graph->toString());
 
     delete(graph);
     expectAllGraphObjectsToBeDeleted();
