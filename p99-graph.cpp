@@ -80,7 +80,7 @@ public:
 
     // If the edge E connects N to another node, returns
     // the other node, otherwise returns None.
-    virtual Node* edgeTarget(Edge* edge, Node* node) const = 0;
+    virtual Node* edgeTarget(Edge* edge, Node* fromNode) const = 0;
 
     virtual bool operator ==(GraphBase<T, U>* that) {
         bool nodesAreEqual = (this->nodes.size() == that->nodes.size() &&
@@ -144,6 +144,14 @@ public:
 
     virtual String toString() const = 0;
 
+protected:
+    template<typename O>
+    static std::string convertToString(const O o) {
+        std::stringstream s;
+        s << o;
+        return s.str();
+    }
+
     String toStringWith(String connectionSymbol) const {
         String result = "";
         int counter = 0;
@@ -174,13 +182,28 @@ public:
         return "[" + result + "]";
     }
 
+    static Vector<Tuple3<char, char, int>> parse(String s, char connectionSymbol) {
+        Vector<Tuple3<char, char, int>> tokens;
+        for (int i = 0; i < s.size();) {
+            char node1Value = s[i];
+            char node2Value = s[i];
+            i += 1;
 
-protected:
-    template<typename O>
-    static std::string convertToString(const O o) {
-        std::stringstream s;
-        s << o;
-        return s.str();
+            if (i + 1 < s.size() && s[i] == connectionSymbol) {
+                node2Value = s[i + 1];
+                i += 2;
+            }
+
+            int label = 0;
+            if (i + 1 < s.size() && s[i] == '/') {
+                label = s[i + 1] - '0';
+                i += 2;
+            }
+            tokens.push_back(Tuple3<char, char, int>(node1Value, node2Value, label));
+
+            i += 2;
+        }
+        return tokens;
     }
 };
 
@@ -195,9 +218,9 @@ public:
         return dynamic_cast<Graph*>(that) != NULL && GraphBase<T, U>::operator==(that);
     }
 
-    Node* edgeTarget(Edge* edge, Node* node) const override {
-        if (edge->n1 == node) return edge->n2;
-        else if (edge->n2 == node) return edge->n1;
+    Node* edgeTarget(Edge* edge, Node* fromNode) const override {
+        if (edge->n1 == fromNode) return edge->n2;
+        else if (edge->n2 == fromNode) return edge->n1;
         else return nullptr;
     }
 
@@ -262,7 +285,7 @@ public:
     static Graph<char, int>* fromString(const String s) {
         Graph<char, int>* graph = new Graph<char, int>();
 
-        auto tokens = parse(s.substr(1, s.size() - 2));
+        auto tokens = Graph::parse(s.substr(1, s.size() - 2), '-');
         for (auto token : tokens) {
             graph->addNode(std::get<0>(token));
             graph->addNode(std::get<1>(token));
@@ -270,42 +293,11 @@ public:
                 graph->addEdge(std::get<0>(token), std::get<1>(token), std::get<2>(token));
             }
         }
-
         return graph;
-    }
-
-    static Graph<char, int>* fromStringLabel(const String s) {
-        return new Graph<char, int>();// TODO
     }
 
     String toString() const override {
         return Graph::toStringWith("-");
-    }
-
-private:
-
-    static Vector<Tuple3<char, char, int>> parse(String s) {
-        Vector<Tuple3<char, char, int>> tokens;
-        for (int i = 0; i < s.size();) {
-            char node1Value = s[i];
-            char node2Value = s[i];
-            i += 1;
-
-            if (i + 1 < s.size() && s[i] == '-') {
-                node2Value = s[i + 1];
-                i += 2;
-            }
-
-            int label = 0;
-            if (i + 1 < s.size() && s[i] == '/') {
-                label = s[i + 1] - '0';
-                i += 2;
-            }
-            tokens.push_back(Tuple3<char, char, int>(node1Value, node2Value, label));
-
-            i += 2;
-        }
-        return tokens;
     }
 };
 
@@ -320,8 +312,8 @@ public:
         return dynamic_cast<Digraph*>(that) != NULL && GraphBase<T, U>::operator==(that);
     }
 
-    Node* edgeTarget(Edge* edge, Node* node) const override {
-        if (edge->n1 == node) return edge->n2;
+    Node* edgeTarget(Edge* edge, Node* fromNode) const override {
+        if (edge->n1 == fromNode) return edge->n2;
         else return nullptr;
     }
 
@@ -374,6 +366,20 @@ public:
                 auto adjacentNodeValue = std::get<0>(nodeAndLabel);
                 auto label = std::get<1>(nodeAndLabel);
                 graph->addArc(nodeValue, adjacentNodeValue, label);
+            }
+        }
+        return graph;
+    }
+
+    static Digraph<char, int>* fromString(const String s) {
+        Digraph<char, int>* graph = new Digraph<char, int>();
+
+        auto tokens = Digraph::parse(s.substr(1, s.size() - 2), '>');
+        for (auto token : tokens) {
+            graph->addNode(std::get<0>(token));
+            graph->addNode(std::get<1>(token));
+            if (std::get<0>(token) != std::get<1>(token)) {
+                graph->addArc(std::get<0>(token), std::get<1>(token), std::get<2>(token));
             }
         }
         return graph;

@@ -140,14 +140,14 @@ TEST(P80, GraphToString) {
     );
     EXPECT_EQ("[a-b, b-c]", graph->toString());
 
-    auto labledGraph = CharGraph::termLabel(
+    auto labeledGraph = CharGraph::termLabel(
         {'a', 'b', 'c'},
         { CharTuple3('a', 'b', 1), CharTuple3('b', 'c', 2) }
     );
-    EXPECT_EQ("[a-b/1, b-c/2]", labledGraph->toString());
+    EXPECT_EQ("[a-b/1, b-c/2]", labeledGraph->toString());
 
     delete(graph);
-    delete(labledGraph);
+    delete(labeledGraph);
     expectAllGraphObjectsToBeDeleted();
 }
 
@@ -156,16 +156,16 @@ TEST(P80, DigraphToString) {
         {'a', 'b', 'c'},
         { CharTuple('a', 'b'), CharTuple('b', 'a'), CharTuple('b', 'c') }
     );
-    EXPECT_EQ("[a>b, b>a, b>c]", graph->toString());
+    EXPECT_EQ("[a>b, b>a, b>c, c]", graph->toString());
 
-    auto labledGraph = CharDigraph::termLabel(
+    auto labeledGraph = CharDigraph::termLabel(
         {'a', 'b', 'c'},
         { CharTuple3('a', 'b', 1), CharTuple3('b', 'a', 2), CharTuple3('b', 'c', 3) }
     );
-    EXPECT_EQ("[a>b/1, b>a/2, b>c/3]", labledGraph->toString());
+    EXPECT_EQ("[a>b/1, b>a/2, b>c/3, c]", labeledGraph->toString());
 
     delete(graph);
-    delete(labledGraph);
+    delete(labeledGraph);
     expectAllGraphObjectsToBeDeleted();
 }
 
@@ -173,6 +173,22 @@ TEST(P80, GraphFromString) {
     auto graph = CharGraph::fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]");
     EXPECT_EQ("[b-c, d, f-c, f-b, g-h, h-g, k-f]", graph->toString());
 
+    auto labeledGraph = CharGraph::fromString("[b-c/1, f-c/2, g-h/3, d, f-b/4, k-f/5, h-g/6]");
+    EXPECT_EQ("[b-c/1, d, f-c/2, f-b/4, g-h/3, h-g/6, k-f/5]", labeledGraph->toString());
+
     delete(graph);
+    delete(labeledGraph);
+    expectAllGraphObjectsToBeDeleted();
+}
+
+TEST(P80, DigraphFromString) {
+    auto graph = CharDigraph::fromString("[b>c, f>c, g>h, d, f>b, k>f, h>g]");
+    EXPECT_EQ("[b>c, c, d, f>c, f>b, g>h, h>g, k>f]", graph->toString());
+
+    auto labeledGraph = CharDigraph::fromString("[b>c/1, f>c/2, g>h/3, d, f>b/4, k>f/5, h>g/6]");
+    EXPECT_EQ("[b>c/1, c, d, f>c/2, f>b/4, g>h/3, h>g/6, k>f/5]", labeledGraph->toString());
+
+    delete(graph);
+    delete(labeledGraph);
     expectAllGraphObjectsToBeDeleted();
 }
