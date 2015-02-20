@@ -192,3 +192,13 @@ TEST(P80, DigraphFromString) {
     delete(labeledGraph);
     expectAllGraphObjectsToBeDeleted();
 }
+
+TEST(P81, FindAllPathsFromOneNodeToAnother) {
+    auto graph = CharDigraph::fromString("[p>q/9, m>q/7, k, p>m/5]");
+    Vector<Vector<char>> expected = {{'p', 'q'}, {'p', 'm', 'q'}};
+
+    EXPECT_EQ(expected, graph->findPaths('p', 'q'));
+
+    delete(graph);
+    expectAllGraphObjectsToBeDeleted();
+}

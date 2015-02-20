@@ -142,6 +142,21 @@ public:
         return result;
     }
 
+    Vector<Vector<T>> findPaths(T fromValue, T toValue) {
+        if (fromValue == toValue) return {};
+        auto fromNode = nodes[fromValue];
+        auto toNode = nodes[toValue];
+
+        auto neighbors = neighborsOf(fromNode);
+        if (contains(toNode, neighbors)) {
+            return {{fromValue, toValue}};
+        }
+
+
+
+        return {};
+    }
+
     virtual String toString() const = 0;
 
 protected:
@@ -204,6 +219,11 @@ protected:
             i += 2;
         }
         return tokens;
+    }
+
+    template<typename V>
+    static bool contains(V item, Vector<V> vector) {
+        return std::find(vector.begin(), vector.end(), item) != vector.end();
     }
 };
 
