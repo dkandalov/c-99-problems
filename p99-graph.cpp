@@ -2,6 +2,7 @@
 #include <map>
 #include <iostream>
 #include <sstream>
+#include <set>
 
 // from http://stackoverflow.com/questions/1926605/how-to-count-the-number-of-objects-created-in-c
 template<typename T>
@@ -25,6 +26,8 @@ template<typename T> int Counted<T>::objectsAlive(0);
 using String = std::string;
 template<typename T>
 using Vector = std::vector<T>;
+template<typename T>
+using Set = std::set<T>;
 template<typename T, typename U>
 using Map = std::map<T, U>;
 template<typename T, typename U>
@@ -143,18 +146,7 @@ public:
     }
 
     Vector<Vector<T>> findPaths(T fromValue, T toValue) {
-        if (fromValue == toValue) return {};
-        auto fromNode = nodes[fromValue];
-        auto toNode = nodes[toValue];
-
-        auto neighbors = neighborsOf(fromNode);
-        if (contains(toNode, neighbors)) {
-            return {{fromValue, toValue}};
-        }
-
-
-
-        return {};
+        return doFindPaths(fromValue, toValue, Set<T>());
     }
 
     virtual String toString() const = 0;
@@ -221,9 +213,26 @@ protected:
         return tokens;
     }
 
-    template<typename V>
-    static bool contains(V item, Vector<V> vector) {
-        return std::find(vector.begin(), vector.end(), item) != vector.end();
+private:
+    Vector<Vector<T>> doFindPaths(T fromValue, T toValue, Set<T> visitedNodes) {
+        if (fromValue == toValue) return {{fromValue}};
+        auto fromNode = nodes[fromValue];
+        auto toNode = nodes[toValue];
+
+        Vector<Vector<T>> result = {};
+        auto neighbors = neighborsOf(fromNode);
+        visitedNodes.insert(fromValue);
+
+        for (auto neighbor : neighbors) {
+            if (visitedNodes.count(neighbor->value) != 0) continue;
+            auto paths = doFindPaths(neighbor->value, toValue, visitedNodes);
+            for (auto path : paths) {
+                path.insert(path.begin(), fromValue);
+                result.push_back(path);
+            }
+
+        }
+        return result;
     }
 };
 
