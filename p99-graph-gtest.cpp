@@ -224,3 +224,14 @@ TEST(P81, FindAllPathsFromOneNodeToAnother_InGraph) {
     delete(graph);
     expectAllGraphObjectsToBeDeleted();
 }
+
+TEST(P82, FindCycleFromNode) {
+    auto graph = CharGraph::fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]");
+
+    Vector<Vector<char>> expected = {{'f', 'c', 'b', 'f'}, {'f', 'b', 'c', 'f'}};
+    EXPECT_EQ(expected, graph->findCycles('f'));
+
+
+    delete(graph);
+    expectAllGraphObjectsToBeDeleted();
+}

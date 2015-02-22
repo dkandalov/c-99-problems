@@ -149,6 +149,21 @@ public:
         return doFindPaths(fromValue, toValue, Set<T>());
     }
 
+    Vector<Vector<T>> findCycles(T fromValue) {
+        Vector<Vector<T>> allPaths;
+        for (auto neighbor : neighborsOf(this->nodes[fromValue])) {
+            auto paths = findPaths(neighbor->value, fromValue);
+            allPaths.insert(allPaths.end(), paths.begin(), paths.end());
+        }
+        Vector<Vector<T>> result;
+        for (auto path : allPaths) {
+            if (path.size() < 3) continue;
+            path.insert(path.begin(), fromValue);
+            result.push_back(path);
+        }
+        return result;
+    }
+
     virtual String toString() const = 0;
 
 protected:
