@@ -257,10 +257,15 @@ public:
         if (this->nodes.count(n1) == 0) throw std::invalid_argument("No nodes for value: " + Graph::convertToString(n1));
         if (this->nodes.count(n2) == 0) throw std::invalid_argument("No nodes for value: " + Graph::convertToString(n2));
 
-        auto edge = new Edge(this->nodes[n1], this->nodes[n2], value);
+        auto node1 = this->nodes[n1];
+        auto node2 = this->nodes[n2];
+        Vector<Node*> neighbors = this->neighborsOf(node1);
+        if (std::find(neighbors.begin(), neighbors.end(), node2) != neighbors.end()) return;
+
+        auto edge = new Edge(node1, node2, value);
         this->edges.push_back(edge);
-        this->nodes[n1]->adj.push_back(edge);
-        this->nodes[n2]->adj.push_back(edge);
+        node1->adj.push_back(edge);
+        node2->adj.push_back(edge);
     }
 
     static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {

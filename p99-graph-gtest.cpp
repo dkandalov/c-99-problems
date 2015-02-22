@@ -171,10 +171,10 @@ TEST(P80, DigraphToString) {
 
 TEST(P80, GraphFromString) {
     auto graph = CharGraph::fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]");
-    EXPECT_EQ("[b-c, d, f-c, f-b, g-h, h-g, k-f]", graph->toString());
+    EXPECT_EQ("[b-c, d, f-c, f-b, g-h, k-f]", graph->toString());
 
     auto labeledGraph = CharGraph::fromString("[b-c/1, f-c/2, g-h/3, d, f-b/4, k-f/5, h-g/6]");
-    EXPECT_EQ("[b-c/1, d, f-c/2, f-b/4, g-h/3, h-g/6, k-f/5]", labeledGraph->toString());
+    EXPECT_EQ("[b-c/1, d, f-c/2, f-b/4, g-h/3, k-f/5]", labeledGraph->toString());
 
     delete(graph);
     delete(labeledGraph);
@@ -217,6 +217,9 @@ TEST(P81, FindAllPathsFromOneNodeToAnother_InGraph) {
 
     expected = {{'g', 'h'}};
     EXPECT_EQ(expected, graph->findPaths('g', 'h'));
+
+    expected = {{'k', 'f', 'c'}, {'k', 'f', 'b', 'c'}};
+    EXPECT_EQ(expected, graph->findPaths('k', 'c'));
 
     delete(graph);
     expectAllGraphObjectsToBeDeleted();
