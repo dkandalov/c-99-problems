@@ -283,6 +283,10 @@ public:
         node2->adj.push_back(edge);
     }
 
+    Vector<Graph*> spanningTrees() {
+        return {};
+    }
+
     static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
         Vector<Tuple3<T, T, U>> edges;
         for (Tuple<T, T> tuple : edgeTuples) {

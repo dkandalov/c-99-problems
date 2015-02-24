@@ -235,3 +235,14 @@ TEST(P82, FindCycleFromNode) {
     delete(graph);
     expectAllGraphObjectsToBeDeleted();
 }
+
+TEST(P83, ConstructAllSpanningTrees) {
+    auto graph = CharGraph::fromString("[a-b, b-c, a-c]");
+
+    Vector<CharGraph*> expected = {};
+    Vector<CharGraph*> actual = graph->spanningTrees();
+    //EXPECT_EQ(expected, actual);
+
+    delete(graph);
+    expectAllGraphObjectsToBeDeleted();
+}
