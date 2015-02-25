@@ -108,6 +108,10 @@ public:
         return !((*this) == that);
     }
 
+    bool equalTo(GraphBase<T, U>* that) {
+        return this->operator==(that);
+    }
+
     void addNode(T value) {
         if (nodes.count(value) != 0) return;
         nodes[value] = new Node(value);
@@ -283,7 +287,7 @@ public:
         node2->adj.push_back(edge);
     }
 
-    Vector<Graph*> spanningTrees() {
+    Vector<std::unique_ptr<Graph>> spanningTrees() {
         return {};
     }
 

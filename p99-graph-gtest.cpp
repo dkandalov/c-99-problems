@@ -8,6 +8,24 @@ using CharTuple3 = Tuple3<char, char, int>;
 using CharAdjacency = Tuple<char, Vector<char>>;
 using CharAdjacencyLabeled = Tuple<char, Vector<Tuple<char, int>>>;
 
+template<typename T, typename U>
+void expectEqualGraphs(std::unique_ptr<Graph<T, U>>& expected,
+                       std::unique_ptr<Graph<T, U>>& actual) {
+    std::cout << "expected graph: " << expected->toString() << "\n";
+    std::cout << "actual graph:   " << actual->toString() << "\n";
+    std::flush(std::cout);
+    EXPECT_TRUE(expected->equalTo(*actual));
+}
+
+template<typename T, typename U>
+void expectEqualGraphVectors(Vector<std::unique_ptr<Graph<T, U>>> expected,
+                             Vector<std::unique_ptr<Graph<T, U>>> actual) {
+    EXPECT_EQ(expected.size(), actual.size());
+    for (auto i = expected.begin(), j = actual.begin(); i != expected.end(); i++, j++) {
+        expectEqualGraphs(*i, *j);
+    }
+}
+
 void expectAllGraphObjectsToBeDeleted() {
 //    std::cout << "graphs created: " << Counted<CharGraph>::objectsCreated << "\n";
 //    std::cout << "nodes created: " << Counted<CharGraph::Node>::objectsCreated << "\n";
@@ -239,9 +257,9 @@ TEST(P82, FindCycleFromNode) {
 TEST(P83, ConstructAllSpanningTrees) {
     auto graph = CharGraph::fromString("[a-b, b-c, a-c]");
 
-    Vector<CharGraph*> expected = {};
-    Vector<CharGraph*> actual = graph->spanningTrees();
-    //EXPECT_EQ(expected, actual);
+    Vector<std::unique_ptr<CharGraph>> expected = {};
+    Vector<std::unique_ptr<CharGraph>> actual = graph->spanningTrees();
+    expectEqualGraphVectors<char, int>(expected, actual);
 
     delete(graph);
     expectAllGraphObjectsToBeDeleted();
