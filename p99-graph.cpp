@@ -34,7 +34,8 @@ template<typename T, typename U>
 using Tuple = std::tuple<T, U>;
 template<typename T, typename U, typename V>
 using Tuple3 = std::tuple<T, U, V>;
-
+template<typename T>
+using p = std::unique_ptr<T>;
 
 template<typename T, typename U>
 class GraphBase {
@@ -287,8 +288,10 @@ public:
         node2->adj.push_back(edge);
     }
 
-    Vector<std::unique_ptr<Graph>> spanningTrees() {
-        return {};
+    Vector<p<Graph>> spanningTrees() {
+        Vector<p<Graph>> result;
+        result.push_back(p<Graph>(new Graph()));
+        return result;
     }
 
     static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {

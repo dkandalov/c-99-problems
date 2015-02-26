@@ -14,7 +14,7 @@ void expectEqualGraphs(std::unique_ptr<Graph<T, U>>& expected,
     std::cout << "expected graph: " << expected->toString() << "\n";
     std::cout << "actual graph:   " << actual->toString() << "\n";
     std::flush(std::cout);
-    EXPECT_TRUE(expected->equalTo(*actual));
+    EXPECT_TRUE(expected->equalTo(actual.get()));
 }
 
 template<typename T, typename U>
@@ -254,13 +254,22 @@ TEST(P82, FindCycleFromNode) {
     expectAllGraphObjectsToBeDeleted();
 }
 
-TEST(P83, ConstructAllSpanningTrees) {
+
+class GraphTest : public ::testing::Test {
+protected:
+    virtual void TearDown() override {
+        expectAllGraphObjectsToBeDeleted();
+        std::cout << "TearDown" << "\n";
+        std::flush(std::cout);
+    }
+};
+
+TEST_F(GraphTest, P83_ConstructAllSpanningTrees) {
     auto graph = CharGraph::fromString("[a-b, b-c, a-c]");
+    Vector<p<CharGraph>> actual = graph->spanningTrees();
 
-    Vector<std::unique_ptr<CharGraph>> expected = {};
-    Vector<std::unique_ptr<CharGraph>> actual = graph->spanningTrees();
-    expectEqualGraphVectors<char, int>(expected, actual);
+    Vector<p<CharGraph>> expected = {};
+    expected.push_back(p<CharGraph>(CharGraph::fromString("[a-b, b-c, a-c]")));
 
-    delete(graph);
-    expectAllGraphObjectsToBeDeleted();
+    expectEqualGraphs<char, int>(expected.front(), actual.front());
 }
