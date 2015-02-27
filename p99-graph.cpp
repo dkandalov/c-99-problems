@@ -299,7 +299,7 @@ public:
         return result;
     }
 
-    static Graph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
+    static p<Graph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
         Vector<Tuple3<T, T, U>> edges;
         for (Tuple<T, T> tuple : edgeTuples) {
             edges.push_back(Tuple3<T, T, U>(std::get<0>(tuple), std::get<1>(tuple), U()));
@@ -307,8 +307,8 @@ public:
         return termLabel(nodeValues, edges);
     }
 
-    static Graph* termLabel(const Vector<T>& nodeValues, const Vector<Tuple3<T, T, U>>& edgeTuples) {
-        auto graph = new Graph();
+    static p<Graph> termLabel(const Vector<T>& nodeValues, const Vector<Tuple3<T, T, U>>& edgeTuples) {
+        auto graph = p_(new Graph());
         for (auto value : nodeValues) {
             graph->addNode(value);
         }
@@ -318,7 +318,7 @@ public:
         return graph;
     }
 
-    static Graph* adjacent(const Vector<Tuple<T, Vector<T>>>& adjacencyList) {
+    static p<Graph> adjacent(const Vector<Tuple<T, Vector<T>>>& adjacencyList) {
         Vector<Tuple<T, Vector<Tuple<T, U>>>> list;
         for (auto tuple : adjacencyList) {
             Vector<Tuple<T, U>> newAdjacent;
@@ -330,8 +330,8 @@ public:
         return adjacentLabel(list);
     }
 
-    static Graph* adjacentLabel(const Vector<Tuple<T, Vector<Tuple<T, U>>>>& adjacencyList) {
-        auto graph = new Graph();
+    static p<Graph> adjacentLabel(const Vector<Tuple<T, Vector<Tuple<T, U>>>>& adjacencyList) {
+        auto graph = p_(new Graph());
         for (auto tuple : adjacencyList) {
             graph->addNode(std::get<0>(tuple));
         }
@@ -347,8 +347,8 @@ public:
         return graph;
     }
 
-    static Graph<char, int>* fromString(const String s) {
-        Graph<char, int>* graph = new Graph<char, int>();
+    static p<Graph<char, int>> fromString(const String s) {
+        auto graph = p_(new Graph<char, int>());
 
         auto tokens = Graph::parse(s.substr(1, s.size() - 2), '-');
         for (auto token : tokens) {
@@ -388,7 +388,7 @@ public:
         this->nodes[source]->adj.push_back(edge);
     }
 
-    static Digraph* term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& arcTuples) {
+    static p<Digraph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& arcTuples) {
         Vector<Tuple3<T, T, U>> updatedArcTuples;
         for (auto tuple : arcTuples) {
             updatedArcTuples.push_back(std::make_tuple(std::get<0>(tuple), std::get<1>(tuple), U()));
@@ -396,8 +396,8 @@ public:
         return termLabel(nodeValues, updatedArcTuples);
     }
 
-    static Digraph* termLabel(const Vector<T>& nodeValues, const Vector<Tuple3<T, T, U>>& arcTuples) {
-        auto graph = new Digraph();
+    static p<Digraph> termLabel(const Vector<T>& nodeValues, const Vector<Tuple3<T, T, U>>& arcTuples) {
+        auto graph = p_(new Digraph());
         for (auto value : nodeValues) {
             graph->addNode(value);
         }
@@ -407,7 +407,7 @@ public:
         return graph;
     }
 
-    static Digraph* adjacent(const Vector<Tuple<T, Vector<T>>>& adjacencyList) {
+    static p<Digraph> adjacent(const Vector<Tuple<T, Vector<T>>>& adjacencyList) {
         Vector<Tuple<T, Vector<Tuple<T, U>>>> list;
         for (auto tuple : adjacencyList) {
             Vector<Tuple<T, U>> newAdjacent;
@@ -419,8 +419,8 @@ public:
         return adjacentLabel(list);
     }
 
-    static Digraph* adjacentLabel(const Vector<Tuple<T, Vector<Tuple<T, U>>>>& adjacencyList) {
-        auto graph = new Digraph();
+    static p<Digraph> adjacentLabel(const Vector<Tuple<T, Vector<Tuple<T, U>>>>& adjacencyList) {
+        auto graph = p_(new Digraph());
         for (auto tuple : adjacencyList) {
             graph->addNode(std::get<0>(tuple));
         }
@@ -436,8 +436,8 @@ public:
         return graph;
     }
 
-    static Digraph<char, int>* fromString(const String s) {
-        Digraph<char, int>* graph = new Digraph<char, int>();
+    static p<Digraph<char, int>> fromString(const String s) {
+        auto graph = p_(new Digraph<char, int>());
 
         auto tokens = Digraph::parse(s.substr(1, s.size() - 2), '>');
         for (auto token : tokens) {

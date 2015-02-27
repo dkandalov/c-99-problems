@@ -54,60 +54,60 @@ protected:
 
 
 TEST_F(GraphTest, P80_GraphCanBeCreatedFromTermsAndAdjacencyList) {
-    auto graph1 = p_(CharGraph::term(
+    auto graph1 = CharGraph::term(
         {'a', 'b', 'c'},
         {CharTuple('a', 'b'), CharTuple('b', 'c')}
-    ));
-    auto graph2 = p_(CharGraph::adjacent({
+    );
+    auto graph2 = CharGraph::adjacent({
             CharAdjacency('a', {'b'}),
             CharAdjacency('b', {'c'}),
             CharAdjacency('c', {})
-    }));
+    });
 }
 
 TEST_F(GraphTest, P80_DirectedGraphCanBeCreatedFromTermsAndAdjacencyList) {
-    auto graph1 = p_(CharDigraph::term(
+    auto graph1 = CharDigraph::term(
         {'a', 'b', 'c'},
         {CharTuple('a', 'b'), CharTuple('b', 'c')}
-    ));
-    auto graph2 = p_(CharDigraph::adjacent({
+    );
+    auto graph2 = CharDigraph::adjacent({
             CharAdjacency('a', {'b'}),
             CharAdjacency('b', {'c'}),
             CharAdjacency('c', {})
-    }));
+    });
 }
 
 TEST_F(GraphTest, P80_GraphEquality) {
-    auto graph1 = p_(CharGraph::term(
+    auto graph1 = CharGraph::term(
             {'a', 'b', 'c'},
             {CharTuple('a', 'b'), CharTuple('b', 'c')}
-    ));
-    auto graph2 = p_(CharGraph::term(
+    );
+    auto graph2 = CharGraph::term(
             {'a', 'b', 'c'},
             {CharTuple('a', 'b'), CharTuple('b', 'c')}
-    ));
+    );
     expectEqualGraphs(graph1, graph1);
     expectEqualGraphs(graph1, graph2);
     expectEqualGraphs(graph2, graph2);
 
-    auto graph3 = p_(CharGraph::term(
+    auto graph3 = CharGraph::term(
         {'a', 'b', 'c', 'd'},
         {CharTuple('a', 'b'), CharTuple('b', 'c')}
-    ));
+    );
     expectNotEqualGraphs(graph1, graph3);
 
-    auto graph4 = p_(CharGraph::term(
+    auto graph4 = CharGraph::term(
         {'a', 'b', 'c'},
         {CharTuple('a', 'b'), CharTuple('b', 'c'), CharTuple{'c', 'a'}}
-    ));
+    );
     expectNotEqualGraphs(graph1, graph4);
 }
 
 TEST_F(GraphTest, P80_GraphConverstionToTermForm) {
-    auto graph = p_(CharGraph::term(
+    auto graph = CharGraph::term(
         {'a', 'b', 'c'},
         { CharTuple('a', 'b'), CharTuple('b', 'c') }
-    ));
+    );
     Vector<char> nodeValues = {'a', 'b', 'c'};
     Vector<CharTuple3> edges = { CharTuple3('a', 'b', 0), CharTuple3('b', 'c', 0) };
     auto expected = std::make_tuple(nodeValues, edges);
@@ -116,10 +116,10 @@ TEST_F(GraphTest, P80_GraphConverstionToTermForm) {
 }
 
 TEST_F(GraphTest, P80_GraphConverstionToAdjacentForm) {
-    auto graph = p_(CharGraph::term(
+    auto graph = CharGraph::term(
         {'a', 'b', 'c'},
         { CharTuple('a', 'b'), CharTuple('b', 'c') }
-    ));
+    );
     Vector<CharAdjacencyLabeled> expected = {
             CharAdjacencyLabeled('a', {Tuple<char, int>('b', 0)}),
             CharAdjacencyLabeled('b', {Tuple<char, int>('a', 0), Tuple<char, int>('c', 0)}),
@@ -130,10 +130,10 @@ TEST_F(GraphTest, P80_GraphConverstionToAdjacentForm) {
 }
 
 TEST_F(GraphTest, P80_DigraphConverstionToAdjacentForm) {
-    auto digraph = p_(CharDigraph::term(
+    auto digraph = CharDigraph::term(
         {'a', 'b', 'c'},
         { CharTuple('a', 'b'), CharTuple('b', 'c') }
-    ));
+    );
     Vector<CharAdjacencyLabeled> expected = {
             CharAdjacencyLabeled('a', {Tuple<char, int>('b', 0)}),
             CharAdjacencyLabeled('b', {Tuple<char, int>('c', 0)}),
@@ -144,51 +144,51 @@ TEST_F(GraphTest, P80_DigraphConverstionToAdjacentForm) {
 }
 
 TEST_F(GraphTest, P80_GraphToString) {
-    auto graph = p_(CharGraph::term(
+    auto graph = CharGraph::term(
         {'a', 'b', 'c'},
         { CharTuple('a', 'b'), CharTuple('b', 'c') }
-    ));
+    );
     EXPECT_EQ("[a-b, b-c]", graph->toString());
 
-    auto labeledGraph = p_(CharGraph::termLabel(
+    auto labeledGraph = CharGraph::termLabel(
         {'a', 'b', 'c'},
         { CharTuple3('a', 'b', 1), CharTuple3('b', 'c', 2) }
-    ));
+    );
     EXPECT_EQ("[a-b/1, b-c/2]", labeledGraph->toString());
 }
 
 TEST_F(GraphTest, P80_DigraphToString) {
-    auto graph = p_(CharDigraph::term(
+    auto graph = CharDigraph::term(
         {'a', 'b', 'c'},
         { CharTuple('a', 'b'), CharTuple('b', 'a'), CharTuple('b', 'c') }
-    ));
+    );
     EXPECT_EQ("[a>b, b>a, b>c, c]", graph->toString());
 
-    auto labeledGraph = p_(CharDigraph::termLabel(
+    auto labeledGraph = CharDigraph::termLabel(
         {'a', 'b', 'c'},
         { CharTuple3('a', 'b', 1), CharTuple3('b', 'a', 2), CharTuple3('b', 'c', 3) }
-    ));
+    );
     EXPECT_EQ("[a>b/1, b>a/2, b>c/3, c]", labeledGraph->toString());
 }
 
 TEST_F(GraphTest, P80_GraphFromString) {
-    auto graph = p_(CharGraph::fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]"));
+    auto graph = CharGraph::fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]");
     EXPECT_EQ("[b-c, d, f-c, f-b, g-h, k-f]", graph->toString());
 
-    auto labeledGraph = p_(CharGraph::fromString("[b-c/1, f-c/2, g-h/3, d, f-b/4, k-f/5, h-g/6]"));
+    auto labeledGraph = CharGraph::fromString("[b-c/1, f-c/2, g-h/3, d, f-b/4, k-f/5, h-g/6]");
     EXPECT_EQ("[b-c/1, d, f-c/2, f-b/4, g-h/3, k-f/5]", labeledGraph->toString());
 }
 
 TEST_F(GraphTest, P80_DigraphFromString) {
-    auto graph = p_(CharDigraph::fromString("[b>c, f>c, g>h, d, f>b, k>f, h>g]"));
+    auto graph = CharDigraph::fromString("[b>c, f>c, g>h, d, f>b, k>f, h>g]");
     EXPECT_EQ("[b>c, c, d, f>c, f>b, g>h, h>g, k>f]", graph->toString());
 
-    auto labeledGraph = p_(CharDigraph::fromString("[b>c/1, f>c/2, g>h/3, d, f>b/4, k>f/5, h>g/6]"));
+    auto labeledGraph = CharDigraph::fromString("[b>c/1, f>c/2, g>h/3, d, f>b/4, k>f/5, h>g/6]");
     EXPECT_EQ("[b>c/1, c, d, f>c/2, f>b/4, g>h/3, h>g/6, k>f/5]", labeledGraph->toString());
 }
 
 TEST_F(GraphTest, P81_FindAllPathsFromOneNodeToAnother_InDigraph) {
-    auto graph = p_(CharDigraph::fromString("[p>q/9, m>q/7, k, p>m/5]"));
+    auto graph = CharDigraph::fromString("[p>q/9, m>q/7, k, p>m/5]");
 
     Vector<Vector<char>> expected = {{'p', 'q'}, {'p', 'm', 'q'}};
     EXPECT_EQ(expected, graph->findPaths('p', 'q'));
@@ -201,7 +201,7 @@ TEST_F(GraphTest, P81_FindAllPathsFromOneNodeToAnother_InDigraph) {
 }
 
 TEST_F(GraphTest, P81_FindAllPathsFromOneNodeToAnother_InGraph) {
-    auto graph = p_(CharGraph::fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]"));
+    auto graph = CharGraph::fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]");
 
     Vector<Vector<char>> expected = {};
     EXPECT_EQ(expected, graph->findPaths('g', 'd'));
@@ -214,18 +214,18 @@ TEST_F(GraphTest, P81_FindAllPathsFromOneNodeToAnother_InGraph) {
 }
 
 TEST_F(GraphTest, P82_FindCycleFromNode) {
-    auto graph = p_(CharGraph::fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]"));
+    auto graph = CharGraph::fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]");
 
     Vector<Vector<char>> expected = {{'f', 'c', 'b', 'f'}, {'f', 'b', 'c', 'f'}};
     EXPECT_EQ(expected, graph->findCycles('f'));
 }
 
 TEST_F(GraphTest, P83_ConstructAllSpanningTrees) {
-    auto graph = p_(CharGraph::fromString("[a-b, b-c, a-c]"));
+    auto graph = CharGraph::fromString("[a-b, b-c, a-c]");
     Vector<p<CharGraph>> actual = graph->spanningTrees();
 
     Vector<p<CharGraph>> expected = {};
-    expected.push_back(p_(CharGraph::fromString("[a-b, b-c, a-c]")));
+    expected.push_back(CharGraph::fromString("[a-b, b-c, a-c]"));
 
 //    TODO expectEqualGraphs(expected.front(), actual.front());
 }
