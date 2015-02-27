@@ -37,6 +37,11 @@ using Tuple3 = std::tuple<T, U, V>;
 template<typename T>
 using p = std::unique_ptr<T>;
 
+template<typename T>
+p<T> p_(T* t) {
+    return p<T>(t);
+}
+
 template<typename T, typename U>
 class GraphBase {
 public:
