@@ -25,8 +25,8 @@ void expectNotEqualGraphs(p<Graph<T, U>>& expected, p<Graph<T, U>>& actual) {
 }
 
 template<typename T, typename U>
-void expectEqualGraphVectors(Vector<p<Graph<T, U>>> expected,
-                             Vector<p<Graph<T, U>>> actual) {
+void expectEqualGraphVectors(Vector<p<Graph<T, U>>>& expected,
+                             Vector<p<Graph<T, U>>>& actual) {
     EXPECT_EQ(expected.size(), actual.size());
     for (auto i = expected.begin(), j = actual.begin(); i != expected.end(); i++, j++) {
         expectEqualGraphs(*i, *j);
@@ -222,10 +222,12 @@ TEST_F(GraphTest, P82_FindCycleFromNode) {
 
 TEST_F(GraphTest, P83_ConstructAllSpanningTrees) {
     auto graph = CharGraph::fromString("[a-b, b-c, a-c]");
-    Vector<p<CharGraph>> actual = graph->spanningTrees();
+    Vector<p<CharGraph>> actual = graph->allSpanningTrees();
 
-    Vector<p<CharGraph>> expected = {};
-    expected.push_back(CharGraph::fromString("[a-b, b-c, a-c]"));
+    Vector<p<CharGraph>> expected;
+    expected.push_back(CharGraph::fromString("[a-b, b-c]"));
+    expected.push_back(CharGraph::fromString("[a-c, b-c]"));
+    expected.push_back(CharGraph::fromString("[a-b, a-c]"));
 
-//    TODO expectEqualGraphs(expected.front(), actual.front());
+    expectEqualGraphVectors(expected, actual);
 }

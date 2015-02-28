@@ -293,9 +293,16 @@ public:
         node2->adj.push_back(edge);
     }
 
-    Vector<p<Graph>> spanningTrees() {
+    Vector<p<Graph>> allSpanningTrees() {
         Vector<p<Graph>> result;
-        result.push_back(p<Graph>(new Graph()));
+
+        auto tree = p_(new Graph());
+        for (auto entry : this->nodes) {
+            for (auto neighbor : this->neighborsOf(entry.second)) {
+                tree->addEdge(entry.first, neighbor->value, U());
+                // TODO
+            }
+        }
         return result;
     }
 
