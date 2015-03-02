@@ -28,7 +28,8 @@ template<typename T, typename U>
 void expectEqualGraphVectors(Vector<p<Graph<T, U>>>& expected,
                              Vector<p<Graph<T, U>>>& actual) {
     EXPECT_EQ(expected.size(), actual.size());
-    for (auto i = expected.begin(), j = actual.begin(); i != expected.end(); i++, j++) {
+    for (auto i = expected.begin(), j = actual.begin();
+         i != expected.end() && j != actual.end(); i++, j++) {
         expectEqualGraphs(*i, *j);
     }
 }
