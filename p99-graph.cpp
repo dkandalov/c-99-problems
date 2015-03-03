@@ -296,17 +296,19 @@ public:
     Vector<p<Graph>> allSpanningTrees() {
         if (this->nodes.empty()) return {};
         auto node = this->nodes.begin()->second;
-        auto spanningPaths = allSpanningPaths(node, Vector<Tuple<T, T>>(), Set<T>());
+        auto spanningPaths = allSpanningPaths(node, Vector<Tuple<T, T>>(), Set<T>({node->value}));
 
         Vector<p<Graph>> spanningTrees;
         for (auto path : spanningPaths) {
-            auto graph = p_(new Graph());
+            auto graph = new Graph();
             for (auto connection : path) {
                 graph->addNode(std::get<0>(connection));
                 graph->addNode(std::get<1>(connection));
                 graph->addEdge(std::get<0>(connection), std::get<1>(connection), U());
+                std::cout << std::get<0>(connection) << std::get<1>(connection) << ", ";
             }
-            spanningTrees.push_back(graph);
+            std::cout << "\n";
+            spanningTrees.push_back(p_(graph));
         }
         return spanningTrees;
     }
@@ -315,7 +317,7 @@ public:
         Vector<Vector<Tuple<T, T>>> result;
 
         for (auto neighbor : this->neighborsOf(node)) {
-            if (visited.count(node->value) > 0) continue;
+            if (visited.count(neighbor->value) > 0) continue;
 
             auto pathCopy = Vector<Tuple<T, T>>(path);
             pathCopy.push_back(std::make_tuple(node->value, neighbor->value));
@@ -325,7 +327,7 @@ public:
             }
 
             auto visitedCopy = Set<T>(visited);
-            visitedCopy.insert(node->value);
+            visitedCopy.insert(neighbor->value);
             auto subResult = allSpanningPaths(neighbor, pathCopy, visitedCopy);
             for (auto item : subResult) {
                 result.push_back(item);
