@@ -85,7 +85,7 @@ TEST_F(GraphTest, P80_GraphEquality) {
     );
     auto graph2 = CharGraph::term(
             {'a', 'b', 'c'},
-            {CharTuple('a', 'b'), CharTuple('b', 'c')}
+            {CharTuple('a', 'b'), CharTuple('c', 'b')}
     );
     expectEqualGraphs(graph1, graph1);
     expectEqualGraphs(graph1, graph2);
@@ -227,7 +227,7 @@ TEST_F(GraphTest, P83_ConstructAllSpanningTrees) {
 
     Vector<p<CharGraph>> expected;
     expected.push_back(CharGraph::fromString("[a-b, b-c]"));
-    expected.push_back(CharGraph::fromString("[a-c, b-c]"));
+    expected.push_back(CharGraph::fromString("[a-c, c-b]"));
     expected.push_back(CharGraph::fromString("[a-b, a-c]"));
 
     expectEqualGraphVectors(expected, actual);

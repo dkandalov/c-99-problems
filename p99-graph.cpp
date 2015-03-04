@@ -110,12 +110,12 @@ public:
         return nodesAreEqual && edgesAreEqual;
     }
 
-    bool operator !=(GraphBase<T, U>* that) {
-        return !((*this) == that);
-    }
-
     bool equalTo(GraphBase<T, U>* that) {
         return this->operator==(that);
+    }
+
+    bool operator !=(GraphBase<T, U>* that) {
+        return !((*this) == that);
     }
 
     void addNode(T value) {
@@ -295,47 +295,43 @@ public:
 
     Vector<p<Graph>> allSpanningTrees() {
         if (this->nodes.empty()) return {};
-        auto node = this->nodes.begin()->second;
-        auto spanningPaths = allSpanningPaths(node, Vector<Tuple<T, T>>(), Set<T>({node->value}));
 
         Vector<p<Graph>> spanningTrees;
-        for (auto path : spanningPaths) {
-            auto graph = new Graph();
-            for (auto connection : path) {
-                graph->addNode(std::get<0>(connection));
-                graph->addNode(std::get<1>(connection));
-                graph->addEdge(std::get<0>(connection), std::get<1>(connection), U());
-                std::cout << std::get<0>(connection) << std::get<1>(connection) << ", ";
+        for (auto entry : this->nodes) {
+            auto node = entry.second;
+            auto spanningPaths = allSpanningPaths(node, Vector<Tuple<T, T>>(), Set<T>({node->value}));
+
+            for (auto path : spanningPaths) {
+                auto graph = new Graph();
+                for (auto connection : path) {
+                    graph->addNode(std::get<0>(connection));
+                    graph->addNode(std::get<1>(connection));
+                    graph->addEdge(std::get<0>(connection), std::get<1>(connection), U());
+                    std::cout << std::get<0>(connection) << std::get<1>(connection) << ", ";
+                }
+                std::cout << "\n";
+                spanningTrees.push_back(p_(graph));
             }
-            std::cout << "\n";
-            spanningTrees.push_back(p_(graph));
         }
         return spanningTrees;
     }
 
     Vector<Vector<Tuple<T, T>>> allSpanningPaths(Node* node, Vector<Tuple<T, T>> path, Set<T> visited) {
-        Vector<Vector<Tuple<T, T>>> result;
+        if (visited.size() == this->nodes.size()) return {path};
 
+        Vector<Vector<Tuple<T, T>>> result;
         for (auto neighbor : this->neighborsOf(node)) {
             if (visited.count(neighbor->value) > 0) continue;
 
             auto pathCopy = Vector<Tuple<T, T>>(path);
-            pathCopy.push_back(std::make_tuple(node->value, neighbor->value));
-            if (visited.size() + 1 == this->nodes.size()) {
-                result.push_back(pathCopy);
-                continue;
-            }
-
             auto visitedCopy = Set<T>(visited);
+            pathCopy.push_back(std::make_tuple(node->value, neighbor->value));
             visitedCopy.insert(neighbor->value);
-            auto subResult = allSpanningPaths(neighbor, pathCopy, visitedCopy);
-            for (auto item : subResult) {
+
+            for (auto item : allSpanningPaths(neighbor, pathCopy, visitedCopy)) {
                 result.push_back(item);
             }
         }
-
-        // TODO
-
         return result;
     }
 
