@@ -14,6 +14,7 @@ void expectEqualGraphs(p<Graph<T, U>>& expected, p<Graph<T, U>>& actual) {
     std::cout << "actual graph:   " << actual->toString() << "\n";
     std::flush(std::cout);
     EXPECT_TRUE(expected->equalTo(actual.get()));
+    std::cout << "-----------" << "\n";
 }
 
 template<typename T, typename U>
@@ -22,6 +23,7 @@ void expectNotEqualGraphs(p<Graph<T, U>>& expected, p<Graph<T, U>>& actual) {
     std::cout << "actual graph:   " << actual->toString() << "\n";
     std::flush(std::cout);
     EXPECT_FALSE(expected->equalTo(actual.get()));
+    std::cout << "-----------" << "\n";
 }
 
 template<typename T, typename U>
