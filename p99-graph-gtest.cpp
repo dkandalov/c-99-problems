@@ -232,5 +232,7 @@ TEST_F(GraphTest, P83_ConstructAllSpanningTrees) {
     expected.push_back(CharGraph::fromString("[a-c, c-b]"));
     expected.push_back(CharGraph::fromString("[a-b, a-c]"));
 
+    // TODO more test cases
+
     expectEqualGraphVectors(expected, actual);
 }

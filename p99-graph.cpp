@@ -94,14 +94,18 @@ public:
     virtual bool equalTo(GraphBase<T, U>* that) {
         bool nodesAreEqual = valuesOf(this->nodes) == valuesOf(that->nodes);
 
-        Vector<std::tuple<T, T, U>> thisEdgeTuples(edges.size());
-        std::transform(edges.begin(), edges.end(), thisEdgeTuples.begin(), [](Edge* it){return it->toTuple();});
-        Vector<std::tuple<T, T, U>> thatEdgeTuples(that->edges.size());
-        std::transform(that->edges.begin(), that->edges.end(), thatEdgeTuples.begin(), [](Edge* it){return it->toTuple();});
-        bool edgesAreEqual = (edges.size() == that->edges.size() &&
-            std::equal(thisEdgeTuples.begin(), thisEdgeTuples.end(), thatEdgeTuples.begin())
-        );
-
+        bool edgesAreEqual = this->edges.size() == that->edges.size();
+        if (!edgesAreEqual) return false;
+        for (auto thisEdge : this->edges) {
+            auto it = std::find_if(that->edges.begin(), that->edges.end(), [&](Edge* thatEdge){
+                return (thatEdge->n1->value == thisEdge->n1->value && thatEdge->n2->value == thisEdge->n2->value) ||
+                       (thatEdge->n1->value == thisEdge->n2->value && thatEdge->n2->value == thisEdge->n1->value);
+            });
+            if (it == that->edges.end()) {
+                edgesAreEqual = false;
+                break;
+            }
+        }
         return nodesAreEqual && edgesAreEqual;
     }
 
@@ -305,7 +309,14 @@ public:
                     std::cout << std::get<0>(connection) << std::get<1>(connection) << ", ";
                 }
                 std::cout << "\n";
-                spanningTrees.push_back(p_(graph));
+                bool isNewGraph = std::find_if(spanningTrees.begin(), spanningTrees.end(), [&](p<Graph>& it) {
+                    return it->equalTo(graph);
+                }) == spanningTrees.end();
+                if (isNewGraph) {
+                    spanningTrees.push_back(p_(graph));
+                } else {
+                    delete(graph);
+                }
             }
         }
         return spanningTrees;
