@@ -231,8 +231,23 @@ TEST_F(GraphTest, P83_ConstructAllSpanningTrees) {
     expected.push_back(CharGraph::fromString("[a-b, b-c]"));
     expected.push_back(CharGraph::fromString("[a-c, c-b]"));
     expected.push_back(CharGraph::fromString("[a-b, a-c]"));
-
-    // TODO more test cases
-
     expectEqualGraphVectors(expected, actual);
+
+
+    graph = CharGraph::fromString("[a-b, b-c, c-d, d-a]");
+    actual = graph->allSpanningTrees();
+
+    expected.clear();
+    expected.push_back(CharGraph::fromString("[a-b, b-c, c-d]"));
+    expected.push_back(CharGraph::fromString("[a-d, c-b, d-c]"));
+    expected.push_back(CharGraph::fromString("[a-d, b-a, d-c]"));
+    expected.push_back(CharGraph::fromString("[a-d, b-a, c-b]"));
+    expectEqualGraphVectors(expected, actual);
+}
+
+TEST_F(GraphTest, P83_ConstructAllSpanningTrees_ComplexExample) {
+    auto graph = CharGraph::fromString("[a-b, a-d, b-c, b-e, c-e, d-e, d-f, d-g, e-h, f-g, g-h]");
+    Vector<p<CharGraph>> actual = graph->allSpanningTrees();
+
+    EXPECT_EQ(14, actual.size());
 }

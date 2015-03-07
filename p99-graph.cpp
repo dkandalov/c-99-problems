@@ -306,9 +306,7 @@ public:
                     graph->addNode(std::get<0>(connection));
                     graph->addNode(std::get<1>(connection));
                     graph->addEdge(std::get<0>(connection), std::get<1>(connection), U());
-                    std::cout << std::get<0>(connection) << std::get<1>(connection) << ", ";
                 }
-                std::cout << "\n";
                 bool isNewGraph = std::find_if(spanningTrees.begin(), spanningTrees.end(), [&](p<Graph>& it) {
                     return it->equalTo(graph);
                 }) == spanningTrees.end();
@@ -339,6 +337,14 @@ public:
             }
         }
         return result;
+    }
+
+    bool isTree() {
+        return allSpanningTrees().size() == 1;
+    }
+
+    bool isConnected() {
+        return allSpanningTrees().size() > 0;
     }
 
     static p<Graph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
