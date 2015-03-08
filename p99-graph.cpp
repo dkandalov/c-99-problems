@@ -246,7 +246,6 @@ private:
                 path.insert(path.begin(), fromValue);
                 result.push_back(path);
             }
-
         }
         return result;
     }
@@ -292,6 +291,15 @@ public:
         node2->adj.push_back(edge);
     }
 
+    p<Graph> minimalSpanningTree() {
+        auto graph = p_(new Graph());
+        if (this->edges.size() == 0) return graph;
+
+        graph->addEdge()
+
+        return graph;
+    }
+
     Vector<p<Graph>> allSpanningTrees() {
         if (this->nodes.empty()) return {};
 
@@ -318,25 +326,6 @@ public:
             }
         }
         return spanningTrees;
-    }
-
-    Vector<Vector<Tuple<T, T>>> allSpanningPaths(Node* node, Vector<Tuple<T, T>> path, Set<T> visited) {
-        if (visited.size() == this->nodes.size()) return {path};
-
-        Vector<Vector<Tuple<T, T>>> result;
-        for (auto neighbor : this->neighborsOf(node)) {
-            if (visited.count(neighbor->value) > 0) continue;
-
-            auto pathCopy = Vector<Tuple<T, T>>(path);
-            auto visitedCopy = Set<T>(visited);
-            pathCopy.push_back(std::make_tuple(node->value, neighbor->value));
-            visitedCopy.insert(neighbor->value);
-
-            for (auto item : allSpanningPaths(neighbor, pathCopy, visitedCopy)) {
-                result.push_back(item);
-            }
-        }
-        return result;
     }
 
     bool isTree() {
@@ -411,6 +400,26 @@ public:
 
     String toString() const override {
         return Graph::toStringWith("-");
+    }
+
+private:
+    Vector<Vector<Tuple<T, T>>> allSpanningPaths(Node* node, Vector<Tuple<T, T>> path, Set<T> visited) {
+        if (visited.size() == this->nodes.size()) return {path};
+
+        Vector<Vector<Tuple<T, T>>> result;
+        for (auto neighbor : this->neighborsOf(node)) {
+            if (visited.count(neighbor->value) > 0) continue;
+
+            auto pathCopy = Vector<Tuple<T, T>>(path);
+            auto visitedCopy = Set<T>(visited);
+            pathCopy.push_back(std::make_tuple(node->value, neighbor->value));
+            visitedCopy.insert(neighbor->value);
+
+            for (auto item : allSpanningPaths(neighbor, pathCopy, visitedCopy)) {
+                result.push_back(item);
+            }
+        }
+        return result;
     }
 };
 
