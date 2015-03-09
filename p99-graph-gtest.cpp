@@ -251,9 +251,17 @@ TEST_F(GraphTest, P83_ConstructAllSpanningTrees_ComplexExample) {
     EXPECT_EQ(14, actual.size());
 }
 
-TEST_F(GraphTest, P84) {
+TEST_F(GraphTest, P84_ConstructMinimalSpanningTree) {
     auto graph = CharGraph::fromString("[a-b/1, b-c/2, a-c/3]");
     auto expected = CharGraph::fromString("[a-b/1, b-c/2]");
+    auto actual = graph->minimalSpanningTree();
+    expectEqualGraphs(expected, actual);
+}
+
+TEST_F(GraphTest, P84_ConstructMinimalSpanningTree_ComplexExample) {
+    // TODO
+    auto graph = CharGraph::fromString("[]");
+    auto expected = CharGraph::fromString("[]");
     auto actual = graph->minimalSpanningTree();
     expectEqualGraphs(expected, actual);
 }
