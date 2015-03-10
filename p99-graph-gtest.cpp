@@ -259,9 +259,12 @@ TEST_F(GraphTest, P84_ConstructMinimalSpanningTree) {
 }
 
 TEST_F(GraphTest, P84_ConstructMinimalSpanningTree_ComplexExample) {
-    // TODO
-    auto graph = CharGraph::fromString("[]");
-    auto expected = CharGraph::fromString("[]");
+    auto graph = CharGraph::fromString(
+            "[a-b/5, a-d/3, b-c/2, b-e/5, c-e/6, e-d/7, e-h/5, h-g/1, g-d/3, g-f/4, f-d/4]"
+    );
+    auto expected = CharGraph::fromString(
+            "[a-d/3, b-e/5, b-c/2, e-h/5, g-d/3, g-f/4, h-g/1]"
+    );
     auto actual = graph->minimalSpanningTree();
     expectEqualGraphs(expected, actual);
 }

@@ -295,8 +295,8 @@ public:
         auto graph = new Graph();
         if (this->nodes.empty()) return p_(graph);
 
-        auto node = this->edges.front()->n1;
-        auto path = minSpanningPath(node, Vector<Tuple3<T, T, U>>(), Set<T>());
+        auto startNode = this->edges.front()->n1;
+        auto path = minSpanningPath(startNode, Vector<Tuple3<T, T, U>>(), {startNode->value});
 
         for (auto connection : path) {
             graph->addNode(std::get<0>(connection));
@@ -429,9 +429,6 @@ private:
     }
 
     Vector<Tuple3<T, T, U>> minSpanningPath(Node* node, Vector<Tuple3<T, T, U>> path, Set<T> visited) {
-        visited.insert(node->value);
-        if (visited.size() == this->nodes.size()) return path;
-
         Edge* minEdge = nullptr;
         for (Edge* edge : this->edges) {
             if ((edge->n1->value == node->value || edge->n2->value == node->value)
@@ -440,8 +437,22 @@ private:
                 minEdge = edge;
             }
         }
-        if (minEdge == nullptr) return path;
+        if (minEdge == nullptr) {
+            Node* unvisitedNode = nullptr;
+            for (auto entry : this->nodes) {
+                if (visited.count(entry.first) == 0) {
+                    unvisitedNode = entry.second;
+                    break;
+                }
+            }
+            if (unvisitedNode == nullptr) return path;
+            return minSpanningPath(unvisitedNode, path, visited);
+        }
+
+        visited.insert(minEdge->n1->value);
+        visited.insert(minEdge->n2->value);
         path.push_back(minEdge->toTuple());
+        if (visited.size() == this->nodes.size()) return path;
 
         T nextNodeValue;
         if (minEdge->n1->value == node->value) nextNodeValue = minEdge->n2->value;
