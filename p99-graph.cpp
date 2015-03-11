@@ -342,6 +342,18 @@ public:
         return allSpanningTrees().size() > 0;
     }
 
+    bool isIsomorphicTo(p<Graph>& graph) {
+        if (this->nodes.size() != graph->nodes.size()) return false;
+        if (this->edges.size() != graph->edges.size()) return false;
+
+        auto values = keySetOf(graph->nodes);
+        do {
+            // TODO
+        } while (std::next_permutation(values.begin(), values.end()));
+
+        return false;
+    }
+
     static p<Graph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
         Vector<Tuple3<T, T, U>> edges;
         for (Tuple<T, T> tuple : edgeTuples) {
@@ -459,6 +471,14 @@ private:
         else nextNodeValue = minEdge->n1->value;
 
         return minSpanningPath(this->nodes[nextNodeValue], path, visited);
+    }
+
+    Set<T> keySetOf(Map<T, Node*> nodeByValue) {
+        Set<T> result;
+        for (auto value : nodeByValue) {
+            result.insert(value.first);
+        }
+        return result;
     }
 };
 

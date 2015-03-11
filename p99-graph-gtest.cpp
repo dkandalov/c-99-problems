@@ -268,3 +268,9 @@ TEST_F(GraphTest, P84_ConstructMinimalSpanningTree_ComplexExample) {
     auto actual = graph->minimalSpanningTree();
     expectEqualGraphs(expected, actual);
 }
+
+TEST_F(GraphTest, P85_GraphIsomorphism) {
+    auto graph1 = CharGraph::fromString("[a-b]");
+    auto graph2 = CharGraph::fromString("[A-B]");
+    EXPECT_TRUE(graph1->isIsomorphicTo(graph2));
+}
