@@ -346,13 +346,22 @@ public:
         if (this->nodes.size() != graph->nodes.size()) return false;
         if (this->edges.size() != graph->edges.size()) return false;
 
-        auto values = keySetOf(graph->nodes);
+
+        Set<T> thisValueSet = keySetOf(graph->nodes);
+        Vector<T> thisValues(thisValueSet.begin(), thisValueSet.end());
+        Set<T> valueSet = keySetOf(graph->nodes);
+        Vector<T> values(valueSet.begin(), valueSet.end());
         do {
-            // TODO
+            Graph renamedGraph = Graph();
+
+            for (auto entry : graph->nodes) {
+                auto i = std::find(values.begin(), values.end(), entry.first);
+                renamedGraph.addNode(thisValues[std::]);
+            }
         } while (std::next_permutation(values.begin(), values.end()));
 
         return false;
-    }
+    };
 
     static p<Graph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
         Vector<Tuple3<T, T, U>> edges;
