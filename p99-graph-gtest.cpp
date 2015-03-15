@@ -273,4 +273,8 @@ TEST_F(GraphTest, P85_GraphIsomorphism) {
     auto graph1 = CharGraph::fromString("[a-b]");
     auto graph2 = CharGraph::fromString("[A-B]");
     EXPECT_TRUE(graph1->isIsomorphicTo(graph2));
+
+    graph1 = CharGraph::fromString("[a-b, b-c, c-a]");
+    graph2 = CharGraph::fromString("[A-B, B-C, C-A]");
+    EXPECT_TRUE(graph1->isIsomorphicTo(graph2));
 }

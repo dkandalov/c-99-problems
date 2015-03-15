@@ -346,8 +346,7 @@ public:
         if (this->nodes.size() != graph->nodes.size()) return false;
         if (this->edges.size() != graph->edges.size()) return false;
 
-
-        Set<T> thisValueSet = keySetOf(graph->nodes);
+        Set<T> thisValueSet = keySetOf(this->nodes);
         Vector<T> thisValues(thisValueSet.begin(), thisValueSet.end());
         Set<T> valueSet = keySetOf(graph->nodes);
         Vector<T> values(valueSet.begin(), valueSet.end());
@@ -356,7 +355,18 @@ public:
 
             for (auto entry : graph->nodes) {
                 auto i = std::find(values.begin(), values.end(), entry.first);
-                renamedGraph.addNode(thisValues[std::]);
+                T nodeValue = thisValues[std::distance(values.begin(), i)];
+                renamedGraph.addNode(nodeValue);
+            }
+            for (auto edge : graph->edges) {
+                auto i1 = std::find(values.begin(), values.end(), edge->n1->value);
+                T nodeValue1 = thisValues[std::distance(values.begin(), i1)];
+                auto i2 = std::find(values.begin(), values.end(), edge->n2->value);
+                T nodeValue2 = thisValues[std::distance(values.begin(), i2)];
+                renamedGraph.addEdge(nodeValue1, nodeValue2, U());
+            }
+            if (this->equalTo(&renamedGraph)) {
+                return true;
             }
         } while (std::next_permutation(values.begin(), values.end()));
 
