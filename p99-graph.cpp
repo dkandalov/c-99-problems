@@ -61,7 +61,7 @@ public:
     class Node : Counted<Node> {
     public:
         T value;
-        Vector<Edge*> adj;
+        Vector<Edge*> edges;
 
         Node(T value) : value(value) {}
     };
@@ -81,7 +81,7 @@ public:
 
     Vector<Node*> neighborsOf(Node* node) const {
         Vector<Node*> result;
-        for (auto edge : node->adj) {
+        for (auto edge : node->edges) {
             result.push_back(edgeTarget(edge, node));
         }
         return result;
@@ -134,7 +134,7 @@ public:
             auto node = entry.second;
 
             Vector<Tuple<T,U>> adjacent;
-            for (auto edge : node->adj) {
+            for (auto edge : node->edges) {
                 if (edge->n1 == node) {
                     adjacent.push_back(Tuple<T,U>(edge->n2->value, edge->value));
                 } else {
@@ -180,13 +180,13 @@ protected:
         int counter = 0;
         for (auto entry : nodes) {
             auto node = entry.second;
-            if (node->adj.size() == 0) {
+            if (node->edges.size() == 0) {
                 if (counter++ > 0) result += ", ";
                 result += convertToString(node->value);
 
             } else {
-                for (int i = 0; i < node->adj.size(); i++) {
-                    auto edge = node->adj[i];
+                for (int i = 0; i < node->edges.size(); i++) {
+                    auto edge = node->edges[i];
                     if (edge->n1->value != node->value) continue;
 
                     if (counter++ > 0) result += ", ";
@@ -287,8 +287,8 @@ public:
 
         auto edge = new Edge(node1, node2, value);
         this->edges.push_back(edge);
-        node1->adj.push_back(edge);
-        node2->adj.push_back(edge);
+        node1->edges.push_back(edge);
+        node2->edges.push_back(edge);
     }
 
     p<Graph> minimalSpanningTree() {
@@ -372,6 +372,24 @@ public:
 
         return false;
     };
+
+    int nodeDegreeOf(T nodeValue) {
+        if (this->nodes.count(nodeValue) == 0)
+            throw std::invalid_argument("No nodes for value: " + Graph::convertToString(nodeValue));
+        return (int) this->nodes[nodeValue]->edges.size();
+    }
+
+    Vector<T> nodesByDegree() {
+        Vector<Node*> nodes;
+        for (auto entry : this->nodes) {
+            nodes.push_back(entry.second);
+        }
+        std::sort(nodes.begin(), nodes.end(), [&](Node* n1, Node* n2){
+            return nodeDegreeOf(n1->value) - nodeDegreeOf(n2->value);
+        });
+
+        return {};
+    }
 
     static p<Graph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
         Vector<Tuple3<T, T, U>> edges;
@@ -520,7 +538,7 @@ public:
     void addArc(T source, T dest, U value) {
         auto edge = new Edge(this->nodes[source], this->nodes[dest], value);
         this->edges.push_back(edge);
-        this->nodes[source]->adj.push_back(edge);
+        this->nodes[source]->edges.push_back(edge);
     }
 
     static p<Digraph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& arcTuples) {

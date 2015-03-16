@@ -278,3 +278,13 @@ TEST_F(GraphTest, P85_GraphIsomorphism) {
     graph2 = CharGraph::fromString("[A-B, B-C, C-A]");
     EXPECT_TRUE(graph1->isIsomorphicTo(graph2));
 }
+
+TEST_F(GraphTest, P86_GraphNodeDegree) {
+    auto graph = CharGraph::fromString("[a-b, b-c, a-c, a-d]");
+    EXPECT_EQ(3, graph->nodeDegreeOf('a'));
+    EXPECT_EQ(2, graph->nodeDegreeOf('b'));
+    EXPECT_EQ(2, graph->nodeDegreeOf('c'));
+    EXPECT_EQ(1, graph->nodeDegreeOf('d'));
+
+    EXPECT_EQ({'a', 'b', 'c', 'd'}, graph->nodesByDegree());
+}
