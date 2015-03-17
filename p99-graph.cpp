@@ -381,16 +381,38 @@ public:
 
     Vector<T> nodesByDegree() {
         Vector<Node*> nodes;
-        for (auto entry : this->nodes) {
-            nodes.push_back(entry.second);
-        }
-        std::sort(nodes.begin(), nodes.end(), [&](Node* n1, Node* n2){
-            return nodeDegreeOf(n1->value) - nodeDegreeOf(n2->value);
+        for (auto entry : this->nodes) nodes.push_back(entry.second);
+
+        std::sort(nodes.begin(), nodes.end(), [&](Node* n1, Node* n2) {
+            return nodeDegreeOf(n2->value) < nodeDegreeOf(n1->value);
         });
 
-        return {};
+        Vector<T> result;
+        for (auto node : nodes) result.push_back(node->value);
+        return result;
     }
 
+    Vector<Tuple<T, int>> colorNodes() {
+        Vector<Tuple<T, int>> result;
+        int color = 1;
+
+        auto nodeValues = nodesByDegree();
+        std::reverse(nodeValues.begin(), nodeValues.end());
+
+        while (nodeValues.size() > 0) {
+            Vector<T> coloredNodes;
+            for (auto nodeValue : nodeValues) {
+                bool isNeighbor = false;
+                for (auto colored : coloredNodes) {
+                    // TODO if (neighborsOf(this->nodes[colored]))
+                }
+                coloredNodes.push_back(nodeValue);
+            }
+        }
+
+        return result;
+    }
+    
     static p<Graph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
         Vector<Tuple3<T, T, U>> edges;
         for (Tuple<T, T> tuple : edgeTuples) {

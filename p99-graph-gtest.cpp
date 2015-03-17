@@ -286,5 +286,16 @@ TEST_F(GraphTest, P86_GraphNodeDegree) {
     EXPECT_EQ(2, graph->nodeDegreeOf('c'));
     EXPECT_EQ(1, graph->nodeDegreeOf('d'));
 
-    EXPECT_EQ({'a', 'b', 'c', 'd'}, graph->nodesByDegree());
+    Vector<char> expected = {'a', 'b', 'c', 'd'};
+    EXPECT_EQ(expected, graph->nodesByDegree());
+}
+
+TEST_F(GraphTest, P86_GraphColoration) {
+    auto graph = CharGraph::fromString("[a-b, b-c, a-c, a-d]");
+    auto actual = graph->colorNodes();
+    Vector<Tuple<char, int>> expected = {
+            std::make_tuple('a', 1), std::make_tuple('b', 2),
+            std::make_tuple('c', 3), std::make_tuple('d', 2)
+    };
+    EXPECT_EQ(expected, actual);
 }
