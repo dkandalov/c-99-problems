@@ -395,24 +395,38 @@ public:
     Vector<Tuple<T, int>> colorNodes() {
         Vector<Tuple<T, int>> result;
         int color = 1;
-
         auto nodeValues = nodesByDegree();
-        std::reverse(nodeValues.begin(), nodeValues.end());
 
         while (nodeValues.size() > 0) {
             Vector<T> coloredNodes;
             for (auto nodeValue : nodeValues) {
-                bool isNeighbor = false;
-                for (auto colored : coloredNodes) {
-                    // TODO if (neighborsOf(this->nodes[colored]))
+                if (!isNeighborOf(coloredNodes, nodeValue)) {
+                    coloredNodes.push_back(nodeValue);
                 }
-                coloredNodes.push_back(nodeValue);
             }
+            for (auto coloredNode : coloredNodes) {
+                result.push_back(std::make_tuple(coloredNode, color));
+            }
+            color++;
+            nodeValues.erase(
+                std::remove_if(nodeValues.begin(), nodeValues.end(), [&](T value) {
+                    return contains(coloredNodes, value);
+                }),
+                nodeValues.end()
+            );
         }
-
         return result;
     }
-    
+
+    bool isNeighborOf(Vector<T> nodeValues, T nodeValue) {
+        for (auto value : nodeValues) {
+            for (auto neighbor : this->neighborsOf(this->nodes[value])) {
+                if (neighbor->value == nodeValue) return true;
+            }
+        }
+        return false;
+    }
+
     static p<Graph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
         Vector<Tuple3<T, T, U>> edges;
         for (Tuple<T, T> tuple : edgeTuples) {
@@ -538,6 +552,10 @@ private:
             result.insert(value.first);
         }
         return result;
+    }
+
+    bool contains(Vector<T> vector, T value) {
+        return vector.end() != std::find(vector.begin(), vector.end(), value);
     }
 };
 

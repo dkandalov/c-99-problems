@@ -295,7 +295,7 @@ TEST_F(GraphTest, P86_GraphColoration) {
     auto actual = graph->colorNodes();
     Vector<Tuple<char, int>> expected = {
             std::make_tuple('a', 1), std::make_tuple('b', 2),
-            std::make_tuple('c', 3), std::make_tuple('d', 2)
+            std::make_tuple('d', 2), std::make_tuple('c', 3)
     };
     EXPECT_EQ(expected, actual);
 }
