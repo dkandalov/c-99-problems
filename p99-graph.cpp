@@ -418,13 +418,23 @@ public:
         return result;
     }
 
-    bool isNeighborOf(Vector<T> nodeValues, T nodeValue) {
-        for (auto value : nodeValues) {
-            for (auto neighbor : this->neighborsOf(this->nodes[value])) {
-                if (neighbor->value == nodeValue) return true;
+    Vector<T> nodesByDepthFrom(T startValue) {
+        Vector<T> result;
+        Set<T> visited;
+        Vector<T> queue = {startValue};
+        while (queue.size() > 0) {
+            auto nodeValue = queue.back();
+            queue.pop_back();
+            if (visited.count(nodeValue) > 0) continue;
+            visited.insert(nodeValue);
+            result.push_back(nodeValue);
+
+            for (auto neighbor : this->neighborsOf(this->nodes[nodeValue])) {
+                queue.push_back(neighbor->value);
             }
         }
-        return false;
+        std::reverse(result.begin(), result.end());
+        return result;
     }
 
     static p<Graph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
@@ -556,6 +566,15 @@ private:
 
     bool contains(Vector<T> vector, T value) {
         return vector.end() != std::find(vector.begin(), vector.end(), value);
+    }
+
+    bool isNeighborOf(Vector<T> nodeValues, T nodeValue) {
+        for (auto value : nodeValues) {
+            for (auto neighbor : this->neighborsOf(this->nodes[value])) {
+                if (neighbor->value == nodeValue) return true;
+            }
+        }
+        return false;
     }
 };
 

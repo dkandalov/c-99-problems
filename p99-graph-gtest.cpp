@@ -292,10 +292,16 @@ TEST_F(GraphTest, P86_GraphNodeDegree) {
 
 TEST_F(GraphTest, P86_GraphColoration) {
     auto graph = CharGraph::fromString("[a-b, b-c, a-c, a-d]");
-    auto actual = graph->colorNodes();
     Vector<Tuple<char, int>> expected = {
             std::make_tuple('a', 1), std::make_tuple('b', 2),
             std::make_tuple('d', 2), std::make_tuple('c', 3)
     };
+    auto actual = graph->colorNodes();
     EXPECT_EQ(expected, actual);
+}
+
+TEST_F(GraphTest, P87_DepthFirstTraversal) {
+    auto graph = CharGraph::fromString("[a-b, b-c, e, a-c, a-d]");
+    Vector<char> expected = {'b', 'c', 'a', 'd'};
+    EXPECT_EQ(expected, graph->nodesByDepthFrom('d'));
 }
