@@ -305,3 +305,14 @@ TEST_F(GraphTest, P87_DepthFirstTraversal) {
     Vector<char> expected = {'b', 'c', 'a', 'd'};
     EXPECT_EQ(expected, graph->nodesByDepthFrom('d'));
 }
+
+TEST_F(GraphTest, P88_ConnectedComponents) {
+    auto graph = CharGraph::fromString("[a-b, c]");
+
+    Vector<p<CharGraph>> expected;
+    expected.push_back(CharGraph::fromString("[a-b]"));
+    expected.push_back(CharGraph::fromString("[c]"));
+
+    Vector<p<CharGraph>> actual = graph->connectedComponents();
+    expectEqualGraphVectors(expected, actual);
+}

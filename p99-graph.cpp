@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <set>
+#include <AddressBook/AddressBook.h>
 
 // from http://stackoverflow.com/questions/1926605/how-to-count-the-number-of-objects-created-in-c
 template<typename T>
@@ -437,6 +438,21 @@ public:
         return result;
     }
 
+    Vector<p<Graph>> connectedComponents() {
+        Vector<p<Graph>> result;
+        auto allNodeValues = keySetOf(this->nodes);
+        while (allNodeValues.size() > 0) {
+            auto nodeValues = nodesByDepthFrom(*allNodeValues.begin());
+            
+            result.push_back(p_(createSubGraphFrom(nodeValues)));
+
+            for (auto nodeValue : nodeValues) {
+                allNodeValues.erase(nodeValue);
+            }
+        }
+        return result;
+    }
+
     static p<Graph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
         Vector<Tuple3<T, T, U>> edges;
         for (Tuple<T, T> tuple : edgeTuples) {
@@ -575,6 +591,19 @@ private:
             }
         }
         return false;
+    }
+    
+    Graph* createSubGraphFrom(Vector<T> nodeValues) {
+        auto graph = new Graph();
+        for (auto nodeValue : nodeValues) {
+            graph->addNode(nodeValue);
+        }
+        for (auto nodeValue : nodeValues) {
+            for (auto edge : this->nodes[nodeValue]->edges) {
+                graph->addEdge(edge->n1->value, edge->n2->value, edge->value);
+            }
+        }
+        return graph;
     }
 };
 
