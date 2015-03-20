@@ -3,7 +3,6 @@
 #include <iostream>
 #include <sstream>
 #include <set>
-#include <AddressBook/AddressBook.h>
 
 // from http://stackoverflow.com/questions/1926605/how-to-count-the-number-of-objects-created-in-c
 template<typename T>
@@ -456,34 +455,56 @@ public:
         return result;
     }
 
-    bool isBipartite() {
-        Vector<T> nodeValues = {this->nodes.begin()->first};
+    Map<T, bool> attemptBipartiteColors() {
         auto coloredValues = Set<T>();
         auto colorByNodeValue = Map<T, bool>();
-        bool color = false;
 
-        while (nodeValues.size() > 0) {
-            auto nodeValue = nodeValues.back();
-            nodeValues.pop_back();
-            if (coloredValues.count(nodeValue) > 0) continue;
-
-            Vector<T> neighborValues;
-            for (auto it : this->neighborsOf(this->nodes[nodeValue])) {
-                neighborValues.push_back(it->value);
-            }
-            for (auto neighborValue : neighborValues) {
-                if (coloredValues.count(neighborValue) > 0 &&
-                    colorByNodeValue[neighborValue] == color) {
-                    return false;
+        while (coloredValues.size() < this->nodes.size()) {
+            Vector<bool> nodeParentColor = { false };
+            T uncoloredValue;
+            for (auto nodeEntry : this->nodes) {
+                if (coloredValues.count(nodeEntry.second->value) == 0) {
+                    uncoloredValue = nodeEntry.second->value;
+                    break;
                 }
             }
+            Vector<T> nodeValues = { uncoloredValue };
+            while (nodeValues.size() > 0) {
+                auto nodeValue = nodeValues.back();
+                nodeValues.pop_back();
+                bool color = !nodeParentColor.back();
+                nodeParentColor.pop_back();
+                if (coloredValues.count(nodeValue) > 0) continue;
 
-            coloredValues.insert(nodeValue);
-            colorByNodeValue[nodeValue] = color;
-            color = !color; // TODO look up parent color
-            nodeValues.insert(nodeValues.end(), neighborValues.begin(), neighborValues.end());
+                Vector<T> neighborValues;
+                for (auto it : this->neighborsOf(this->nodes[nodeValue])) {
+                    neighborValues.push_back(it->value);
+                }
+                for (auto neighborValue : neighborValues) {
+                    if (coloredValues.count(neighborValue) > 0 &&
+                            colorByNodeValue[neighborValue] == color) {
+                        return colorByNodeValue;
+                    }
+                }
+
+                coloredValues.insert(nodeValue);
+                colorByNodeValue[nodeValue] = color;
+                nodeValues.insert(nodeValues.end(), neighborValues.begin(), neighborValues.end());
+                for (int i = 0; i < nodeValues.size(); i++) {
+                    nodeParentColor.push_back(color);
+                }
+            }
         }
-        return true;
+        return colorByNodeValue;
+    }
+
+    bool isBipartite() {
+        auto colorByNodeValue = attemptBipartiteColors();
+        std::cout << "=============" << "\n";
+        for (auto entry : colorByNodeValue) {
+            std::cout << entry.first << ": " << entry.second << "\n";
+        }
+        return colorByNodeValue.size() == this->nodes.size();
     };
 
     static p<Graph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
