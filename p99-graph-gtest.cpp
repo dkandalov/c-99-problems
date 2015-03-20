@@ -316,3 +316,10 @@ TEST_F(GraphTest, P88_ConnectedComponents) {
     Vector<p<CharGraph>> actual = graph->connectedComponents();
     expectEqualGraphVectors(expected, actual);
 }
+
+TEST_F(GraphTest, P89_BipartiteGraphs) {
+//    EXPECT_TRUE(CharDigraph::fromString("[a>b c>a d>b]")->isBipartite());
+    EXPECT_FALSE(CharGraph::fromString("[a-b, b-c, c-a]")->isBipartite());
+    EXPECT_TRUE(CharGraph::fromString("[a-b, b-c, d]")->isBipartite());
+    EXPECT_FALSE(CharGraph::fromString("[a-b, b-c, d, e-f, f-g, g-e, h]")->isBipartite());
+}

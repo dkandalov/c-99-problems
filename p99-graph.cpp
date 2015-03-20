@@ -393,6 +393,9 @@ public:
         return result;
     }
 
+    /*
+     * http://en.wikipedia.org/wiki/Graph_coloring#Greedy_coloring
+     */
     Vector<Tuple<T, int>> colorNodes() {
         Vector<Tuple<T, int>> result;
         int color = 1;
@@ -452,6 +455,36 @@ public:
         }
         return result;
     }
+
+    bool isBipartite() {
+        Vector<T> nodeValues = {this->nodes.begin()->first};
+        auto coloredValues = Set<T>();
+        auto colorByNodeValue = Map<T, bool>();
+        bool color = false;
+
+        while (nodeValues.size() > 0) {
+            auto nodeValue = nodeValues.back();
+            nodeValues.pop_back();
+            if (coloredValues.count(nodeValue) > 0) continue;
+
+            Vector<T> neighborValues;
+            for (auto it : this->neighborsOf(this->nodes[nodeValue])) {
+                neighborValues.push_back(it->value);
+            }
+            for (auto neighborValue : neighborValues) {
+                if (coloredValues.count(neighborValue) > 0 &&
+                    colorByNodeValue[neighborValue] == color) {
+                    return false;
+                }
+            }
+
+            coloredValues.insert(nodeValue);
+            colorByNodeValue[nodeValue] = color;
+            color = !color; // TODO look up parent color
+            nodeValues.insert(nodeValues.end(), neighborValues.begin(), neighborValues.end());
+        }
+        return true;
+    };
 
     static p<Graph> term(const Vector<T>& nodeValues, const Vector<Tuple<T, T>>& edgeTuples) {
         Vector<Tuple3<T, T, U>> edges;
