@@ -2,13 +2,44 @@
 #include <stdlib.h>
 #include <iostream>
 
-template<typename T>
-using Vector = std::vector<T>;
-using String = std::string;
+using std::vector;
+using std::string;
+using std::tuple;
+using std::make_tuple;
+
+namespace KnightsTour {
+    bool isValid(vector<tuple<int, int>> path) {
+        return false; // TODO
+    }
+
+    vector<tuple<int, int>> allMovesFrom(tuple<int, int> position) {
+        return {}; // TODO
+    }
+
+    vector<tuple<int, int>> findKnightsPath(int boardSize, vector<tuple<int, int>> path) {
+        if (path.size() == boardSize) return {path};
+        vector<tuple<int, int>> result;
+
+        auto position = path.back();
+        for (auto newPosition : allMovesFrom(position)) {
+            auto pathCopy = vector<tuple<int, int>>(path);
+            pathCopy.push_back(newPosition);
+            if (isValid(pathCopy)) {
+                auto subResults = findKnightsPath(boardSize, pathCopy);
+                result.insert(result.end(), subResults.begin(), subResults.end());
+            }
+        }
+        return result;
+    }
+
+    vector<tuple<int, int>> findKnightsPath(int boardSize) {
+        return findKnightsPath(boardSize, {make_tuple(0, 0)});
+    }
+}
 
 namespace EightQueens {
-    String asString(Vector<int> solution) {
-        String s;
+    string asString(vector<int> solution) {
+        string s;
         for (int col = 0; col < solution.size(); col++) {
             for (int row = 0; row < solution.size(); row++) {
                 if (solution[col] == row) s += "Q"; else s += "-";
@@ -18,7 +49,7 @@ namespace EightQueens {
         return s;
     }
 
-    bool isValid(Vector<int> solution) {
+    bool isValid(vector<int> solution) {
         for (int col1 = 0; col1 < solution.size(); col1++) {
             int row1 = solution[col1];
             for (int col2 = 0; col2 < solution.size(); col2++) {
@@ -31,12 +62,12 @@ namespace EightQueens {
         return true;
     }
 
-    Vector<Vector<int>> solveEightQueensProblem(int boardSize, Vector<int> solution) {
+    vector<vector<int>> solveEightQueensProblem(int boardSize, vector<int> solution) {
         if (solution.size() == boardSize) return { solution };
 
-        Vector<Vector<int>> result;
+        vector<vector<int>> result;
         for (int row = 0; row < boardSize; row++) {
-            Vector<int> solutionCopy(solution);
+            vector<int> solutionCopy(solution);
             solutionCopy.push_back(row);
             if (isValid(solutionCopy)) {
                 auto subResult = solveEightQueensProblem(boardSize, solutionCopy);
@@ -46,7 +77,7 @@ namespace EightQueens {
         return result;
     }
 
-    Vector<Vector<int>> solveEightQueensProblem(int boardSize) {
+    vector<vector<int>> solveEightQueensProblem(int boardSize) {
         return solveEightQueensProblem(boardSize, {});
     }
 }

@@ -18,3 +18,8 @@ TEST(P90, EightQueensProblem) {
     EXPECT_EQ(10, solveAndPrint(5).size());
     EXPECT_EQ(92, solveEightQueensProblem(8).size());
 }
+
+TEST(P91, KnightsTour) {
+    using namespace KnightsTour;
+    EXPECT_EQ(1, findKnightsPath(1).size());
+}
