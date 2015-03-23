@@ -4,27 +4,66 @@
 
 using std::vector;
 using std::string;
+using std::to_string;
 using std::tuple;
 using std::make_tuple;
+using std::get;
 
 namespace KnightsTour {
-    bool isValid(vector<tuple<int, int>> path) {
-        return false; // TODO
+    struct Position {
+        int x;
+        int y;
+        Position(int const x, int const y) : x(x), y(y) {}
+    };
+
+    string asString(vector<Position> path) {
+        string s;
+        for (auto position : path) {
+            s += "(" + to_string(position.x) + "," + to_string(position.y) + ")";
+        }
+        return s;
     }
 
-    vector<tuple<int, int>> allMovesFrom(tuple<int, int> position) {
-        return {}; // TODO
+    bool isValid(vector<Position> path, int boardSize) {
+        for (auto position : path) {
+            if (position.x < 0 || position.x >= boardSize) return false;
+            if (position.y < 0 || position.y >= boardSize) return false;
+        }
+        for (auto position1 : path) {
+            int count = 0;
+            for (auto position2 : path) {
+                if (position1.x == position2.x && position1.y == position2.y) count++;
+                if (count > 1) return false;
+            }
+        }
+        return true;
     }
 
-    vector<tuple<int, int>> findKnightsPath(int boardSize, vector<tuple<int, int>> path) {
-        if (path.size() == boardSize) return {path};
-        vector<tuple<int, int>> result;
+    vector<Position> allMovesFrom(Position position) {
+        int x = position.x;
+        int y = position.y;
+
+        auto upRight = Position(x + 1, y - 2);
+        auto upLeft = Position(x - 1, y - 2);
+        auto rightUp = Position(x + 2, y - 1);
+        auto rightDown = Position(x + 2, y + 1);
+        auto leftUp = Position(x - 2, y - 1);
+        auto leftDown = Position(x - 2, y + 1);
+        auto downRight = Position(x + 1, y + 2);
+        auto downLeft = Position(x - 1, y + 2);
+
+        return {upRight, upLeft, rightUp, rightDown, leftUp, leftDown, downRight, downLeft};
+    }
+
+    vector<vector<Position>> findKnightsPath(int boardSize, vector<Position> path) {
+        if (path.size() == boardSize * boardSize) return {path};
+        vector<vector<Position>> result;
 
         auto position = path.back();
         for (auto newPosition : allMovesFrom(position)) {
-            auto pathCopy = vector<tuple<int, int>>(path);
+            auto pathCopy = vector<Position>(path);
             pathCopy.push_back(newPosition);
-            if (isValid(pathCopy)) {
+            if (isValid(pathCopy, boardSize)) {
                 auto subResults = findKnightsPath(boardSize, pathCopy);
                 result.insert(result.end(), subResults.begin(), subResults.end());
             }
@@ -32,8 +71,8 @@ namespace KnightsTour {
         return result;
     }
 
-    vector<tuple<int, int>> findKnightsPath(int boardSize) {
-        return findKnightsPath(boardSize, {make_tuple(0, 0)});
+    vector<vector<Position>> findKnightsPath(int boardSize) {
+        return findKnightsPath(boardSize, {Position(0, 0)});
     }
 }
 
