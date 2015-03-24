@@ -16,7 +16,7 @@ namespace KnightsTour {
         Position(int const x, int const y) : x(x), y(y) {}
     };
 
-    string asString(vector<Position> path) {
+    string asString(vector<Position>& path) {
         string s;
         for (auto position : path) {
             s += "(" + to_string(position.x) + "," + to_string(position.y) + ")";
@@ -24,7 +24,7 @@ namespace KnightsTour {
         return s;
     }
 
-    bool isValid(vector<Position> path, int boardSize) {
+    bool isValid(vector<Position>& path, int boardSize) {
         for (auto position : path) {
             if (position.x < 0 || position.x >= boardSize) return false;
             if (position.y < 0 || position.y >= boardSize) return false;
@@ -55,7 +55,7 @@ namespace KnightsTour {
         return {upRight, upLeft, rightUp, rightDown, leftUp, leftDown, downRight, downLeft};
     }
 
-    vector<vector<Position>> findKnightsPath(int boardSize, vector<Position> path) {
+    vector<vector<Position>> findKnightsPath(int boardSize, vector<Position>& path) {
         if (path.size() == boardSize * boardSize) return {path};
         vector<vector<Position>> result;
 
@@ -72,12 +72,13 @@ namespace KnightsTour {
     }
 
     vector<vector<Position>> findKnightsPath(int boardSize) {
-        return findKnightsPath(boardSize, {Position(0, 0)});
+        vector<Position> path = {Position(0, 0)};
+        return findKnightsPath(boardSize, path);
     }
 }
 
 namespace EightQueens {
-    string asString(vector<int> solution) {
+    string asString(vector<int>& solution) {
         string s;
         for (int col = 0; col < solution.size(); col++) {
             for (int row = 0; row < solution.size(); row++) {
@@ -88,7 +89,7 @@ namespace EightQueens {
         return s;
     }
 
-    bool isValid(vector<int> solution) {
+    bool isValid(vector<int>& solution) {
         for (int col1 = 0; col1 < solution.size(); col1++) {
             int row1 = solution[col1];
             for (int col2 = 0; col2 < solution.size(); col2++) {
@@ -101,7 +102,7 @@ namespace EightQueens {
         return true;
     }
 
-    vector<vector<int>> solveEightQueensProblem(int boardSize, vector<int> solution) {
+    vector<vector<int>> solveEightQueensProblem(int boardSize, vector<int>& solution) {
         if (solution.size() == boardSize) return { solution };
 
         vector<vector<int>> result;
@@ -117,6 +118,7 @@ namespace EightQueens {
     }
 
     vector<vector<int>> solveEightQueensProblem(int boardSize) {
-        return solveEightQueensProblem(boardSize, {});
+        vector<int> solution = {};
+        return solveEightQueensProblem(boardSize, solution);
     }
 }
