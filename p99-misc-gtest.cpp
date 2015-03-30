@@ -28,3 +28,20 @@ TEST(P91, KnightsTour) {
 //    EXPECT_EQ(304, findKnightsPath(5).size());
 //    EXPECT_EQ(0, findKnightsPath(8).size());
 }
+
+TEST(P91, KnightsTour_Lazy) {
+    using namespace KnightsTour;
+
+    auto knightsPath = KnightPathLazy(1);
+    EXPECT_EQ(1, knightsPath.nextPath().size());
+    EXPECT_EQ(0, knightsPath.nextPath().size());
+
+    knightsPath = KnightPathLazy(2);
+    EXPECT_EQ(0, knightsPath.nextPath().size());
+
+//    knightsPath = KnightPathLazy(5);
+//    for (int i = 0; i < 304; i++) {
+//        EXPECT_EQ(25, knightsPath.nextPath().size());
+//    }
+//    EXPECT_EQ(0, knightsPath.nextPath().size());
+}

@@ -75,6 +75,45 @@ namespace KnightsTour {
         vector<Position> path = {Position(0, 0)};
         return findKnightsPath(boardSize, path);
     }
+
+
+    struct Frame {
+        vector<Position> path;
+        Frame(vector<Position> const& path) : path(path) { }
+    };
+
+    class KnightPathLazy {
+    private:
+        int boardSize;
+        vector<Frame> frames;
+
+    public:
+        KnightPathLazy(int boardSize) : boardSize(boardSize) {
+            auto frame = Frame({Position(0, 0)});
+            frames = { frame };
+        };
+
+        vector<Position> nextPath() {
+            vector<Position> path = {};
+            while (!frames.empty() && path.size() != boardSize * boardSize) {
+                auto frame = frames.back();
+                frames.pop_back();
+
+                path = frame.path;
+
+                auto position = path.back();
+                for (auto newPosition : allMovesFrom(position)) {
+                    auto pathCopy = vector<Position>(path);
+                    pathCopy.push_back(newPosition);
+                    if (isValid(pathCopy, boardSize)) {
+                        frames.push_back(Frame(pathCopy));
+                    }
+                }
+            }
+            if (path.size() == boardSize * boardSize) return path;
+            else return {};
+        }
+    };
 }
 
 namespace EightQueens {
