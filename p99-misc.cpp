@@ -1,8 +1,12 @@
 #include <vector>
 #include <stdlib.h>
 #include <iostream>
+#include <array>
+#include <stack>
 
 using std::vector;
+using std::array;
+using std::stack;
 using std::string;
 using std::to_string;
 using std::tuple;
@@ -15,6 +19,20 @@ namespace KnightsTour {
         int y;
         Position(int const x, int const y) : x(x), y(y) {}
     };
+    struct Path {
+        vector<Position> positions;
+
+        Path(vector<Position> const& positions) : positions(positions) { }
+
+        unsigned long size() {
+            return positions.size();
+        }
+    };
+    struct Frame {
+        vector<Position> path;
+        Frame(vector<Position> const& path) : path(path) { }
+    };
+
 
     string asString(vector<Position>& path) {
         string s;
@@ -24,22 +42,16 @@ namespace KnightsTour {
         return s;
     }
 
-    bool isValid(vector<Position>& path, int boardSize) {
-        for (auto position : path) {
-            if (position.x < 0 || position.x >= boardSize) return false;
-            if (position.y < 0 || position.y >= boardSize) return false;
-        }
-        for (auto position1 : path) {
-            int count = 0;
-            for (auto position2 : path) {
-                if (position1.x == position2.x && position1.y == position2.y) count++;
-                if (count > 1) return false;
-            }
+    bool isValid(Position& position, vector<Position>& path, int boardSize) {
+        if (position.x < 0 || position.x >= boardSize) return false;
+        if (position.y < 0 || position.y >= boardSize) return false;
+        for (auto thatPosition : path) {
+            if (thatPosition.x == position.x && thatPosition.y == position.y) return false;
         }
         return true;
     }
 
-    vector<Position> allMovesFrom(Position position) {
+    array<Position, 8> allMovesFrom(Position& position) {
         int x = position.x;
         int y = position.y;
 
@@ -61,9 +73,9 @@ namespace KnightsTour {
 
         auto position = path.back();
         for (auto newPosition : allMovesFrom(position)) {
-            auto pathCopy = vector<Position>(path);
-            pathCopy.push_back(newPosition);
-            if (isValid(pathCopy, boardSize)) {
+            if (isValid(newPosition, path, boardSize)) {
+                auto pathCopy = vector<Position>(path);
+                pathCopy.push_back(newPosition);
                 auto subResults = findKnightsPath(boardSize, pathCopy);
                 result.insert(result.end(), subResults.begin(), subResults.end());
             }
@@ -77,36 +89,30 @@ namespace KnightsTour {
     }
 
 
-    struct Frame {
-        vector<Position> path;
-        Frame(vector<Position> const& path) : path(path) { }
-    };
-
     class KnightPathLazy {
     private:
         int boardSize;
-        vector<Frame> frames;
+        stack<Frame> frames;
 
     public:
         KnightPathLazy(int boardSize) : boardSize(boardSize) {
-            auto frame = Frame({Position(0, 0)});
-            frames = { frame };
+            frames = stack<Frame>({ Frame({Position(0, 0)}) });
         };
 
         vector<Position> nextPath() {
             vector<Position> path = {};
             while (!frames.empty() && path.size() != boardSize * boardSize) {
-                auto frame = frames.back();
-                frames.pop_back();
+                auto frame = frames.top();
+                frames.pop();
 
                 path = frame.path;
 
                 auto position = path.back();
                 for (auto newPosition : allMovesFrom(position)) {
-                    auto pathCopy = vector<Position>(path);
-                    pathCopy.push_back(newPosition);
-                    if (isValid(pathCopy, boardSize)) {
-                        frames.push_back(Frame(pathCopy));
+                    if (isValid(newPosition, path, boardSize)) {
+                        auto pathCopy = vector<Position>(path);
+                        pathCopy.push_back(newPosition);
+                        frames.push(Frame(pathCopy));
                     }
                 }
             }

@@ -39,9 +39,11 @@ TEST(P91, KnightsTour_Lazy) {
     knightsPath = KnightPathLazy(2);
     EXPECT_EQ(0, knightsPath.nextPath().size());
 
+    // commented out because it takes ~6.5 sec
 //    knightsPath = KnightPathLazy(5);
 //    for (int i = 0; i < 304; i++) {
 //        EXPECT_EQ(25, knightsPath.nextPath().size());
+//        std::cout << i << "\n";
 //    }
 //    EXPECT_EQ(0, knightsPath.nextPath().size());
 }
