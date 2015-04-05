@@ -13,6 +13,20 @@ using std::tuple;
 using std::make_tuple;
 using std::get;
 
+namespace VonKochConjecture {
+    template<typename T>
+    struct Link {
+        T n1;
+        T n2;
+        Link(T n1, T n2) : n1(n1), n2(n2) {}
+    };
+
+    vector<Link<int>> labelTree(vector<Link<char>>& treeLinks) {
+        return {};
+    }
+}
+
+
 namespace KnightsTour {
     struct Position {
         int x;

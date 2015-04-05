@@ -47,3 +47,15 @@ TEST(P91, KnightsTour_Lazy) {
 //    }
 //    EXPECT_EQ(0, knightsPath.nextPath().size());
 }
+
+TEST(P92, VonKochConjecture) {
+    using namespace VonKochConjecture;
+
+    vector<Link<char>> treeLinks = {
+            Link<char>('a', 'd'), Link<char>('a', 'g'), Link<char>('a', 'b'),
+            Link<char>('b', 'e'), Link<char>('b', 'c'), Link<char>('e', 'f')
+    };
+    vector<Link<int>> labels = labelTree(treeLinks);
+
+    EXPECT_EQ(6, labels.size());
+}
