@@ -19,10 +19,39 @@ namespace VonKochConjecture {
         T n1;
         T n2;
         Link(T n1, T n2) : n1(n1), n2(n2) {}
+
+        bool equalTo(Link link) {
+            return n1 == link.n1 && n2 == link.n2;
+        }
     };
 
-    vector<Link<int>> labelTree(vector<Link<char>>& treeLinks) {
+    vector<Link<int>> allCombinationsOf(vector<int>& unusedLabels) {
+        vector<Link<int>> result;
+        for (int label1 : unusedLabels) {
+            for (int label2 : unusedLabels) {
+                if (label1 != label2) {
+                    result.push_back(Link(label1, label2));
+                }
+            }
+        }
+        return result;
+    }
+
+    vector<Link<int>> doLabelTree(vector<Link<char>>& treeLinks, vector<int>& unusedLabels) {
+        if (treeLinks.empty()) return {};
+
+        for (Link<int> link : allCombinationsOf(unusedLabels)) {
+
+        }
         return {};
+    }
+
+    vector<Link<int>> labelTree(vector<Link<char>>& treeLinks) {
+        vector<int> unusedLabels;
+        for (int i = 0; i < treeLinks.size(); i++) {
+            unusedLabels.push_back(i);
+        }
+        return doLabelTree(treeLinks, unusedLabels);
     }
 }
 
