@@ -24,34 +24,51 @@ namespace VonKochConjecture {
             return n1 == link.n1 && n2 == link.n2;
         }
     };
+    struct Solution {
+        Solution(Solution& solution) {}
+        Solution(vector<Link<char>>& links) {}
 
-    vector<Link<int>> allCombinationsOf(vector<int>& unusedLabels) {
-        vector<Link<int>> result;
-        for (int label1 : unusedLabels) {
-            for (int label2 : unusedLabels) {
-                if (label1 != label2) {
-                    result.push_back(Link(label1, label2));
-                }
+        vector<Solution> nextSolutions() {
+            return {};
+        }
+
+        bool complete() {
+            return false;
+        }
+
+        bool isValid() {
+            return false;
+        }
+    };
+
+//    vector<Link<int>> allCombinationsOf(vector<int>& unusedLabels) {
+//        vector<Link<int>> result;
+//        for (int label1 : unusedLabels) {
+//            for (int label2 : unusedLabels) {
+//                if (label1 != label2) {
+//                    result.push_back(Link(label1, label2));
+//                }
+//            }
+//        }
+//        return result;
+//    }
+
+    vector<Solution> doLabelTree(Solution solution) {
+        if (solution.complete()) return {/*solution*/};
+
+        vector<Solution> result = {};
+        for (auto subSolution : solution.nextSolutions()) {
+            if (subSolution.isValid()) {
+//                auto subSolutions = doLabelTree(solution);
+//                result.insert(result.begin(), subSolutions.begin(), subSolutions.end());
             }
         }
         return result;
     }
 
-    vector<Link<int>> doLabelTree(vector<Link<char>>& treeLinks, vector<int>& unusedLabels) {
-        if (treeLinks.empty()) return {};
-
-        for (Link<int> link : allCombinationsOf(unusedLabels)) {
-
-        }
-        return {};
-    }
-
-    vector<Link<int>> labelTree(vector<Link<char>>& treeLinks) {
-        vector<int> unusedLabels;
-        for (int i = 0; i < treeLinks.size(); i++) {
-            unusedLabels.push_back(i);
-        }
-        return doLabelTree(treeLinks, unusedLabels);
+    vector<Solution> labelTree(vector<Link<char>>& treeLinks) {
+        auto emptySolution = Solution(treeLinks);
+        return doLabelTree(emptySolution);
     }
 }
 
