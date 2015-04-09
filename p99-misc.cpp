@@ -3,10 +3,14 @@
 #include <iostream>
 #include <array>
 #include <stack>
+#include <map>
+#include <set>
 
 using std::vector;
 using std::array;
 using std::stack;
+using std::map;
+using std::set;
 using std::string;
 using std::to_string;
 using std::tuple;
@@ -24,20 +28,45 @@ namespace VonKochConjecture {
             return n1 == link.n1 && n2 == link.n2;
         }
     };
-    struct Solution {
-        Solution(Solution& solution) {}
-        Solution(vector<Link<char>>& links) {}
+    class Solution {
+    public:
+        vector<char> charsLeft;
+        map<char, int> mapping;
+        vector<Link<char>> links;
+        vector<Link<int>> mappedLinks;
+
+        Solution(vector<Link<char>>& links): links(links) {
+            for (auto link : links) {
+                if (std::find(charsLeft.begin(), charsLeft.end(), link.n1) == charsLeft.end()) {
+                    charsLeft.push_back(link.n1);
+                }
+                if (std::find(charsLeft.begin(), charsLeft.end(), link.n2) == charsLeft.end()) {
+                    charsLeft.push_back(link.n2);
+                }
+            }
+        }
+
+        Solution(const Solution& solution):
+                charsLeft(solution.charsLeft), mapping(solution.mapping),
+                links(solution.links), mappedLinks(solution.mappedLinks) { }
 
         vector<Solution> nextSolutions() {
             return {};
         }
 
         bool complete() {
-            return false;
+            return links.empty();
         }
 
         bool isValid() {
-            return false;
+            set<int> diffs;
+            for (auto link : mappedLinks) {
+                diffs.insert(abs(link.n1 - link.n2));
+            }
+            for (int i = 1; i <= mappedLinks.size(); i++) {
+                if (diffs.count(i) != 0) return false;
+            }
+            return true;
         }
     };
 
@@ -54,20 +83,20 @@ namespace VonKochConjecture {
 //    }
 
     vector<Solution> doLabelTree(Solution solution) {
-        if (solution.complete()) return {/*solution*/};
+        if (solution.complete()) return {solution};
 
         vector<Solution> result = {};
         for (auto subSolution : solution.nextSolutions()) {
             if (subSolution.isValid()) {
-//                auto subSolutions = doLabelTree(solution);
-//                result.insert(result.begin(), subSolutions.begin(), subSolutions.end());
+                auto subSolutions = doLabelTree(solution);
+                result.insert(result.begin(), subSolutions.begin(), subSolutions.end());
             }
         }
         return result;
     }
 
     vector<Solution> labelTree(vector<Link<char>>& treeLinks) {
-        auto emptySolution = Solution(treeLinks);
+        Solution emptySolution(treeLinks);
         return doLabelTree(emptySolution);
     }
 }
