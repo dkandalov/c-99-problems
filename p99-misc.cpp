@@ -34,6 +34,7 @@ namespace VonKochConjecture {
         map<char, int> mapping;
         vector<Link<char>> links;
         vector<Link<int>> mappedLinks;
+        unsigned long nodeAmount;
 
         Solution(vector<Link<char>>& links): links(links) {
             for (auto link : links) {
@@ -44,18 +45,37 @@ namespace VonKochConjecture {
                     charsLeft.push_back(link.n2);
                 }
             }
+            nodeAmount = charsLeft.size();
         }
 
         Solution(const Solution& solution):
                 charsLeft(solution.charsLeft), mapping(solution.mapping),
-                links(solution.links), mappedLinks(solution.mappedLinks) { }
+                links(solution.links), mappedLinks(solution.mappedLinks),
+                nodeAmount(solution.nodeAmount) {}
 
         vector<Solution> nextSolutions() {
-            return {};
+            vector<Solution> result;
+
+            auto c = charsLeft.back();
+            for (int i = 1; i <= nodeAmount; i++) {
+                Solution subSolution(*this);
+                subSolution.charsLeft.pop_back();
+                subSolution.mapping[c] = i;
+                for (auto link : links) {
+                    if (subSolution.mapping.count(link.n1) != 0 && subSolution.mapping.count(link.n2)) {
+                        subSolution.mappedLinks.push_back(Link<int>(
+                                subSolution.mapping[link.n1],
+                                subSolution.mapping[link.n2]
+                        ));
+                    }
+                }
+                result.push_back(subSolution);
+            }
+            return result;
         }
 
         bool complete() {
-            return links.empty();
+            return mapping.size() == nodeAmount;
         }
 
         bool isValid() {
@@ -63,7 +83,7 @@ namespace VonKochConjecture {
             for (auto link : mappedLinks) {
                 diffs.insert(abs(link.n1 - link.n2));
             }
-            for (int i = 1; i <= mappedLinks.size(); i++) {
+            for (int i = 1; i <= nodeAmount; i++) {
                 if (diffs.count(i) != 0) return false;
             }
             return true;
