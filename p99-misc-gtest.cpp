@@ -52,18 +52,47 @@ TEST(P92, VonKochConjecture) {
     using namespace VonKochConjecture;
 
     vector<Link<char>> treeLinks = {
-            Link<char>('a', 'd'), Link<char>('a', 'g'), Link<char>('a', 'b'),
-            Link<char>('b', 'e'), Link<char>('b', 'c'), Link<char>('e', 'f')
+            Link<char>('a', 'b'), Link<char>('b', 'c')
     };
     vector<Solution> solutions = labelTree(treeLinks);
 
-//    vector<Link<int>> expectedLabels = {
-//            Link<int>(1, 7), Link<int>(7, 2), Link<int>(7, 3),
-//            Link<int>(3, 5), Link<int>(3, 6), Link<int>(5, 4)
-//    };
-//    EXPECT_EQ(expectedLabels.size(), labeledLinks.size());
-//    for (int i = 0; i < expectedLabels.size(); i++) {
-//        if (i >= labeledLinks.size()) break;
-//        EXPECT_TRUE(expectedLabels[i].equalTo(labeledLinks[i]));
-//    }
+    EXPECT_EQ(4, solutions.size());
+    EXPECT_EQ("(2->1 1->3)", solutions[0].toString());
+    EXPECT_EQ("(1->3 3->2)", solutions[1].toString());
+    EXPECT_EQ("(3->1 1->2)", solutions[2].toString());
+    EXPECT_EQ("(2->3 3->1)", solutions[3].toString());
+    std::cout << "Solutions: " << "\n";
+    for (auto item : solutions) std::cout << item.toString() << "\n";
+
+
+    treeLinks = {
+            Link<char>('a', 'd'), Link<char>('a', 'g'), Link<char>('a', 'b'),
+            Link<char>('b', 'e'), Link<char>('b', 'c'), Link<char>('e', 'f')
+    };
+    solutions = labelTree(treeLinks);
+
+    EXPECT_EQ(52, solutions.size());
+    EXPECT_EQ("(2->3 2->5 2->6 6->1 6->4 1->7)", solutions[0].toString());
+    EXPECT_EQ("(2->5 2->3 2->6 6->1 6->4 1->7)", solutions[1].toString());
+    std::cout << "Solutions: " << "\n";
+    for (auto item : solutions) std::cout << item.toString() << "\n";
+}
+
+TEST(P92, VonKochConjecture_ComplexExample) {
+    using namespace VonKochConjecture;
+
+    vector<Link<char>> treeLinks = {
+            Link<char>('a', 'b'), Link<char>('a', 'h'), Link<char>('a', 'i'),
+            Link<char>('a', 'g'), Link<char>('a', 'c'), Link<char>('c', 'f'),
+            Link<char>('c', 'd'), Link<char>('d', 'k'), Link<char>('c', 'e'),
+            Link<char>('e', 'q'), Link<char>('q', 'm'), Link<char>('q', 'n'),
+            Link<char>('n', 'p')
+    };
+    // TODO too slow
+    vector<Solution> solutions = labelTree(treeLinks);
+
+    EXPECT_EQ(4, solutions.size());
+    EXPECT_EQ("(2->1 1->3)", solutions[0].toString());
+    std::cout << "Solutions: " << "\n";
+    for (auto item : solutions) std::cout << item.toString() << "\n";
 }

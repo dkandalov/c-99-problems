@@ -16,6 +16,7 @@ using std::to_string;
 using std::tuple;
 using std::make_tuple;
 using std::get;
+using std::string;
 
 namespace VonKochConjecture {
     template<typename T>
@@ -57,12 +58,20 @@ namespace VonKochConjecture {
             vector<Solution> result;
 
             auto c = charsLeft.back();
+            charsLeft.pop_back();
+
             for (int i = 1; i <= nodeAmount; i++) {
+                bool alreadyMapped = false;
+                for (auto item : mapping) {
+                    if (item.second == i) alreadyMapped = true;
+                }
+                if (alreadyMapped) continue;
+
                 Solution subSolution(*this);
-                subSolution.charsLeft.pop_back();
                 subSolution.mapping[c] = i;
-                for (auto link : links) {
-                    if (subSolution.mapping.count(link.n1) != 0 && subSolution.mapping.count(link.n2)) {
+                subSolution.mappedLinks.clear();
+                for (auto link : subSolution.links) {
+                    if (subSolution.mapping.count(link.n1) > 0 && subSolution.mapping.count(link.n2) > 0) {
                         subSolution.mappedLinks.push_back(Link<int>(
                                 subSolution.mapping[link.n1],
                                 subSolution.mapping[link.n2]
@@ -75,32 +84,29 @@ namespace VonKochConjecture {
         }
 
         bool complete() {
-            return mapping.size() == nodeAmount;
+            return charsLeft.size() == 0;
         }
 
         bool isValid() {
             set<int> diffs;
             for (auto link : mappedLinks) {
-                diffs.insert(abs(link.n1 - link.n2));
-            }
-            for (int i = 1; i <= nodeAmount; i++) {
-                if (diffs.count(i) != 0) return false;
+                int diff = abs(link.n1 - link.n2);
+                if (diffs.count(diff) > 0) return false;
+                else diffs.insert(diff);
             }
             return true;
         }
-    };
 
-//    vector<Link<int>> allCombinationsOf(vector<int>& unusedLabels) {
-//        vector<Link<int>> result;
-//        for (int label1 : unusedLabels) {
-//            for (int label2 : unusedLabels) {
-//                if (label1 != label2) {
-//                    result.push_back(Link(label1, label2));
-//                }
-//            }
-//        }
-//        return result;
-//    }
+        string toString() {
+            string s = "";
+            int i = 1;
+            for (auto link : mappedLinks) {
+                s += std::to_string(link.n1) + "->" + std::to_string(link.n2);
+                if (i++ < mappedLinks.size()) s += " ";
+            }
+            return "(" + s + ")";
+        }
+    };
 
     vector<Solution> doLabelTree(Solution solution) {
         if (solution.complete()) return {solution};
@@ -108,7 +114,7 @@ namespace VonKochConjecture {
         vector<Solution> result = {};
         for (auto subSolution : solution.nextSolutions()) {
             if (subSolution.isValid()) {
-                auto subSolutions = doLabelTree(solution);
+                auto subSolutions = doLabelTree(subSolution);
                 result.insert(result.begin(), subSolutions.begin(), subSolutions.end());
             }
         }
