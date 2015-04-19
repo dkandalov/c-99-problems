@@ -78,6 +78,7 @@ TEST(P92, VonKochConjecture) {
     for (auto item : solutions) std::cout << item.toString() << "\n";
 }
 
+/*
 TEST(P92, VonKochConjecture_ComplexExample) {
     using namespace VonKochConjecture;
 
@@ -95,4 +96,4 @@ TEST(P92, VonKochConjecture_ComplexExample) {
     EXPECT_EQ("(2->1 1->3)", solutions[0].toString());
     std::cout << "Solutions: " << "\n";
     for (auto item : solutions) std::cout << item.toString() << "\n";
-}
+}*/

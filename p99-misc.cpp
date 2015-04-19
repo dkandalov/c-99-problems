@@ -33,7 +33,7 @@ namespace VonKochConjecture {
     public:
         vector<char> charsLeft;
         map<char, int> mapping;
-        vector<Link<char>> links;
+        vector<Link<char>>& links;
         vector<Link<int>> mappedLinks;
         unsigned long nodeAmount;
 
@@ -54,11 +54,21 @@ namespace VonKochConjecture {
                 links(solution.links), mappedLinks(solution.mappedLinks),
                 nodeAmount(solution.nodeAmount) {}
 
+        void operator=(const Solution& solution) {
+            charsLeft = vector<char>(solution.charsLeft);
+            mapping = map<char, int>(solution.mapping);
+            links = solution.links;
+            mappedLinks = solution.mappedLinks;
+            nodeAmount = solution.nodeAmount;
+        }
+
         vector<Solution> nextSolutions() {
             vector<Solution> result;
 
             auto c = charsLeft.back();
             charsLeft.pop_back();
+
+//            std::cout << charsLeft.size() << "\n";
 
             for (int i = 1; i <= nodeAmount; i++) {
                 bool alreadyMapped = false;
@@ -78,7 +88,9 @@ namespace VonKochConjecture {
                         ));
                     }
                 }
-                result.push_back(subSolution);
+                if (subSolution.isValid()) {
+                    result.push_back(subSolution);
+                }
             }
             return result;
         }
@@ -113,17 +125,25 @@ namespace VonKochConjecture {
 
         vector<Solution> result = {};
         for (auto subSolution : solution.nextSolutions()) {
-            if (subSolution.isValid()) {
-                auto subSolutions = doLabelTree(subSolution);
-                result.insert(result.begin(), subSolutions.begin(), subSolutions.end());
-            }
+            auto subSolutions = doLabelTree(subSolution);
+            result.insert(result.begin(), subSolutions.begin(), subSolutions.end());
         }
         return result;
     }
 
+    static long duration;
+
     vector<Solution> labelTree(vector<Link<char>>& treeLinks) {
+        using namespace std::chrono;
+        auto start = system_clock::now();
+
         Solution emptySolution(treeLinks);
-        return doLabelTree(emptySolution);
+        vector<Solution> solution = doLabelTree(emptySolution);
+
+        auto end = system_clock::now();
+        std::cout << "Duration: " << (end - start).count() / 1000 << "ms\n";
+
+        return solution;
     }
 }
 
