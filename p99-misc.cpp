@@ -18,6 +18,12 @@ using std::make_tuple;
 using std::get;
 using std::string;
 
+template<typename T>
+using p = std::unique_ptr<T>;
+template<typename T>
+p<T> p_(T* t) { return p<T>(t); }
+
+
 namespace VonKochConjecture {
     template<typename T>
     struct Link {
@@ -54,6 +60,8 @@ namespace VonKochConjecture {
                 links(solution.links), mappedLinks(solution.mappedLinks),
                 nodeAmount(solution.nodeAmount) {}
 
+        Solution(Solution&& solution) = default;
+
         void operator=(const Solution& solution) {
             charsLeft = vector<char>(solution.charsLeft);
             mapping = map<char, int>(solution.mapping);
@@ -62,13 +70,11 @@ namespace VonKochConjecture {
             nodeAmount = solution.nodeAmount;
         }
 
-        vector<Solution> nextSolutions() {
-            vector<Solution> result;
+        vector<p<Solution>> nextSolutions() {
+            vector<p<Solution>> result;
 
             auto c = charsLeft.back();
             charsLeft.pop_back();
-
-//            std::cout << charsLeft.size() << "\n";
 
             for (int i = 1; i <= nodeAmount; i++) {
                 bool alreadyMapped = false;
@@ -77,18 +83,19 @@ namespace VonKochConjecture {
                 }
                 if (alreadyMapped) continue;
 
-                Solution subSolution(*this);
-                subSolution.mapping[c] = i;
-                subSolution.mappedLinks.clear();
-                for (auto link : subSolution.links) {
-                    if (subSolution.mapping.count(link.n1) > 0 && subSolution.mapping.count(link.n2) > 0) {
-                        subSolution.mappedLinks.push_back(Link<int>(
-                                subSolution.mapping[link.n1],
-                                subSolution.mapping[link.n2]
+                p<Solution> subSolution = p_(new Solution(*this));
+                subSolution->mapping[c] = i;
+                subSolution->mappedLinks.clear();
+                for (auto link : subSolution->links) {
+                    if (subSolution->mapping.find(link.n1) != subSolution->mapping.end() &&
+                        subSolution->mapping.find(link.n2) != subSolution->mapping.end()) {
+                        subSolution->mappedLinks.push_back(Link<int>(
+                                subSolution->mapping[link.n1],
+                                subSolution->mapping[link.n2]
                         ));
                     }
                 }
-                if (subSolution.isValid()) {
+                if (subSolution->isValid()) {
                     result.push_back(subSolution);
                 }
             }
@@ -120,27 +127,26 @@ namespace VonKochConjecture {
         }
     };
 
-    vector<Solution> doLabelTree(Solution solution) {
-        if (solution.complete()) return {solution};
+    vector<p<Solution>> doLabelTree(p<Solution> solution, int depth) {
+        if (solution->complete()) return {solution};
 
-        vector<Solution> result = {};
-        for (auto subSolution : solution.nextSolutions()) {
-            auto subSolutions = doLabelTree(subSolution);
+        vector<p<Solution>> result = {};
+        for (auto subSolution : solution->nextSolutions()) {
+            auto subSolutions = doLabelTree(subSolution, depth + 1);
             result.insert(result.begin(), subSolutions.begin(), subSolutions.end());
+            if (depth == 0 && result.size() > 0) return result; // TODO remove
         }
         return result;
     }
 
-    static long duration;
 
-    vector<Solution> labelTree(vector<Link<char>>& treeLinks) {
-        using namespace std::chrono;
-        auto start = system_clock::now();
+    vector<p<Solution>> labelTree(vector<Link<char>>& treeLinks) {
+        auto start = std::chrono::system_clock::now();
 
-        Solution emptySolution(treeLinks);
-        vector<Solution> solution = doLabelTree(emptySolution);
+        p<Solution> emptySolution = p_(new Solution(treeLinks));
+        vector<p<Solution>> solution = doLabelTree(emptySolution, 0);
 
-        auto end = system_clock::now();
+        auto end = std::chrono::system_clock::now();
         std::cout << "Duration: " << (end - start).count() / 1000 << "ms\n";
 
         return solution;
