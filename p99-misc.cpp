@@ -35,6 +35,13 @@ namespace VonKochConjecture {
             return n1 == link.n1 && n2 == link.n2;
         }
     };
+
+    // Misc links:
+    // http://en.cppreference.com/w/cpp/language/move_constructor
+    // http://stackoverflow.com/questions/23071621/llvm-find-if-implicitly-deleted-copy-constructor-with-unique-ptr
+    // http://stackoverflow.com/questions/3283778/why-can-i-not-push-back-a-unique-ptr-into-a-vector
+    // http://stackoverflow.com/questions/21487714/inserting-a-vector-of-unique-ptr-into-another-vector
+    // http://stackoverflow.com/questions/20292682/iterating-through-vectorunique-ptrmytype-using-c11-for-loops
     class Solution {
     public:
         vector<char> charsLeft;
@@ -44,7 +51,7 @@ namespace VonKochConjecture {
         unsigned long nodeAmount;
 
         Solution(vector<Link<char>>& links): links(links) {
-            for (auto link : links) {
+            for (auto& link : links) {
                 if (std::find(charsLeft.begin(), charsLeft.end(), link.n1) == charsLeft.end()) {
                     charsLeft.push_back(link.n1);
                 }
@@ -59,8 +66,6 @@ namespace VonKochConjecture {
                 charsLeft(solution.charsLeft), mapping(solution.mapping),
                 links(solution.links), mappedLinks(solution.mappedLinks),
                 nodeAmount(solution.nodeAmount) {}
-
-        Solution(Solution&& solution) = default;
 
         void operator=(const Solution& solution) {
             charsLeft = vector<char>(solution.charsLeft);
@@ -78,7 +83,7 @@ namespace VonKochConjecture {
 
             for (int i = 1; i <= nodeAmount; i++) {
                 bool alreadyMapped = false;
-                for (auto item : mapping) {
+                for (auto& item : mapping) {
                     if (item.second == i) alreadyMapped = true;
                 }
                 if (alreadyMapped) continue;
@@ -86,7 +91,7 @@ namespace VonKochConjecture {
                 p<Solution> subSolution = p_(new Solution(*this));
                 subSolution->mapping[c] = i;
                 subSolution->mappedLinks.clear();
-                for (auto link : subSolution->links) {
+                for (auto& link : subSolution->links) {
                     if (subSolution->mapping.find(link.n1) != subSolution->mapping.end() &&
                         subSolution->mapping.find(link.n2) != subSolution->mapping.end()) {
                         subSolution->mappedLinks.push_back(Link<int>(
@@ -96,7 +101,7 @@ namespace VonKochConjecture {
                     }
                 }
                 if (subSolution->isValid()) {
-                    result.push_back(subSolution);
+                    result.push_back(std::move(subSolution));
                 }
             }
             return result;
@@ -119,7 +124,7 @@ namespace VonKochConjecture {
         string toString() {
             string s = "";
             int i = 1;
-            for (auto link : mappedLinks) {
+            for (auto& link : mappedLinks) {
                 s += std::to_string(link.n1) + "->" + std::to_string(link.n2);
                 if (i++ < mappedLinks.size()) s += " ";
             }
@@ -127,14 +132,20 @@ namespace VonKochConjecture {
         }
     };
 
-    vector<p<Solution>> doLabelTree(p<Solution> solution, int depth) {
-        if (solution->complete()) return {solution};
+    vector<p<Solution>> doLabelTree(p<Solution>& solution, int depth) {
+        vector<p<Solution>> result;
 
-        vector<p<Solution>> result = {};
-        for (auto subSolution : solution->nextSolutions()) {
-            auto subSolutions = doLabelTree(subSolution, depth + 1);
-            result.insert(result.begin(), subSolutions.begin(), subSolutions.end());
-            if (depth == 0 && result.size() > 0) return result; // TODO remove
+        if (solution->complete()) {
+            result.push_back(std::move(solution));
+            return result;
+        }
+
+        for (auto& subSolution : solution->nextSolutions()) {
+            vector<p<Solution>> subSolutions = doLabelTree(subSolution, depth + 1);
+            result.insert(result.begin(),
+                          std::make_move_iterator(subSolutions.begin()),
+                          std::make_move_iterator(subSolutions.end()));
+//            if (depth == 0 && result.size() > 0) return result; // TODO remove
         }
         return result;
     }

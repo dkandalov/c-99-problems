@@ -48,22 +48,21 @@ TEST(P91, KnightsTour_Lazy) {
 //    EXPECT_EQ(0, knightsPath.nextPath().size());
 }
 
-/*
 TEST(P92, VonKochConjecture) {
     using namespace VonKochConjecture;
 
     vector<Link<char>> treeLinks = {
             Link<char>('a', 'b'), Link<char>('b', 'c')
     };
-    vector<Solution> solutions = labelTree(treeLinks);
+    vector<p<Solution>> solutions = labelTree(treeLinks);
 
     EXPECT_EQ(4, solutions.size());
-    EXPECT_EQ("(2->1 1->3)", solutions[0].toString());
-    EXPECT_EQ("(1->3 3->2)", solutions[1].toString());
-    EXPECT_EQ("(3->1 1->2)", solutions[2].toString());
-    EXPECT_EQ("(2->3 3->1)", solutions[3].toString());
+    EXPECT_EQ("(2->1 1->3)", solutions[0]->toString());
+    EXPECT_EQ("(1->3 3->2)", solutions[1]->toString());
+    EXPECT_EQ("(3->1 1->2)", solutions[2]->toString());
+    EXPECT_EQ("(2->3 3->1)", solutions[3]->toString());
     std::cout << "Solutions: " << "\n";
-    for (auto item : solutions) std::cout << item.toString() << "\n";
+    for (auto& item : solutions) std::cout << item->toString() << "\n";
 
 
     treeLinks = {
@@ -73,12 +72,11 @@ TEST(P92, VonKochConjecture) {
     solutions = labelTree(treeLinks);
 
     EXPECT_EQ(52, solutions.size());
-    EXPECT_EQ("(2->3 2->5 2->6 6->1 6->4 1->7)", solutions[0].toString());
-    EXPECT_EQ("(2->5 2->3 2->6 6->1 6->4 1->7)", solutions[1].toString());
+    EXPECT_EQ("(2->3 2->5 2->6 6->1 6->4 1->7)", solutions[0]->toString());
+    EXPECT_EQ("(2->5 2->3 2->6 6->1 6->4 1->7)", solutions[1]->toString());
 //    std::cout << "Solutions: " << "\n";
-//    for (auto item : solutions) std::cout << item.toString() << "\n";
+//    for (auto& item : solutions) std::cout << item.toString() << "\n";
 }
-*/
 
 TEST(P92, VonKochConjecture_ComplexExample) {
     using namespace VonKochConjecture;
@@ -96,5 +94,5 @@ TEST(P92, VonKochConjecture_ComplexExample) {
     EXPECT_EQ(4, solutions.size());
     EXPECT_EQ("(2->1 1->3)", solutions[0]->toString());
     std::cout << "Solutions: " << "\n";
-//    for (auto item : solutions) std::cout << item->toString() << "\n";
+//    for (auto& item : solutions) std::cout << item->toString() << "\n";
 }
