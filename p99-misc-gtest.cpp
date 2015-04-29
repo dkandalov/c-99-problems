@@ -72,8 +72,8 @@ TEST(P92, VonKochConjecture) {
     solutions = labelTree(treeLinks);
 
     EXPECT_EQ(52, solutions.size());
-    EXPECT_EQ("(2->3 2->5 2->6 6->1 6->4 1->7)", solutions[0]->toString());
-    EXPECT_EQ("(2->5 2->3 2->6 6->1 6->4 1->7)", solutions[1]->toString());
+    EXPECT_EQ("(2->5 2->3 2->6 6->1 6->4 1->7)", solutions[0]->toString());
+    EXPECT_EQ("(2->3 2->5 2->6 6->1 6->4 1->7)", solutions[1]->toString());
 //    std::cout << "Solutions: " << "\n";
 //    for (auto& item : solutions) std::cout << item.toString() << "\n";
 }

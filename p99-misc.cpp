@@ -24,6 +24,7 @@ template<typename T>
 p<T> p_(T* t) { return p<T>(t); }
 
 
+// aka "Graceful labelling conjecture" (http://en.wikipedia.org/wiki/Graceful_labeling)
 namespace VonKochConjecture {
     template<typename T>
     struct Link {
@@ -67,39 +68,15 @@ namespace VonKochConjecture {
                 links(solution.links), mappedLinks(solution.mappedLinks),
                 nodeAmount(solution.nodeAmount) {}
 
-        void operator=(const Solution& solution) {
-            charsLeft = vector<char>(solution.charsLeft);
-            mapping = map<char, int>(solution.mapping);
-            links = solution.links;
-            mappedLinks = solution.mappedLinks;
-            nodeAmount = solution.nodeAmount;
-        }
-
         vector<p<Solution>> nextSolutions() {
             vector<p<Solution>> result;
 
-            auto c = charsLeft.back();
-            charsLeft.pop_back();
-
+            char c = nextUnmappedChar();
             for (int i = 1; i <= nodeAmount; i++) {
-                bool alreadyMapped = false;
-                for (auto& item : mapping) {
-                    if (item.second == i) alreadyMapped = true;
-                }
+                bool alreadyMapped = reverseMapping(i) != 0;
                 if (alreadyMapped) continue;
 
-                p<Solution> subSolution = p_(new Solution(*this));
-                subSolution->mapping[c] = i;
-                subSolution->mappedLinks.clear();
-                for (auto& link : subSolution->links) {
-                    if (subSolution->mapping.find(link.n1) != subSolution->mapping.end() &&
-                        subSolution->mapping.find(link.n2) != subSolution->mapping.end()) {
-                        subSolution->mappedLinks.push_back(Link<int>(
-                                subSolution->mapping[link.n1],
-                                subSolution->mapping[link.n2]
-                        ));
-                    }
-                }
+                p<Solution> subSolution = this->copyWithMapping(c, i);
                 if (subSolution->isValid()) {
                     result.push_back(std::move(subSolution));
                 }
@@ -108,7 +85,7 @@ namespace VonKochConjecture {
         }
 
         bool complete() {
-            return charsLeft.size() == 0;
+            return links.size() == mappedLinks.size();
         }
 
         bool isValid() {
@@ -129,6 +106,65 @@ namespace VonKochConjecture {
                 if (i++ < mappedLinks.size()) s += " ";
             }
             return "(" + s + ")";
+        }
+
+    private:
+        char nextUnmappedChar() {
+            auto c = charsLeft.back();
+            if (mappedLinks.size() == 0) return c;
+            for (auto mappedLink : mappedLinks) {
+                char mappedChar = reverseMapping(mappedLink.n1);
+                char unmappedNeighbour = findUnmapped(neighboursOf(mappedChar));
+                if (unmappedNeighbour != 0) return unmappedNeighbour;
+
+                mappedChar = reverseMapping(mappedLink.n2);
+                unmappedNeighbour = findUnmapped(neighboursOf(mappedChar));
+                if (unmappedNeighbour != 0) return unmappedNeighbour;
+            }
+            return c;
+        }
+
+        char reverseMapping(int n) {
+            for (auto item : mapping) {
+                if (item.second == n) return item.first;
+            }
+            return 0;
+        }
+
+        bool hasMapping(char c) {
+            return mapping.find(c) != mapping.end();
+        }
+
+        char findUnmapped(const set<char>& chars) {
+            for (auto c : chars) {
+                if (!hasMapping(c)) return c;
+            }
+            return 0;
+        }
+
+        set<char> neighboursOf(char c) {
+            set<char> result;
+            for (auto link : links) {
+                if (link.n1 == c) result.insert(link.n2);
+                else if (link.n2 == c) result.insert(link.n1);
+            }
+            return result;
+        }
+
+        p<Solution> copyWithMapping(char fromChar, int toInt) {
+            p<Solution> subSolution = p_(new Solution(*this));
+            subSolution->charsLeft.pop_back();
+            subSolution->mapping[fromChar] = toInt;
+            subSolution->mappedLinks.clear();
+            for (auto& link : subSolution->links) {
+                if (subSolution->hasMapping(link.n1) && subSolution->hasMapping(link.n2)) {
+                    subSolution->mappedLinks.push_back(Link<int>(
+                            subSolution->mapping[link.n1],
+                            subSolution->mapping[link.n2]
+                    ));
+                }
+            }
+            return subSolution;
         }
     };
 
