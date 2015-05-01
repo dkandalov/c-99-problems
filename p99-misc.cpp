@@ -24,6 +24,35 @@ template<typename T>
 p<T> p_(T* t) { return p<T>(t); }
 
 
+class Combination {
+public:
+    virtual vector<p<Combination>> subCombinations() = 0;
+    virtual bool isComplete() = 0;
+    virtual bool isValid() = 0;
+    virtual string toString() {
+        return "";
+    }
+};
+
+vector<p<Combination>> findAllValidCombinations(p<Combination>& combination) {
+    vector<p<Combination>> result;
+
+    if (combination->isComplete()) {
+        result.push_back(std::move(combination));
+        return result;
+    }
+
+    for (auto& subCombination : combination->subCombinations()) {
+        if (!subCombination->isValid()) continue;
+        vector<p<Combination>> subCombinations = findAllValidCombinations(subCombination);
+        result.insert(result.begin(),
+                      std::make_move_iterator(subCombinations.begin()),
+                      std::make_move_iterator(subCombinations.end()));
+    }
+    return result;
+}
+
+
 // aka "Graceful labelling conjecture" (http://en.wikipedia.org/wiki/Graceful_labeling)
 namespace VonKochConjecture {
     template<typename T>
@@ -43,7 +72,7 @@ namespace VonKochConjecture {
     // http://stackoverflow.com/questions/3283778/why-can-i-not-push-back-a-unique-ptr-into-a-vector
     // http://stackoverflow.com/questions/21487714/inserting-a-vector-of-unique-ptr-into-another-vector
     // http://stackoverflow.com/questions/20292682/iterating-through-vectorunique-ptrmytype-using-c11-for-loops
-    class Solution {
+    class LinkMapping : public Combination {
     public:
         vector<char> charsLeft;
         map<char, int> mapping;
@@ -51,7 +80,7 @@ namespace VonKochConjecture {
         vector<Link<int>> mappedLinks;
         unsigned long nodeAmount;
 
-        Solution(vector<Link<char>>& links): links(links) {
+        LinkMapping(vector<Link<char>>& links): links(links) {
             for (auto& link : links) {
                 if (std::find(charsLeft.begin(), charsLeft.end(), link.n1) == charsLeft.end()) {
                     charsLeft.push_back(link.n1);
@@ -63,32 +92,28 @@ namespace VonKochConjecture {
             nodeAmount = charsLeft.size();
         }
 
-        Solution(const Solution& solution):
+        LinkMapping(const LinkMapping& solution):
                 charsLeft(solution.charsLeft), mapping(solution.mapping),
                 links(solution.links), mappedLinks(solution.mappedLinks),
                 nodeAmount(solution.nodeAmount) {}
 
-        vector<p<Solution>> nextSolutions() {
-            vector<p<Solution>> result;
+        vector<p<Combination>> subCombinations() {
+            vector<p<Combination>> result;
 
             char c = nextUnmappedChar();
             for (int i = 1; i <= nodeAmount; i++) {
                 bool alreadyMapped = reverseMapping(i) != 0;
                 if (alreadyMapped) continue;
-
-                p<Solution> subSolution = this->copyWithMapping(c, i);
-                if (subSolution->isValid()) {
-                    result.push_back(std::move(subSolution));
-                }
+                result.push_back(std::move(this->copyWithMapping(c, i)));
             }
             return result;
         }
 
-        bool complete() {
+        bool isComplete() override {
             return links.size() == mappedLinks.size();
         }
 
-        bool isValid() {
+        bool isValid() override {
             set<int> diffs;
             for (auto link : mappedLinks) {
                 int diff = abs(link.n1 - link.n2);
@@ -98,7 +123,7 @@ namespace VonKochConjecture {
             return true;
         }
 
-        string toString() {
+        string toString() override {
             string s = "";
             int i = 1;
             for (auto& link : mappedLinks) {
@@ -151,8 +176,8 @@ namespace VonKochConjecture {
             return result;
         }
 
-        p<Solution> copyWithMapping(char fromChar, int toInt) {
-            p<Solution> subSolution = p_(new Solution(*this));
+        p<Combination> copyWithMapping(char fromChar, int toInt) {
+            auto subSolution = new LinkMapping(*this);
             subSolution->charsLeft.pop_back();
             subSolution->mapping[fromChar] = toInt;
             subSolution->mappedLinks.clear();
@@ -164,34 +189,15 @@ namespace VonKochConjecture {
                     ));
                 }
             }
-            return subSolution;
+            return p_<Combination>(subSolution);
         }
     };
 
-    vector<p<Solution>> doLabelTree(p<Solution>& solution, int depth) {
-        vector<p<Solution>> result;
-
-        if (solution->complete()) {
-            result.push_back(std::move(solution));
-            return result;
-        }
-
-        for (auto& subSolution : solution->nextSolutions()) {
-            vector<p<Solution>> subSolutions = doLabelTree(subSolution, depth + 1);
-            result.insert(result.begin(),
-                          std::make_move_iterator(subSolutions.begin()),
-                          std::make_move_iterator(subSolutions.end()));
-//            if (depth == 0 && result.size() > 0) return result; // TODO remove
-        }
-        return result;
-    }
-
-
-    vector<p<Solution>> labelTree(vector<Link<char>>& treeLinks) {
+    vector<p<Combination>> labelTree(vector<Link<char>>& treeLinks) {
         auto start = std::chrono::system_clock::now();
 
-        p<Solution> emptySolution = p_(new Solution(treeLinks));
-        vector<p<Solution>> solution = doLabelTree(emptySolution, 0);
+        p<Combination> emptySolution = p_<Combination>(new LinkMapping(treeLinks));
+        vector<p<Combination>> solution = findAllValidCombinations(emptySolution);
 
         auto end = std::chrono::system_clock::now();
         std::cout << "Duration: " << (end - start).count() / 1000 << "ms\n";
