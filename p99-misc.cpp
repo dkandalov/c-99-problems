@@ -236,15 +236,6 @@ namespace KnightsTour {
         return s;
     }
 
-    bool isValid(Position& position, vector<Position>& path, int boardSize) {
-        if (position.x < 0 || position.x >= boardSize) return false;
-        if (position.y < 0 || position.y >= boardSize) return false;
-        for (auto thatPosition : path) {
-            if (thatPosition.x == position.x && thatPosition.y == position.y) return false;
-        }
-        return true;
-    }
-
     array<Position, 8> allMovesFrom(Position& position) {
         int x = position.x;
         int y = position.y;
@@ -261,26 +252,6 @@ namespace KnightsTour {
         return {upRight, upLeft, rightUp, rightDown, leftUp, leftDown, downRight, downLeft};
     }
 
-    vector<vector<Position>> findKnightsPath(int boardSize, vector<Position>& path) {
-        if (path.size() == boardSize * boardSize) return {path};
-        vector<vector<Position>> result;
-
-        auto position = path.back();
-        for (auto newPosition : allMovesFrom(position)) {
-            if (isValid(newPosition, path, boardSize)) {
-                auto pathCopy = vector<Position>(path);
-                pathCopy.push_back(newPosition);
-                auto subResults = findKnightsPath(boardSize, pathCopy);
-                result.insert(result.end(), subResults.begin(), subResults.end());
-            }
-        }
-        return result;
-    }
-
-    vector<vector<Position>> findKnightsPath(int boardSize) {
-        vector<Position> path = {Position(0, 0)};
-        return findKnightsPath(boardSize, path);
-    }
 
     class KnightsPath : public Combination {
     public:
@@ -318,9 +289,14 @@ namespace KnightsTour {
         }
 
         string toString() override {
-            return "";
+            return asString(positions);
         }
     };
+
+    vector<p<Combination>> findKnightsPath(const int boardSize) {
+        p<Combination> knightsPath = p_(new KnightsPath(boardSize, {Position(0, 0)}));
+        return findAllValidCombinations(knightsPath);
+    }
 
 
     class KnightPathLazy {
@@ -352,6 +328,15 @@ namespace KnightsTour {
             }
             if (path.size() == boardSize * boardSize) return path;
             else return {};
+        }
+
+        bool isValid(Position& position, vector<Position>& path, int boardSize) {
+            if (position.x < 0 || position.x >= boardSize) return false;
+            if (position.y < 0 || position.y >= boardSize) return false;
+            for (auto thatPosition : path) {
+                if (thatPosition.x == position.x && thatPosition.y == position.y) return false;
+            }
+            return true;
         }
     };
 }
