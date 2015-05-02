@@ -282,6 +282,46 @@ namespace KnightsTour {
         return findKnightsPath(boardSize, path);
     }
 
+    class KnightsPath : public Combination {
+    public:
+        const int boardSize;
+        vector<Position> positions;
+
+        KnightsPath(const int boardSize, const vector<Position>& positions) :
+                boardSize(boardSize), positions(positions) {}
+
+        KnightsPath(const KnightsPath& knightsPath) :
+            boardSize(knightsPath.boardSize), positions(knightsPath.positions) {}
+
+        vector<p<Combination>> subCombinations() override {
+            vector<p<Combination>> result;
+            for (auto nextPosition : allMovesFrom(positions.back())) {
+                auto pathCopy = new KnightsPath(*this);
+                pathCopy->positions.push_back(nextPosition);
+                result.push_back(p_(pathCopy));
+            }
+            return result;
+        }
+
+        bool isComplete() override {
+            return positions.size() == boardSize * boardSize;
+        }
+
+        bool isValid() override {
+            auto position = positions.back();
+            if (position.x < 0 || position.x >= boardSize) return false;
+            if (position.y < 0 || position.y >= boardSize) return false;
+            for (int i = 0; i < positions.size() - 1; i++) { // note that last element is skipped
+                if (positions[i].x == position.x && positions[i].y == position.y) return false;
+            }
+            return true;
+        }
+
+        string toString() override {
+            return "";
+        }
+    };
+
 
     class KnightPathLazy {
     private:
