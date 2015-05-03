@@ -5,8 +5,8 @@ TEST(P90, EightQueensProblem) {
     using namespace EightQueens;
     auto solveAndPrint = [](int boardSize){
         auto solutions = solveEightQueensProblem(boardSize);
-        for (auto solution : solutions) {
-            std::cout << asString(solution) << "\n";
+        for (auto& solution : solutions) {
+            std::cout << solution->toString() << "\n";
         }
         return solutions;
     };
