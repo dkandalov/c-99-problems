@@ -37,11 +37,6 @@ public:
 vector<p<Combination>> findAllValidCombinations(p<Combination>& combination) {
     vector<p<Combination>> result;
 
-    if (combination->isComplete()) {
-        result.push_back(std::move(combination));
-        return result;
-    }
-
     for (auto& subCombination : combination->subCombinations()) {
         if (!subCombination->isValid()) continue;
         vector<p<Combination>> subCombinations = findAllValidCombinations(subCombination);
@@ -49,7 +44,54 @@ vector<p<Combination>> findAllValidCombinations(p<Combination>& combination) {
                       std::make_move_iterator(subCombinations.begin()),
                       std::make_move_iterator(subCombinations.end()));
     }
+
+    if (combination->isComplete()) {
+        result.push_back(std::move(combination));
+    }
     return result;
+}
+
+
+namespace ArithmeticPuzzle {
+    // http://stackoverflow.com/questions/3256192/complex-initialization-of-const-fields
+    class Equation : public Combination {
+    const vector<int> numbers;
+    const vector<char> operators;
+
+    public:
+        Equation(vector<int> const& numbers) :
+                numbers(numbers), operators(createOperators()) {}
+
+        vector<p<Combination>> subCombinations() override {
+            return {};
+        }
+
+        bool isComplete() override {
+            return false;
+        }
+
+        bool isValid() override {
+            return false;
+        }
+
+        string toString() override {
+            return "";
+        }
+
+    private:
+        vector<char> createOperators() {
+            vector<char> result;
+            for (int i = 0; i < numbers.size(); i++) {
+                result.push_back(' ');
+            }
+            return result;
+        }
+    };
+
+    vector<p<Combination>> findOperators(vector<int> numbers) {
+        p<Combination> equation = p_(new Equation(numbers));
+        return findAllValidCombinations(equation);
+    }
 }
 
 
@@ -99,6 +141,7 @@ namespace VonKochConjecture {
 
         vector<p<Combination>> subCombinations() {
             vector<p<Combination>> result;
+            if (isComplete()) return result;
 
             char c = nextUnmappedChar();
             for (int i = 1; i <= nodeAmount; i++) {
@@ -266,6 +309,8 @@ namespace KnightsTour {
 
         vector<p<Combination>> subCombinations() override {
             vector<p<Combination>> result;
+            if (isComplete()) return result;
+
             for (auto nextPosition : allMovesFrom(positions.back())) {
                 auto pathCopy = new KnightsPath(*this);
                 pathCopy->positions.push_back(nextPosition);
@@ -354,6 +399,8 @@ namespace EightQueens {
 
         vector<p<Combination>> subCombinations() override {
             vector<p<Combination>> result;
+            if (isComplete()) return result;
+
             for (int row = 0; row < boardSize; row++) {
                 auto copy = new QueenPositions(this->boardSize, this->solution);
                 copy->solution.push_back(row);

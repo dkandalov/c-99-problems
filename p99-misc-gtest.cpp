@@ -96,3 +96,13 @@ TEST(P92, VonKochConjecture_ComplexExample) {
 //    std::cout << "Solutions: " << "\n";
 //    for (auto& item : solutions) std::cout << item->toString() << "\n";
 }
+
+TEST(P93, ArithmeticPuzzle) {
+    using namespace ArithmeticPuzzle;
+
+    auto solutions = findOperators({2, 3, 5, 7, 11});
+    EXPECT_EQ(12, solutions.size());
+    for (auto& solution : solutions) {
+        std::cout << solution->toString() << "\n";
+    }
+}
