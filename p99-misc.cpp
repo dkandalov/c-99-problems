@@ -62,29 +62,66 @@ namespace ArithmeticPuzzle {
         Equation(vector<int> const& numbers) :
                 numbers(numbers), operators(createOperators()) {}
 
+        Equation(vector<int> const& numbers, vector<char> const& operators) :
+                numbers(numbers), operators(operators) {}
+
         vector<p<Combination>> subCombinations() override {
-            return {};
+//            std::cout << this->toString() << "\n";
+//            std::flush(std::cout);
+
+            vector<p<Combination>> result;
+            array<char, 5> ops = {'=', '+', '-', '*', '/'};
+
+            for (char op : ops) {
+                for (int i = 0; i < operators.size(); i++) {
+                    if (operators[i] != ' ') continue;
+                    if (std::find(operators.begin(), operators.end(), '=') != operators.end()) continue;
+
+                    vector<char> operatorsCopy(operators.begin(), operators.end());
+                    operatorsCopy[i] = op;
+                    auto equation = new Equation(numbers, operatorsCopy);
+                    result.push_back(p_(equation));
+                }
+            }
+            return result;
         }
 
         bool isComplete() override {
-            return false;
+            return std::find(operators.begin(), operators.end(), ' ') == operators.end();
         }
 
         bool isValid() override {
-            return false;
+            vector<char>::const_iterator it = std::find(operators.begin(), operators.end(), '=');
+            if (it == operators.end()) return false;
+            auto eqIndex = std::distance(operators.begin(), it);
+
+            vector<int> leftNumbers(numbers.begin(), numbers.begin() + eqIndex);
+            vector<int> rightNumbers(numbers.begin() + eqIndex + 1, numbers.end());
+            vector<char> leftOperators(operators.begin(), operators.begin() + eqIndex);
+            vector<char> rightOperators(operators.begin() + eqIndex + 1, operators.end());
+
+            return evaluate(leftNumbers, leftOperators) == evaluate(rightNumbers, rightOperators);
         }
 
         string toString() override {
-            return "";
+            string s = "";
+            for (int i = 0; i < numbers.size(); i++) {
+                s += std::to_string(numbers[i]) + operators[i];
+            }
+            return s;
         }
 
     private:
         vector<char> createOperators() {
             vector<char> result;
-            for (int i = 0; i < numbers.size(); i++) {
+            for (int i = 0; i < numbers.size() - 1; i++) {
                 result.push_back(' ');
             }
             return result;
+        }
+
+        int evaluate(vector<int> numbers, vector<char> operators) {
+            return 0;
         }
     };
 
