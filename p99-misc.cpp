@@ -120,9 +120,69 @@ namespace ArithmeticPuzzle {
             return result;
         }
 
-        int evaluate(vector<int> numbers, vector<char> operators) {
+        int evaluate(vector<int>& numbers, vector<char>& operators) {
+            auto it = std::find(operators.begin(), operators.end(), '*');
+            if (it != operators.end()) {
+                auto multIndex = std::distance(operators.begin(), it);
+                int n = numbers[multIndex] * numbers[multIndex + 1];
+
+                vector<int> newNumbers(numbers.begin(), numbers.end());
+                newNumbers.erase(newNumbers.begin() + multIndex);
+                newNumbers.erase(newNumbers.begin() + multIndex);
+                vector<char> newOperators(operators.begin(), operators.end());
+                newOperators.erase(newOperators.begin() + multIndex);
+
+                if (newOperators.size() == 0) {
+                    return n;
+                }
+                // TODO
+            }
+
             return 0;
         }
+    };
+
+    template<typename T>
+    class Expression {
+    public:
+        virtual T evaluate() const = 0;
+    };
+
+    class Eq: public Expression<bool> {
+        p<Expression<int>> left, right;
+    public:
+        Eq(p<Expression<int>> left, p<Expression<int>> right) :
+                left(std::move(left)), right(std::move(right)) { }
+
+        bool evaluate() const override {
+            return left->evaluate() == right->evaluate();
+        }
+    };
+
+    class Mult: public Expression<int> {
+        const int left, right;
+    public:
+        Mult(int left, int right) : left(left), right(right) {}
+        int evaluate() const override { return left + right; }
+    };
+    class Divide: public Expression<int> {
+        const int left, right;
+    public:
+        Divide(int left, int right) : left(left), right(right) {}
+        int evaluate() const override { return left / right; }
+    };
+
+    class Add: public Expression<int> {
+        const int left, right;
+    public:
+        Add(int left, int right) : left(left), right(right) {}
+        int evaluate() const override { return left + right; }
+    };
+    class Subtract: public Expression<int> {
+        const int left, right;
+    public:
+        Subtract(int left, int right) : left(left), right(right) {}
+        int evaluate() const override { return left - right; }
     };
 
     vector<p<Combination>> findOperators(vector<int> numbers) {
