@@ -53,6 +53,48 @@ vector<p<Combination>> findAllValidCombinations(p<Combination>& combination) {
 
 
 namespace ArithmeticPuzzle {
+    template<typename T>
+    class Expression {
+    public:
+        virtual T evaluate() const = 0;
+    };
+    class Eq: public Expression<bool> {
+        p<Expression<int>> left, right;
+    public:
+        Eq(p<Expression<int>> left, p<Expression<int>> right) : left(std::move(left)), right(std::move(right)) { }
+        bool evaluate() const override { return left->evaluate() == right->evaluate(); }
+    };
+    class Const: public Expression<int> {
+        const int n;
+    public:
+        Const(int n) : n(n){}
+        int evaluate() const override { return n; }
+    };
+    class Mult: public Expression<int> {
+        const p<Expression<int>> left, right;
+    public:
+        Mult(p<Expression<int>> left, p<Expression<int>> right) : left(std::move(left)), right(std::move(right)) {}
+        int evaluate() const override { return left->evaluate() + right->evaluate(); }
+    };
+    class Divide: public Expression<int> {
+        const p<Expression<int>> left, right;
+    public:
+        Divide(p<Expression<int>> left, p<Expression<int>> right) : left(std::move(left)), right(std::move(right)) {}
+        int evaluate() const override { return left->evaluate() / right->evaluate(); }
+    };
+    class Add: public Expression<int> {
+        const p<Expression<int>> left, right;
+    public:
+        Add(p<Expression<int>> left, p<Expression<int>> right) : left(std::move(left)), right(std::move(right)) {}
+        int evaluate() const override { return left->evaluate() + right->evaluate(); }
+    };
+    class Subtract: public Expression<int> {
+        const p<Expression<int>> left, right;
+    public:
+        Subtract(p<Expression<int>> left, p<Expression<int>> right) : left(std::move(left)), right(std::move(right)) {}
+        int evaluate() const override { return left->evaluate() - right->evaluate(); }
+    };
+
     // http://stackoverflow.com/questions/3256192/complex-initialization-of-const-fields
     class Equation : public Combination {
     const vector<int> numbers;
@@ -66,9 +108,6 @@ namespace ArithmeticPuzzle {
                 numbers(numbers), operators(operators) {}
 
         vector<p<Combination>> subCombinations() override {
-//            std::cout << this->toString() << "\n";
-//            std::flush(std::cout);
-
             vector<p<Combination>> result;
             array<char, 5> ops = {'=', '+', '-', '*', '/'};
 
@@ -120,69 +159,32 @@ namespace ArithmeticPuzzle {
             return result;
         }
 
-        int evaluate(vector<int>& numbers, vector<char>& operators) {
+        p<Expression<int>> createExpression(vector<p<Expression<int>>>& numbers, vector<char>& operators) {
+            if (numbers.size() == 1) return std::move(numbers[0]);
+
             auto it = std::find(operators.begin(), operators.end(), '*');
             if (it != operators.end()) {
-                auto multIndex = std::distance(operators.begin(), it);
-                int n = numbers[multIndex] * numbers[multIndex + 1];
+                auto index = std::distance(operators.begin(), it);
+                auto expression = new Mult(std::move(numbers[index]), std::move(numbers[index + 1]));
 
-                vector<int> newNumbers(numbers.begin(), numbers.end());
-                newNumbers.erase(newNumbers.begin() + multIndex);
-                newNumbers.erase(newNumbers.begin() + multIndex);
-                vector<char> newOperators(operators.begin(), operators.end());
-                newOperators.erase(newOperators.begin() + multIndex);
+                numbers.erase(numbers.begin() + index);
+                numbers.erase(numbers.begin() + index + 1);
+                numbers.insert(numbers.begin() + index, p_(expression));
+                operators.erase(operators.begin() + index);
 
-                if (newOperators.size() == 0) {
-                    return n;
-                }
-                // TODO
             }
-
-            return 0;
+            // TODO
+            return createExpression(numbers, operators);
         }
-    };
 
-    template<typename T>
-    class Expression {
-    public:
-        virtual T evaluate() const = 0;
-    };
-
-    class Eq: public Expression<bool> {
-        p<Expression<int>> left, right;
-    public:
-        Eq(p<Expression<int>> left, p<Expression<int>> right) :
-                left(std::move(left)), right(std::move(right)) { }
-
-        bool evaluate() const override {
-            return left->evaluate() == right->evaluate();
+        int evaluate(vector<int>& numbers, vector<char>& operators) {
+            vector<p<Expression<int>>> consts;
+            std::transform(numbers.begin(), numbers.end(), consts.begin(), [](int n) -> p<Const> {
+                return p_(new Const(n));
+            });
+            auto expression = createExpression(consts, operators);
+            return expression->evaluate();
         }
-    };
-
-    class Mult: public Expression<int> {
-        const int left, right;
-    public:
-        Mult(int left, int right) : left(left), right(right) {}
-        int evaluate() const override { return left + right; }
-    };
-    class Divide: public Expression<int> {
-        const int left, right;
-    public:
-        Divide(int left, int right) : left(left), right(right) {}
-        int evaluate() const override { return left / right; }
-    };
-
-    class Add: public Expression<int> {
-        const int left, right;
-    public:
-        Add(int left, int right) : left(left), right(right) {}
-        int evaluate() const override { return left + right; }
-    };
-    class Subtract: public Expression<int> {
-        const int left, right;
-    public:
-        Subtract(int left, int right) : left(left), right(right) {}
-        int evaluate() const override { return left - right; }
     };
 
     vector<p<Combination>> findOperators(vector<int> numbers) {
