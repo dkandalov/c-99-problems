@@ -17,6 +17,7 @@ using std::tuple;
 using std::make_tuple;
 using std::get;
 using std::string;
+using std::function;
 
 template<typename T>
 using p = std::unique_ptr<T>;
@@ -95,6 +96,15 @@ namespace ArithmeticPuzzle {
         int evaluate() const override { return left->evaluate() - right->evaluate(); }
     };
 
+    template<typename T>
+    std::ostream& operator<<(std::ostream& stream, p<Expression<T>> expression) {
+        return stream << "Expression";
+    }
+    std::ostream& operator<<(std::ostream& stream, p<Const> expression) {
+        return stream << ""; //expression;
+    }
+
+
     // http://stackoverflow.com/questions/3256192/complex-initialization-of-const-fields
     class Equation : public Combination {
     const vector<int> numbers;
@@ -108,6 +118,9 @@ namespace ArithmeticPuzzle {
                 numbers(numbers), operators(operators) {}
 
         vector<p<Combination>> subCombinations() override {
+            std::cout << this->toString() << "\n";
+            std::flush(std::cout);
+
             vector<p<Combination>> result;
             array<char, 5> ops = {'=', '+', '-', '*', '/'};
 
@@ -126,10 +139,8 @@ namespace ArithmeticPuzzle {
         }
 
         bool isComplete() override {
-            return std::find(operators.begin(), operators.end(), ' ') == operators.end();
-        }
+            if (std::find(operators.begin(), operators.end(), ' ') != operators.end()) return false;
 
-        bool isValid() override {
             vector<char>::const_iterator it = std::find(operators.begin(), operators.end(), '=');
             if (it == operators.end()) return false;
             auto eqIndex = std::distance(operators.begin(), it);
@@ -140,6 +151,11 @@ namespace ArithmeticPuzzle {
             vector<char> rightOperators(operators.begin() + eqIndex + 1, operators.end());
 
             return evaluate(leftNumbers, leftOperators) == evaluate(rightNumbers, rightOperators);
+        }
+
+        bool isValid() override {
+            // always true because it's hard to check if expression valid before it's complete
+            return true;
         }
 
         string toString() override {
@@ -162,23 +178,53 @@ namespace ArithmeticPuzzle {
         p<Expression<int>> createExpression(vector<p<Expression<int>>>& numbers, vector<char>& operators) {
             if (numbers.size() == 1) return std::move(numbers[0]);
 
-            auto it = std::find(operators.begin(), operators.end(), '*');
-            if (it != operators.end()) {
-                auto index = std::distance(operators.begin(), it);
-                auto expression = new Mult(std::move(numbers[index]), std::move(numbers[index + 1]));
+            bool consumed;
+            consumed = consumeExpression(numbers, operators, '*', [](p<Expression<int>> left, p<Expression<int>> right) {
+                return p_(new Mult(std::move(left), std::move(right)));
+            });
+            if (consumed) return createExpression(numbers, operators);
 
-                numbers.erase(numbers.begin() + index);
-                numbers.erase(numbers.begin() + index + 1);
-                numbers.insert(numbers.begin() + index, p_(expression));
-                operators.erase(operators.begin() + index);
+            consumed = consumeExpression(numbers, operators, '/', [](p<Expression<int>> left, p<Expression<int>> right) {
+                return p_(new Divide(std::move(left), std::move(right)));
+            });
+            if (consumed) return createExpression(numbers, operators);
 
-            }
-            // TODO
+            consumed = consumeExpression(numbers, operators, '+', [](p<Expression<int>> left, p<Expression<int>> right) {
+                return p_(new Add(std::move(left), std::move(right)));
+            });
+            if (consumed) return createExpression(numbers, operators);
+
+            consumeExpression(numbers, operators, '-', [](p<Expression<int>> left, p<Expression<int>> right) {
+                return p_(new Subtract(std::move(left), std::move(right)));
+            });
             return createExpression(numbers, operators);
         }
 
+        bool consumeExpression(vector<p<Expression<int>>>& numbers, vector<char>& operators, char operatorSymbol,
+                               function<p<Expression<int>>(p<Expression<int>>, p<Expression<int>>)> createExpression) {
+            auto it = std::find(operators.begin(), operators.end(), operatorSymbol);
+            if (it == operators.end()) return false;
+
+            auto index = std::distance(operators.begin(), it);
+            auto expression = createExpression(std::move(numbers[index]), std::move(numbers[index + 1]));
+
+            std::cout << "fail " << operatorSymbol << "\n";
+            for (auto& number : numbers) {
+                std::cout << number << "\n";
+            }
+            std::flush(std::cout);
+            numbers.erase(numbers.begin() + index);
+            numbers.erase(numbers.begin() + index + 1);
+            numbers.insert(numbers.begin() + index, std::move(expression));
+            operators.erase(operators.begin() + index);
+            std::cout << "fail" << "\n";
+            std::flush(std::cout);
+
+            return true;
+        }
+
         int evaluate(vector<int>& numbers, vector<char>& operators) {
-            vector<p<Expression<int>>> consts;
+            vector<p<Expression<int>>> consts(numbers.size());
             std::transform(numbers.begin(), numbers.end(), consts.begin(), [](int n) -> p<Const> {
                 return p_(new Const(n));
             });
