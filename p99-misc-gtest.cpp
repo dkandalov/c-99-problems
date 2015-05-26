@@ -101,8 +101,8 @@ TEST(P93, ArithmeticPuzzle) {
     using namespace ArithmeticPuzzle;
 
     auto solutions = findOperators({2, 3, 5, 7, 11});
-    EXPECT_EQ(12, solutions.size());
     for (auto& solution : solutions) {
         std::cout << solution->toString() << "\n";
     }
+    EXPECT_EQ(12, solutions.size());
 }

@@ -58,51 +58,62 @@ namespace ArithmeticPuzzle {
     class Expression {
     public:
         virtual T evaluate() const = 0;
+        virtual string toString() const { return "Expression"; }
     };
     class Eq: public Expression<bool> {
         p<Expression<int>> left, right;
     public:
         Eq(p<Expression<int>> left, p<Expression<int>> right) : left(std::move(left)), right(std::move(right)) { }
         bool evaluate() const override { return left->evaluate() == right->evaluate(); }
+        virtual string toString() const override {
+            return "Eq(" + left->toString() + "," + right->toString() + ")";
+        }
     };
     class Const: public Expression<int> {
         const int n;
     public:
         Const(int n) : n(n){}
         int evaluate() const override { return n; }
+        virtual string toString() const override {
+            return "Const(" + std::to_string(this->n) + ")";
+        }
     };
     class Mult: public Expression<int> {
         const p<Expression<int>> left, right;
     public:
         Mult(p<Expression<int>> left, p<Expression<int>> right) : left(std::move(left)), right(std::move(right)) {}
-        int evaluate() const override { return left->evaluate() + right->evaluate(); }
+        int evaluate() const override { return left->evaluate() * right->evaluate(); }
+        virtual string toString() const override {
+            return "Mult(" + left->toString() + "," + right->toString() + ")";
+        }
     };
     class Divide: public Expression<int> {
         const p<Expression<int>> left, right;
     public:
         Divide(p<Expression<int>> left, p<Expression<int>> right) : left(std::move(left)), right(std::move(right)) {}
         int evaluate() const override { return left->evaluate() / right->evaluate(); }
+        virtual string toString() const override {
+            return "Divide(" + left->toString() + "," + right->toString() + ")";
+        }
     };
     class Add: public Expression<int> {
         const p<Expression<int>> left, right;
     public:
         Add(p<Expression<int>> left, p<Expression<int>> right) : left(std::move(left)), right(std::move(right)) {}
         int evaluate() const override { return left->evaluate() + right->evaluate(); }
+        virtual string toString() const override {
+            return "Add(" + left->toString() + "," + right->toString() + ")";
+        }
     };
     class Subtract: public Expression<int> {
         const p<Expression<int>> left, right;
     public:
         Subtract(p<Expression<int>> left, p<Expression<int>> right) : left(std::move(left)), right(std::move(right)) {}
         int evaluate() const override { return left->evaluate() - right->evaluate(); }
+        virtual string toString() const override {
+            return "Subtract(" + left->toString() + "," + right->toString() + ")";
+        }
     };
-
-    template<typename T>
-    std::ostream& operator<<(std::ostream& stream, p<Expression<T>> expression) {
-        return stream << "Expression";
-    }
-    std::ostream& operator<<(std::ostream& stream, p<Const> expression) {
-        return stream << ""; //expression;
-    }
 
 
     // http://stackoverflow.com/questions/3256192/complex-initialization-of-const-fields
@@ -118,16 +129,14 @@ namespace ArithmeticPuzzle {
                 numbers(numbers), operators(operators) {}
 
         vector<p<Combination>> subCombinations() override {
-            std::cout << this->toString() << "\n";
-            std::flush(std::cout);
-
             vector<p<Combination>> result;
             array<char, 5> ops = {'=', '+', '-', '*', '/'};
 
             for (char op : ops) {
+                if (op == '=' && std::find(operators.begin(), operators.end(), '=') != operators.end()) continue;
+
                 for (int i = 0; i < operators.size(); i++) {
                     if (operators[i] != ' ') continue;
-                    if (std::find(operators.begin(), operators.end(), '=') != operators.end()) continue;
 
                     vector<char> operatorsCopy(operators.begin(), operators.end());
                     operatorsCopy[i] = op;
@@ -141,11 +150,11 @@ namespace ArithmeticPuzzle {
         bool isComplete() override {
             if (std::find(operators.begin(), operators.end(), ' ') != operators.end()) return false;
 
-            vector<char>::const_iterator it = std::find(operators.begin(), operators.end(), '=');
+            auto it = std::find(operators.begin(), operators.end(), '=');
             if (it == operators.end()) return false;
             auto eqIndex = std::distance(operators.begin(), it);
 
-            vector<int> leftNumbers(numbers.begin(), numbers.begin() + eqIndex);
+            vector<int> leftNumbers(numbers.begin(), numbers.begin() + eqIndex + 1);
             vector<int> rightNumbers(numbers.begin() + eqIndex + 1, numbers.end());
             vector<char> leftOperators(operators.begin(), operators.begin() + eqIndex);
             vector<char> rightOperators(operators.begin() + eqIndex + 1, operators.end());
@@ -177,8 +186,8 @@ namespace ArithmeticPuzzle {
 
         p<Expression<int>> createExpression(vector<p<Expression<int>>>& numbers, vector<char>& operators) {
             if (numbers.size() == 1) return std::move(numbers[0]);
-
             bool consumed;
+
             consumed = consumeExpression(numbers, operators, '*', [](p<Expression<int>> left, p<Expression<int>> right) {
                 return p_(new Mult(std::move(left), std::move(right)));
             });
@@ -189,15 +198,17 @@ namespace ArithmeticPuzzle {
             });
             if (consumed) return createExpression(numbers, operators);
 
+            consumed = consumeExpression(numbers, operators, '-', [](p<Expression<int>> left, p<Expression<int>> right) {
+                return p_(new Subtract(std::move(left), std::move(right)));
+            });
+            if (consumed) return createExpression(numbers, operators);
+
             consumed = consumeExpression(numbers, operators, '+', [](p<Expression<int>> left, p<Expression<int>> right) {
                 return p_(new Add(std::move(left), std::move(right)));
             });
             if (consumed) return createExpression(numbers, operators);
 
-            consumeExpression(numbers, operators, '-', [](p<Expression<int>> left, p<Expression<int>> right) {
-                return p_(new Subtract(std::move(left), std::move(right)));
-            });
-            return createExpression(numbers, operators);
+            throw new std::logic_error("Failed to consume expression");
         }
 
         bool consumeExpression(vector<p<Expression<int>>>& numbers, vector<char>& operators, char operatorSymbol,
@@ -208,17 +219,10 @@ namespace ArithmeticPuzzle {
             auto index = std::distance(operators.begin(), it);
             auto expression = createExpression(std::move(numbers[index]), std::move(numbers[index + 1]));
 
-            std::cout << "fail " << operatorSymbol << "\n";
-            for (auto& number : numbers) {
-                std::cout << number << "\n";
-            }
-            std::flush(std::cout);
             numbers.erase(numbers.begin() + index);
-            numbers.erase(numbers.begin() + index + 1);
+            numbers.erase(numbers.begin() + index);
             numbers.insert(numbers.begin() + index, std::move(expression));
             operators.erase(operators.begin() + index);
-            std::cout << "fail" << "\n";
-            std::flush(std::cout);
 
             return true;
         }
